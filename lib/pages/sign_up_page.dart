@@ -1,0 +1,107 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:her_long_game/auth/supabase_auth_manager.dart';
+import 'package:her_long_game/nav.dart';
+import 'package:her_long_game/theme.dart';
+import 'package:her_long_game/widgets/her_app_bar.dart';
+
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
+
+  @override
+  State<SignUpPage> createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignUpPage> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _auth = SupabaseAuthManager();
+
+  bool _isLoading = false;
+  String? _error;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _signUp() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+    try {
+      await _auth.createAccountWithEmail(
+        context,
+        _emailController.text.trim(),
+        _passwordController.text,
+      );
+      if (!mounted) return;
+      context.go(AppRoutes.home);
+    } catch (e) {
+      debugPrint('Sign up failed: $e');
+      if (!mounted) return;
+      setState(() => _error = 'Sign up failed. You may need to confirm your email before signing in.');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Scaffold(
+      appBar: HerAppBar(showBack: true, fallbackRoute: '/auth', backButtonColor: cs.onSurface, titleText: 'Create account'),
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: Padding(
+              padding: AppSpacing.paddingLg,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: AppSpacing.lg),
+                  Text('Start your journey', style: context.textStyles.titleLarge?.copyWith(color: cs.onSurface).semiBold),
+                  const SizedBox(height: AppSpacing.sm),
+                  Text('Create an account to save your progress.', style: context.textStyles.bodyMedium?.copyWith(color: cs.onSurfaceVariant)),
+                  const SizedBox(height: AppSpacing.xl),
+                  TextField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    decoration: const InputDecoration(labelText: 'Email', prefixIcon: Icon(Icons.mail_outline)),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  TextField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: (_) => _isLoading ? null : _signUp(),
+                    decoration: const InputDecoration(labelText: 'Password', prefixIcon: Icon(Icons.lock_outline)),
+                  ),
+                  if (_error != null) ...[
+                    const SizedBox(height: AppSpacing.md),
+                    Text(_error!, style: context.textStyles.bodySmall?.copyWith(color: cs.error)),
+                  ],
+                  const SizedBox(height: AppSpacing.lg),
+                  FilledButton.icon(
+                    onPressed: _isLoading ? null : _signUp,
+                    icon: Icon(Icons.person_add_alt_1, color: cs.onPrimary),
+                    label: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Text(_isLoading ? 'Creating…' : 'Create account', style: TextStyle(color: cs.onPrimary)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
