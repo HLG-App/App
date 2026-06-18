@@ -53,7 +53,7 @@ class GoalsSnapshotPage extends StatelessWidget {
                     children: [
                       const Icon(Icons.error_outline, color: HLGColors.horizonOrange),
                       const SizedBox(width: 10),
-                      Expanded(child: Text('Couldn\'t load goals right now.', style: HLGTextStyles.body(color: HLGColors.textBody))),
+                      Expanded(child: Text('Couldn\'t load goals.', style: HLGTextStyles.body(color: HLGColors.textBody), maxLines: 1, overflow: TextOverflow.ellipsis)),
                     ],
                   ),
                 ),
@@ -75,7 +75,7 @@ class GoalsSnapshotPage extends StatelessWidget {
                     children: [
                       const Icon(Icons.flag_outlined, color: HLGColors.deepSage),
                       const SizedBox(width: 10),
-                      Expanded(child: Text('No goals yet. Add one from any tool.', style: HLGTextStyles.body(color: HLGColors.textBody))),
+                      Expanded(child: Text('No goals yet.', style: HLGTextStyles.body(color: HLGColors.textBody), maxLines: 1, overflow: TextOverflow.ellipsis)),
                     ],
                   ),
                 ),
@@ -109,8 +109,10 @@ class GoalsSnapshotPage extends StatelessWidget {
                             Text(label.isEmpty ? 'Goal' : label, style: HLGTextStyles.labelMedium(color: HLGColors.textBody)),
                             const SizedBox(height: 4),
                             Text(
-                              [if (lesson.isNotEmpty) 'From $lesson', if (tool.isNotEmpty) 'Tool $tool'].join(' · '),
-                              style: HLGTextStyles.body(color: HLGColors.midSage),
+                              [if (lesson.isNotEmpty) lesson, if (tool.isNotEmpty) tool].join(' · '),
+                              style: HLGTextStyles.body(color: HLGColors.textMuted),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),

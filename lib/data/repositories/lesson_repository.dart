@@ -63,16 +63,43 @@ class LessonRepository {
       // Some environments include `updated_at` on lesson_progress; others don't.
       // We *prefer* to write it when available, but we must not break the lesson
       // flow if the column is missing.
-      final withUpdatedAt = <String, dynamic>{...payload, 'updated_at': DateTime.now().toIso8601String()};
-      try {
-        await _client.from('lesson_progress').upsert(withUpdatedAt, onConflict: 'user_id,lesson_code');
-      } catch (e) {
-        final msg = e.toString().toLowerCase();
-        final isMissingUpdatedAt = msg.contains("updated_at") && (msg.contains('does not exist') || msg.contains('schema cache'));
-        if (!isMissingUpdatedAt) rethrow;
-        debugPrint('[LessonRepository] saveProgress retrying without updated_at (column missing)');
-        await _client.from('lesson_progress').upsert(payload, onConflict: 'user_id,lesson_code');
+      var attempt = <String, dynamic>{...payload, 'updated_at': DateTime.now().toIso8601String()};
+
+      // Retry strategy:
+      // - If `updated_at` is missing, drop it.
+      // - If any of the new flexible response columns (e.g. s7_response) are missing
+      //   in the current Supabase schema, drop them and try again.
+      // This keeps the app compatible across environments while you iterate on DB.
+      for (var i = 0; i < 3; i++) {
+        try {
+          await _client.from('lesson_progress').upsert(attempt, onConflict: 'user_id,lesson_code');
+          return;
+        } on PostgrestException catch (e) {
+          final msg = (e.message).toLowerCase();
+
+          final isMissingUpdatedAt = msg.contains('updated_at') && (msg.contains('does not exist') || msg.contains('schema cache'));
+          if (isMissingUpdatedAt && attempt.containsKey('updated_at')) {
+            debugPrint('[LessonRepository] saveProgress retrying without updated_at (column missing)');
+            attempt = {...attempt}..remove('updated_at');
+            continue;
+          }
+
+          // Example message:
+          // "column lesson_progress.s7_response does not exist"
+          final m = RegExp(r'column\s+lesson_progress\.(\w+)\s+does\s+not\s+exist', caseSensitive: false).firstMatch(e.message);
+          final missingCol = m?.group(1);
+          if (missingCol != null && attempt.containsKey(missingCol)) {
+            debugPrint('[LessonRepository] saveProgress retrying without $missingCol (column missing)');
+            attempt = {...attempt}..remove(missingCol);
+            continue;
+          }
+
+          rethrow;
+        }
       }
+
+      // If we get here, retries were exhausted.
+      await _client.from('lesson_progress').upsert(attempt, onConflict: 'user_id,lesson_code');
     } catch (e) {
       debugPrint('[LessonRepository] saveProgress FAILED: $e');
       rethrow;

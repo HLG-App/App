@@ -101,12 +101,12 @@ class LearningCatalog {
         id: 1,
         title: 'THE PAST',
         subtitle: 'Context & Curiosity',
-        emotionalGoal: 'Turn confusion into context — and shame into curiosity.',
+        emotionalGoal: 'Turn confusion into context – and shame into curiosity.',
         focus:
             'Pre‑Course + Module 1\n• Permission & Identity\n• Foundations\n• Money’s origin story\n• Women’s role in history\n• System mechanics (1971)',
         learnerFeels: 'Seen. Curious. Not alone.',
-        fromIdentity: 'I feel behind — like I missed something everyone else learned.',
-        toIdentity: 'The system has a history — and I can understand it.',
+        fromIdentity: 'I feel behind – like I missed something everyone else learned.',
+        toIdentity: 'The system has a history – and I can understand it.',
         moduleIds: const ['0', '1'],
         accentColor: HLGColors.horizonOrange,
       ),
@@ -114,11 +114,11 @@ class LearningCatalog {
         id: 2,
         title: 'THE PRESENT',
         subtitle: 'Clarity & Capability',
-        emotionalGoal: 'Turn awareness into action — with tools that match real life.',
+        emotionalGoal: 'Turn awareness into action – with tools that match real life.',
         focus:
             'Modules 2 + 3\n• Money & the System\n• Building the Base\n• Inflation, pay gap, tax, credit\n• Budget, debt, super, insurance\n• HerTools activated',
         learnerFeels: 'Informed. Capable. In control.',
-        fromIdentity: 'I’m overwhelmed — and I don’t know what matters first.',
+        fromIdentity: 'I’m overwhelmed – and I don’t know what matters first.',
         toIdentity: 'I can make decisions with clarity and confidence.',
         moduleIds: const ['2', '3'],
         accentColor: HLGColors.deepSage,
@@ -127,14 +127,16 @@ class LearningCatalog {
         id: 3,
         title: 'THE FUTURE',
         subtitle: 'Ownership & Legacy',
-        emotionalGoal: 'Turn momentum into ownership — and ownership into legacy.',
+        emotionalGoal: 'Turn momentum into ownership – and ownership into legacy.',
         focus:
-            'Module 4 + Ongoing\n• Growing Wealth\n• The Long Game\n• Compound growth, ETFs, Bitcoin\n• Future Self Portrait\n• HerPath & HerWisdom',
+            'Module 4 + Ongoing\n• Growing Wealth\n• The Long Game\n• Compound growth, ETFs, Bitcoin\n• HerPath & HerWisdom',
+
         learnerFeels: 'Empowered. Intentional. Legacy‑minded.',
         fromIdentity: 'I’m trying to keep up.',
         toIdentity: 'I’m building a long game that outlives the moment.',
         moduleIds: const ['4'],
-        accentColor: HLGColors.night,
+        // Phase 3 uses a deeper, premium anchor (not ink text).
+        accentColor: HLGColors.deepForest,
       ),
     ];
 

@@ -25,14 +25,15 @@ class SalaryRippleWidget extends StatefulWidget {
 
 class _SalaryRippleWidgetState extends State<SalaryRippleWidget> with SingleTickerProviderStateMixin {
   static const Color deepSage = Color(0xFF5C7A62);
+  static const Color sage = Color(0xFF7A9279);
   static const Color sagePale = Color(0xFFD4E0D6);
   static const Color crownGold = Color(0xFFB8923A);
   static const Color warmCream = Color(0xFFF7F5F0);
-  static const Color night = Color(0xFF161E17);
+  static const Color night = deepSage;
   static const Color horizonOrange = Color(0xFFD4621A);
   static const Color midSage = Color(0xFF8A9E8D);
-  static const Color petal = Color(0xFFEDE0D4);
-  static const Color textBody = Color(0xFF2A3A2C);
+  static const Color petal = Color(0xFFF2EFE8);
+  static const Color textBody = midSage;
 
   double _raisePercent = 5.0;
   int _tappedRing = -1;
@@ -289,9 +290,9 @@ class _SalaryRippleWidgetState extends State<SalaryRippleWidget> with SingleTick
           child: Stack(
             alignment: Alignment.center,
             children: [
-              _buildRing(4, 110, const Color(0xFF1A4A6B), _ring4, 'Ring 4'),
+              _buildRing(4, 110, crownGold, _ring4, 'Ring 4'),
               _buildRing(3, 85, deepSage, _ring3, 'Ring 3'),
-              _buildRing(2, 60, const Color(0xFF7A9178), _ring2, 'Ring 2'),
+              _buildRing(2, 60, sage, _ring2, 'Ring 2'),
               _buildRing(1, 35, horizonOrange, _ring1, 'Ring 1'),
               Container(
                 width: 20,
@@ -328,9 +329,9 @@ class _SalaryRippleWidgetState extends State<SalaryRippleWidget> with SingleTick
   Widget _buildRingDetails() {
     final rings = [
       _RingData(1, horizonOrange, 'Extra take-home this year', _ring1),
-      _RingData(2, const Color(0xFF7A9178), 'Extra lifetime earnings', _ring2),
+      _RingData(2, sage, 'Extra lifetime earnings', _ring2),
       _RingData(3, deepSage, 'Extra super contributions', _ring3),
-      _RingData(4, const Color(0xFF1A4A6B), 'Extra in your retirement account', _ring4),
+      _RingData(4, crownGold, 'Extra in your retirement account', _ring4),
     ];
     return Column(
       children: rings
@@ -354,7 +355,7 @@ class _SalaryRippleWidgetState extends State<SalaryRippleWidget> with SingleTick
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          'Ring ${r.ring} — ${r.label}',
+                          'Ring ${r.ring} – ${r.label}',
                           style: GoogleFonts.dmSans(
                             fontSize: 13,
                             color: isSelected ? r.color : midSage,
@@ -380,7 +381,7 @@ class _SalaryRippleWidgetState extends State<SalaryRippleWidget> with SingleTick
     final total = _ring1 + _ring2 + _ring3 + _ring4;
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: night, borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(color: night, borderRadius: BorderRadius.circular(12)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -394,7 +395,7 @@ class _SalaryRippleWidgetState extends State<SalaryRippleWidget> with SingleTick
             style: GoogleFonts.playfairDisplay(fontSize: 32, fontWeight: FontWeight.w700, color: warmCream),
           ),
           Text(
-            'across career and super — in today\'s dollars',
+            'across career and super – in today\'s dollars',
             style: GoogleFonts.dmSans(fontSize: 12, color: midSage, fontStyle: FontStyle.italic),
           ),
           const SizedBox(height: 8),

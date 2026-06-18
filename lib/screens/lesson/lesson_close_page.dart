@@ -20,7 +20,6 @@ class _LessonClosePageState extends State<LessonClosePage> {
   bool _loading = true;
   String? _bullet1, _bullet2, _bullet3, _quote;
   String? _herNotesPrompt;
-  String? _laResponse;
   String _noteText = '';
   String _passItOnText = '';
   bool _nameToggle = false;
@@ -51,34 +50,21 @@ class _LessonClosePageState extends State<LessonClosePage> {
       final userId = Supabase.instance.client.auth.currentUser?.id;
       if (userId == null) return;
 
+      // V4: takeaway columns hold the "Three Things to Carry" content.
       final screen = await Supabase.instance.client
           .from('lesson_screens')
-          .select('carry_bullet_1, carry_bullet_2, carry_bullet_3, carry_quote, her_notes_prompt, display_name')
+          .select('takeaway_bullet_1, takeaway_bullet_2, takeaway_bullet_3, takeaway_quote, her_notes_prompt, display_name')
           .eq('lesson_code', widget.lessonCode)
           .eq('screen_type', 'complete')
           .maybeSingle();
 
-      String? laResponse;
-      if (widget.lessonCode == 'LA') {
-        final progress = await Supabase.instance.client
-            .from('lesson_progress')
-            .select('s7_response')
-            .eq('user_id', userId)
-            .eq('lesson_code', 'LA')
-            .maybeSingle();
-        final raw = progress?['s7_response'];
-        if (raw is String && raw.isNotEmpty) laResponse = raw;
-        else if (raw is Map && raw.isNotEmpty) laResponse = raw.values.first?.toString();
-      }
-
       if (!mounted) return;
       setState(() {
-        _bullet1 = screen?['carry_bullet_1'];
-        _bullet2 = screen?['carry_bullet_2'];
-        _bullet3 = screen?['carry_bullet_3'];
-        _quote = screen?['carry_quote'];
+        _bullet1 = screen?['takeaway_bullet_1'];
+        _bullet2 = screen?['takeaway_bullet_2'];
+        _bullet3 = screen?['takeaway_bullet_3'];
+        _quote = screen?['takeaway_quote'];
         _herNotesPrompt = screen?['her_notes_prompt'];
-        _laResponse = laResponse;
         _loading = false;
       });
 
@@ -200,7 +186,6 @@ class _LessonClosePageState extends State<LessonClosePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildLAResponse(),
                   _buildThreeThingsToCarry(),
                   _buildPassedOnWidget(),
                   _buildHerNotes(),
@@ -212,22 +197,6 @@ class _LessonClosePageState extends State<LessonClosePage> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildLAResponse() {
-    if (widget.lessonCode != 'LA' || _laResponse == null) return const SizedBox.shrink();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'You said that ${_laResponse!.toLowerCase().replaceAll(RegExp(r'\.$'), '')}. We\'ll come back to that.',
-          style: GoogleFonts.playfairDisplay(fontSize: 20, fontStyle: FontStyle.italic, color: const Color(0xFF5C7A62), height: 1.5),
-        ),
-        const SizedBox(height: 24),
-        Container(height: 1, color: const Color(0xFFB8923A)),
-        const SizedBox(height: 24),
-      ],
     );
   }
 
@@ -311,12 +280,11 @@ class _LessonClosePageState extends State<LessonClosePage> {
 
   Widget _buildHerNotes() {
     if (_herNotesPrompt == null) return const SizedBox.shrink();
-    if (widget.lessonCode == 'L0') return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-          Text('HER NOTES', style: GoogleFonts.dmSans(fontSize: 9, fontWeight: FontWeight.w600, color: HLGColors.antiqueRose, letterSpacing: 2.0)),
+        Text('HER NOTES', style: GoogleFonts.dmSans(fontSize: 9, fontWeight: FontWeight.w600, color: HLGColors.antiqueRose, letterSpacing: 2.0)),
         const SizedBox(height: 8),
         Text(_herNotesPrompt!, style: GoogleFonts.playfairDisplay(fontSize: 18, fontStyle: FontStyle.italic, color: const Color(0xFF5C7A62))),
         const SizedBox(height: 12),
@@ -358,9 +326,11 @@ class _LessonClosePageState extends State<LessonClosePage> {
   }
 
   Widget _buildPassItOn() {
-    // "Pass it on" is a later-stage/community-style reflection. Keep it off the
-    // early intro/toolkit completion experience.
-    if (widget.lessonCode == 'L0' || widget.lessonCode == 'L0b' || widget.lessonCode == 'LA') return const SizedBox.shrink();
+    // Suppress for onboarding lessons (O1–O5) — too early in the journey for community sharing.
+    final code = widget.lessonCode;
+    if (code == 'O1' || code == 'O2' || code == 'O3' || code == 'O4' || code == 'O5') {
+      return const SizedBox.shrink();
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -507,8 +477,31 @@ class _LessonClosePageState extends State<LessonClosePage> {
     }
   }
 
-  void _onContinue() {
-    final nextRoute = LessonFlow.nextRouteAfterClose(widget.lessonCode);
-    context.go(nextRoute);
+  Future<void> _onContinue() async {
+    // When the last onboarding lesson (O5) is completed, mark the user's
+    // onboarding as complete so the user lands in the main app.
+
+    try {
+      final userId = Supabase.instance.client.auth.currentUser?.id;
+      if (userId == null) {
+        if (!mounted) return;
+        context.go('/auth');
+        return;
+      }
+
+      if (widget.lessonCode == 'O5') {
+        await Supabase.instance.client.from('users').update({'onboarding_complete': true}).eq('id', userId);
+      }
+    } catch (e) {
+      debugPrint('[LessonClosePage] Failed to mark onboarding complete: $e');
+    }
+
+    if (!mounted) return;
+    context.go(LessonFlow.nextRouteAfterClose(widget.lessonCode));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

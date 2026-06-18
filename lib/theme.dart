@@ -15,8 +15,9 @@ class AppSpacing {
 
 /// Border radius tokens used across the app.
 class AppRadius {
-  static const double sm = 10;
-  static const double md = 16;
+  // Design: buttons/inputs 0.5rem (8px), cards 0.75rem (12px).
+  static const double sm = 8;
+  static const double md = 12;
   static const double lg = 24;
 }
 
@@ -30,7 +31,7 @@ extension TextStyleExtensions on TextStyle {
 
 /// Her Long Game brand colors.
 ///
-/// Source of truth: `arhitecture.md` (Colour palette v5.0).
+/// Source of truth: `DESIGN.md` (v5.0, 2026-06-17).
 class HLGColors {
   // Primary
   static const Color deepSage = Color(0xFF5C7A62); // Primary · CTAs · Key UI
@@ -39,30 +40,47 @@ class HLGColors {
 
   // Accent / Neutrals
   static const Color crownGold = Color(0xFFB8923A); // Gold accent
-  static const Color warmCream = Color(0xFFF7F5F0); // Primary background
-  static const Color petal = Color(0xFFEDE0D4); // Cards · Warm panels
+  static const Color warmCream = Color(0xFFF7F5F0); // Primary surface
+  static const Color creamWarm = Color(0xFFF2EFE8); // Input fields
+
+  // Ink / Charcoal (app-first neutrals)
+  // DESIGN.md forbids near-black "night" tokens, but the app still needs a true
+  // readable ink that is not green.
+  static const Color ink = Color(0xFF2D2A26);
+  static const Color inkMuted = Color(0xFF6C6760);
+
+  /// Soft surface tint derived from the core palette.
+  ///
+  /// This avoids introducing extra “mystery hex” colors while still giving
+  /// cards/panels enough separation from [warmCream].
+  static Color get petal => Color.lerp(warmCream, sage, 0.14)!;
 
   // Dark & Signal
-  static const Color night = Color(0xFF161E17); // Dark headers · Statements · Nav bar
+  // `night` in legacy code means "ink". It is NOT a background surface token.
+  // Dark *surfaces* must use [deepSage] per DESIGN.md.
+  static const Color night = ink;
   static const Color growth = Color(0xFF7ECFA0); // Positive indicators
   static const Color horizonOrange = Color(0xFFD4621A); // Accent only
   static const Color antiqueRose = Color(0xFFC4756A);
 
-  // Onboarding / dark surfaces
-  /// Deep forest green used for premium onboarding screens.
-  static const Color deepForest = Color(0xFF1E2E20);
-  static const Color deepForestSurface = Color(0xFF1A2E1C);
+  // Onboarding / dark surfaces — DESIGN.md restricts dark backgrounds to deepSage only.
+  static const Color deepForest = deepSage;
+  static const Color deepForestSurface = deepSage;
 
   // Derived / utility
-  static const Color sagePale = Color(0xFFD4E0D6); // Light backgrounds
-  static const Color textBody = Color(0xFF2A3A2C); // Dark body text
-  static const Color textMuted = Color(0xFF6A7E6C); // Secondary/muted text
+  static Color get sagePale => Color.lerp(warmCream, sage, 0.22)!;
+
+  /// Primary “ink” color used for body text.
+  static const Color textBody = ink;
+
+  /// Secondary text color (muted).
+  static const Color textMuted = inkMuted;
   static const Color white = Color(0xFFFFFFFF);
 }
 
 /// Her Long Game typography.
 ///
-/// Source of truth: `arhitecture.md` (Typography v5.0).
+/// Source of truth: `DESIGN.md` (Typography v5.0).
 class HLGTextStyles {
   // Playfair Display — emotion
   static TextStyle h1Display({Color? color}) => GoogleFonts.playfairDisplay(
@@ -129,19 +147,9 @@ class HLGTextStyles {
   );
 
   // DM Sans — information
-  static TextStyle body({Color? color}) => GoogleFonts.dmSans(
-    fontSize: 15,
-    fontWeight: FontWeight.w400,
-    height: 1.55,
-    color: color,
-  );
+  static TextStyle body({Color? color}) => GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w400, height: 1.55, color: color);
 
-  static TextStyle labelMedium({Color? color}) => GoogleFonts.dmSans(
-    fontSize: 12,
-    fontWeight: FontWeight.w500,
-    height: 1.35,
-    color: color,
-  );
+  static TextStyle labelMedium({Color? color}) => GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.w500, height: 1.35, color: color);
 
   /// Home: portrait card heading (Playfair Display 28pt italic).
   static TextStyle homePortraitHeading({Color? color}) => GoogleFonts.playfairDisplay(
@@ -193,19 +201,14 @@ class HLGTextStyles {
     color: color,
   );
 
-  static TextStyle uiElement({Color? color}) => GoogleFonts.dmSans(
-    fontSize: 11,
-    fontWeight: FontWeight.w400,
-    height: 1.25,
-    color: color,
-  );
+  static TextStyle uiElement({Color? color}) => GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w400, height: 1.25, color: color);
 
   static TextStyle eyebrowAllCaps({Color? color}) => GoogleFonts.dmSans(
-    fontSize: 9,
-    fontWeight: FontWeight.w400,
+    fontSize: 10,
+    fontWeight: FontWeight.w500,
     letterSpacing: 2.0,
     height: 1.2,
-    color: color,
+    color: color ?? HLGColors.crownGold,
   );
 
   /// Wordmark: "Her" (Playfair Display 20pt italic).
@@ -223,7 +226,7 @@ class HLGTextStyles {
     fontWeight: FontWeight.w400,
     letterSpacing: 2.5,
     height: 1.1,
-    color: color ?? HLGColors.night,
+    color: color ?? HLGColors.deepSage,
   );
 }
 
@@ -236,8 +239,10 @@ class AppTheme {
       secondary: HLGColors.sage,
       onSecondary: HLGColors.white,
       tertiary: HLGColors.crownGold,
-      onTertiary: HLGColors.night,
-      error: const Color(0xFFB00020),
+      onTertiary: HLGColors.deepSage,
+      // Brand rule (architecture.md): avoid clinical red; use Antique Rose for human-warning moments.
+      // Note: keep Antique Rose usage sparse at the screen level (do not use for CTAs/nav).
+      error: HLGColors.antiqueRose,
       onError: HLGColors.white,
       surface: HLGColors.warmCream,
       onSurface: HLGColors.textBody,
@@ -252,64 +257,97 @@ class AppTheme {
       bodyMedium: HLGTextStyles.body(color: HLGColors.textBody),
       labelLarge: HLGTextStyles.labelMedium(color: HLGColors.textBody),
       labelMedium: HLGTextStyles.uiElement(color: HLGColors.textBody),
-      labelSmall: HLGTextStyles.eyebrowAllCaps(color: HLGColors.textMuted),
+      labelSmall: HLGTextStyles.eyebrowAllCaps(),
     );
 
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
       colorScheme: cs,
+      splashFactory: NoSplash.splashFactory,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
       scaffoldBackgroundColor: HLGColors.warmCream,
       textTheme: textTheme,
+      iconTheme: const IconThemeData(color: HLGColors.textBody),
       appBarTheme: const AppBarTheme(
-        backgroundColor: Colors.transparent,
+        backgroundColor: HLGColors.warmCream,
         elevation: 0,
         scrolledUnderElevation: 0,
         foregroundColor: HLGColors.textBody,
+        surfaceTintColor: Colors.transparent,
       ),
       cardTheme: CardThemeData(
-        color: HLGColors.petal,
+        // App: cards should *lift* from the cream reading surface without
+        // becoming another green block.
+        color: HLGColors.white,
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md), side: BorderSide(color: HLGColors.deepSage.withValues(alpha: 0.12))),
+        shadowColor: HLGColors.deepSage.withValues(alpha: 0.06),
       ),
-      dividerTheme: DividerThemeData(color: HLGColors.night.withValues(alpha: 0.08), space: 1, thickness: 1),
+      dividerTheme: DividerThemeData(color: HLGColors.deepSage.withValues(alpha: 0.12), space: 1, thickness: 1),
       filledButtonTheme: FilledButtonThemeData(
         style: ButtonStyle(
           backgroundColor: const WidgetStatePropertyAll(HLGColors.deepSage),
           foregroundColor: const WidgetStatePropertyAll(HLGColors.white),
           iconColor: const WidgetStatePropertyAll(HLGColors.white),
           textStyle: WidgetStatePropertyAll(HLGTextStyles.labelMedium(color: HLGColors.white)),
-          padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 18, vertical: 14)),
-          shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(999))),
+          padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 24, vertical: 14)),
+          shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.sm))),
           overlayColor: WidgetStatePropertyAll(HLGColors.sage.withValues(alpha: 0.18)),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: ButtonStyle(
+          foregroundColor: const WidgetStatePropertyAll(HLGColors.deepSage),
+          iconColor: const WidgetStatePropertyAll(HLGColors.deepSage),
+          textStyle: WidgetStatePropertyAll(HLGTextStyles.labelMedium(color: HLGColors.deepSage)),
+          overlayColor: WidgetStatePropertyAll(HLGColors.deepSage.withValues(alpha: 0.08)),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: ButtonStyle(
           foregroundColor: const WidgetStatePropertyAll(HLGColors.deepSage),
           iconColor: const WidgetStatePropertyAll(HLGColors.deepSage),
-          side: const WidgetStatePropertyAll(BorderSide(color: HLGColors.deepSage, width: 1)),
+          side: const WidgetStatePropertyAll(BorderSide(color: HLGColors.deepSage, width: 1.5)),
           textStyle: WidgetStatePropertyAll(HLGTextStyles.labelMedium(color: HLGColors.deepSage)),
-          padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 18, vertical: 14)),
-          shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(999))),
+          padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 24, vertical: 14)),
+          shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.sm))),
           overlayColor: WidgetStatePropertyAll(HLGColors.sage.withValues(alpha: 0.12)),
         ),
       ),
+      chipTheme: ChipThemeData(
+        backgroundColor: HLGColors.creamWarm,
+        selectedColor: HLGColors.deepSage.withValues(alpha: 0.12),
+        disabledColor: HLGColors.creamWarm,
+        secondarySelectedColor: HLGColors.deepSage.withValues(alpha: 0.12),
+        checkmarkColor: HLGColors.deepSage,
+        labelStyle: HLGTextStyles.labelMedium(color: HLGColors.textBody),
+        secondaryLabelStyle: HLGTextStyles.labelMedium(color: HLGColors.deepSage),
+        side: BorderSide(color: HLGColors.deepSage.withValues(alpha: 0.16), width: 1),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: HLGColors.white,
+        fillColor: HLGColors.creamWarm,
         hintStyle: HLGTextStyles.body(color: HLGColors.textMuted),
         labelStyle: HLGTextStyles.labelMedium(color: HLGColors.textMuted),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: HLGColors.deepSage, width: 1.5),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.sm), borderSide: BorderSide(color: HLGColors.deepSage.withValues(alpha: 0.35), width: 1.5)),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.sm), borderSide: BorderSide(color: HLGColors.deepSage.withValues(alpha: 0.35), width: 1.5)),
+        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.sm), borderSide: const BorderSide(color: HLGColors.deepSage, width: 1.5)),
+      ),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: HLGColors.deepSage,
+        contentTextStyle: HLGTextStyles.body(color: HLGColors.warmCream),
+        actionTextColor: HLGColors.crownGold,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: HLGColors.night,
-        selectedItemColor: HLGColors.horizonOrange,
-        unselectedItemColor: HLGColors.midSage,
+        backgroundColor: HLGColors.warmCream,
+        selectedItemColor: HLGColors.deepSage,
+        unselectedItemColor: HLGColors.textMuted,
         type: BottomNavigationBarType.fixed,
         showSelectedLabels: true,
         showUnselectedLabels: true,

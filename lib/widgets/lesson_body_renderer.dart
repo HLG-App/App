@@ -91,17 +91,17 @@ class LessonBodyRenderer extends StatelessWidget {
     return blocks;
   }
 
-  /// Splits a paragraph that contains multiple "Layer X —" definitions into
+  /// Splits a paragraph that contains multiple "Layer X" definitions into
   /// separate blocks so each definition can render cleanly.
   ///
   /// Example input:
-  /// "Layer 1 — ... Layer 2 — ... Layer 3 — ..."
+  /// "Layer 1 – ... Layer 2 – ... Layer 3 – ..."
   static List<String> _splitLayerDefinitions(String block) {
-    final regex = RegExp(r'(?:^|\s)(Layer\s+[0-9]+[A-Za-z]?\s+—\s+)');
+    final regex = RegExp(r'(?:^|\s)(Layer\s+[0-9]+[A-Za-z]?\s+[—–]\s+)');
     final matches = regex.allMatches(block).toList(growable: false);
     if (matches.length <= 1) return [block.trim()];
 
-    // We split by finding each "Layer X —" prefix and taking text until the next.
+    // We split by finding each "Layer X" prefix and taking text until the next.
     final starts = <int>[];
     for (final m in matches) {
       // Use the start of the word "Layer" not the preceding whitespace.
@@ -159,7 +159,7 @@ class LessonBodyRenderer extends StatelessWidget {
     final isNumbered = RegExp(r'^\s*\d+[\.)]\s+').hasMatch(t);
     final isBulleted = RegExp(r'^\s*[-•]\s+').hasMatch(t);
 
-    final dashIndex = t.indexOf(' — ');
+    final dashIndex = t.indexOf(' — ') >= 0 ? t.indexOf(' — ') : t.indexOf(' – ');
     final isDefinition = dashIndex != -1 && _wordCount(t.substring(0, dashIndex)) <= 4;
 
     if (isNumbered || isBulleted || isDefinition) {
@@ -174,13 +174,13 @@ class LessonBodyRenderer extends StatelessWidget {
 }
 
 /// Intro-screen renderer: clean reading (no **term** highlighting, no {{ref}} widgets).
-/// Splits on double newlines into paragraph blocks and supports "Word — definition" formatting.
+/// Splits on double newlines into paragraph blocks and supports "Word – definition" formatting.
 class IntroLessonBodyRenderer extends StatelessWidget {
   final String bodyText;
 
   const IntroLessonBodyRenderer({super.key, required this.bodyText});
 
-  static final RegExp _definitionLine = RegExp(r'^([A-Z][A-Za-z]+)\s+—\s+(.+)$');
+  static final RegExp _definitionLine = RegExp(r'^([A-Z][A-Za-z]+)\s+[—–]\s+(.+)$');
 
   @override
   Widget build(BuildContext context) {
@@ -224,7 +224,7 @@ class _IntroParagraph extends StatelessWidget {
             style: GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w600, color: HLGColors.crownGold, height: 1.8),
           ),
           TextSpan(
-            text: ' — ',
+            text: ' – ',
             style: GoogleFonts.dmSans(fontSize: 15, color: HLGColors.warmCream.withValues(alpha: 0.4), height: 1.8),
           ),
           TextSpan(
@@ -405,11 +405,11 @@ class _DefinitionOrListBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Definition-style: 'Short term — explanation'
-    if (isDefinition && text.contains(' — ')) {
-      final parts = text.split(' — ');
+    // Definition-style: 'Short term – explanation'
+    if (isDefinition && (text.contains(' — ') || text.contains(' – '))) {
+      final parts = text.contains(' – ') ? text.split(' – ') : text.split(' — ');
       final left = parts.first.trim();
-      final right = parts.skip(1).join(' — ').trim();
+      final right = parts.skip(1).join(' – ').trim();
 
       final leftStyle = GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w600, color: HLGColors.night, height: 1.7);
       final dashStyle = GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w400, color: HLGColors.midSage, height: 1.7);
@@ -427,7 +427,7 @@ class _DefinitionOrListBlock extends StatelessWidget {
           text: TextSpan(
             children: [
               ..._inlineSpansFromText(left, leftStyle),
-              TextSpan(text: ' — ', style: dashStyle),
+              TextSpan(text: ' – ', style: dashStyle),
               ..._inlineSpansFromText(right, rightStyle),
             ],
           ),

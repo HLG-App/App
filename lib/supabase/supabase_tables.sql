@@ -228,7 +228,7 @@ values
     2,
     'reveal',
     'Your money story has three layers.',
-    'Layer 1 — What you were shown: how money was handled in your family. Layer 2 — What you were told: the explicit messages. Layer 3 — What you concluded: the belief you formed. Layer 3 is the one that runs your financial life. It was formed before you were old enough to question it.',
+    'Layer 1 – What you were shown: how money was handled in your family. Layer 2 – What you were told: the explicit messages. Layer 3 – What you concluded: the belief you formed. Layer 3 is the one that runs your financial life. It was formed before you were old enough to question it.',
     null
   ),
   (
@@ -236,7 +236,7 @@ values
     3,
     'reframe',
     'A belief formed in childhood is not a personality trait.',
-    'It is information from a specific time, filtered through a child''s understanding of the world. You are no longer that child. The first step is not to change the belief. It is to see it clearly — and ask: is this still true? Was it ever true? Who does it serve for me to keep believing it?',
+    'It is information from a specific time, filtered through a child''s understanding of the world. You are no longer that child. The first step is not to change the belief. It is to see it clearly – and ask: is this still true? Was it ever true? Who does it serve for me to keep believing it?',
     null
   ),
   (
@@ -244,7 +244,7 @@ values
     4,
     'responsibility',
     'You are not your money story. But you are responsible for what you do with it.',
-    'The women who change their financial lives are not the ones who were born with different beliefs. They are the ones who examined theirs — and decided which ones to keep.',
+    'The women who change their financial lives are not the ones who were born with different beliefs. They are the ones who examined theirs – and decided which ones to keep.',
     null
   ),
   (
@@ -253,7 +253,7 @@ values
     'action',
     'What was the main money message in your family growing up?',
     'Select the one that feels most true.',
-    '["Money was tight — we never had quite enough", "Money wasn''t discussed — it was private", "Money caused conflict", "Money was managed well — I had a good example", "I had no idea what was happening with money"]'::jsonb
+    '["Money was tight – we never had quite enough", "Money wasn''t discussed – it was private", "Money caused conflict", "Money was managed well – I had a good example", "I had no idea what was happening with money"]'::jsonb
   ),
   (
     'LA',

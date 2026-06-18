@@ -45,10 +45,6 @@ class LessonFlowController {
   String firstLessonInModule(String moduleId) {
     final module = LearningCatalog.instance.maybeGetModule(moduleId);
     if (module == null) return 'LA';
-
-    for (final item in module.items) {
-      if (item.code.startsWith('L')) return item.code;
-    }
     return module.items.isNotEmpty ? module.items.first.code : 'LA';
   }
 

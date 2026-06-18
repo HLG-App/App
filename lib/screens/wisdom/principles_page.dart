@@ -1,65 +1,66 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:her_long_game/theme.dart';
 
 class PrinciplesPage extends StatelessWidget {
   const PrinciplesPage({super.key});
 
-  static const Color deepSage = Color(0xFF5C7A62);
-  static const Color crownGold = Color(0xFFB8923A);
-  static const Color warmCream = Color(0xFFF7F5F0);
-  static const Color night = Color(0xFF161E17);
-  static const Color midSage = Color(0xFF8A9E8D);
-  static const Color horizonOrange = Color(0xFFD4621A);
-  static const Color petal = Color(0xFFEDE0D4);
-  static const Color sagePale = Color(0xFFD4E0D6);
-  static const Color textBody = Color(0xFF2A3A2C);
+  static const Color deepSage = HLGColors.deepSage;
+  static const Color crownGold = HLGColors.crownGold;
+  static const Color warmCream = HLGColors.warmCream;
+  static const Color night = HLGColors.night;
+  static const Color midSage = HLGColors.midSage;
+  static const Color horizonOrange = HLGColors.horizonOrange;
+  static Color get petal => HLGColors.petal;
+  static Color get sagePale => HLGColors.sagePale;
+  static const Color textBody = HLGColors.textBody;
 
   static const List<Map<String, String>> _principles = [
     {
       'number': '01',
-      'heading': 'Spend less than you earn.',
-      'body': 'The oldest principle in personal finance. Everything else builds on this one. Not glamorous. Not optional.',
+      'heading': 'Money is a tool. Understand the tool first.',
+      'body': 'Money stores your time, effort, and skill so you can use it later. It is not a measure of your worth. When you understand the tool, you stop letting it drive the story.',
     },
     {
       'number': '02',
-      'heading': 'Understand what money actually is.',
-      'body': 'Money is a tool for storing your time, effort, and skill so you can exchange it later. It is not a measure of your worth. It is an agreement — and agreements can be understood.',
+      'heading': 'The system was not built for you.',
+      'body': 'The gender pay gap, the super gap, the unpaid labour gap: structural, not personal. The gap was never in you. The gap was in what you were given.',
     },
     {
       'number': '03',
-      'heading': 'Inflation is not neutral.',
-      'body': 'Cash held still moves backwards. Every year. Quietly. No notification. Understanding this changes every decision you make about where your money sits.',
+      'heading': 'Sound money holds its value.',
+      'body': 'Hard money is scarce by design. Fiat currency is printed by choice. Since 1971 every dollar has been backed by a promise. Understanding this is modern financial literacy.',
     },
     {
       'number': '04',
-      'heading': 'Assets beat cash over time.',
-      'body': 'Things that hold or grow their value outperform cash over long periods. Not always. Not without risk. But consistently enough to matter across a lifetime.',
+      'heading': 'Inflation quietly changes the game.',
+      'body': 'Cash held still moves backwards. Every year. Quietly. No notification. When you see inflation clearly, you make different decisions about where your money sits.',
     },
     {
       'number': '05',
-      'heading': 'Time is the most powerful variable.',
-      'body': 'Compound growth is not about returns. It is about time. Starting earlier with less beats starting later with more — almost every time.',
+      'heading': 'Assets beat cash over time.',
+      'body': 'Things that hold or grow their value tend to outperform cash over long periods. Not always. Not without risk. But consistently enough to matter across a lifetime.',
     },
     {
       'number': '06',
-      'heading': 'The system was not built for you.',
-      'body': 'The gender pay gap, the super gap, the unpaid labour gap — structural, not personal. The gap was never in you. The gap was in what you were given.',
+      'heading': 'Time does the heavy lifting.',
+      'body': 'Compound growth is not about returns. It is about time. Starting earlier with less beats starting later with more, almost every time.',
     },
     {
       'number': '07',
-      'heading': 'Your income is not fixed.',
-      'body': 'A salary is a starting point. Skills compound. Negotiation works. Your earning capacity is a lever — and levers can be pulled.',
+      'heading': 'Spend less than you earn. Shockingly revolutionary.',
+      'body': 'Everything else builds on this. Not glamorous. Not optional. If it feels impossible right now, start by creating one small, repeatable gap between what comes in and what goes out.',
     },
     {
       'number': '08',
-      'heading': 'Debt is a tool, not a character flaw.',
-      'body': 'Productive debt builds assets. Consumptive debt funds things that disappear. The question is: will what I borrowed for still exist when the debt is paid?',
+      'heading': 'Your income is not fixed.',
+      'body': 'A salary is a starting point. Skills compound. Negotiation works. Your earning capacity is a lever, and levers can be pulled.',
     },
     {
       'number': '09',
-      'heading': 'Sound money holds its value.',
-      'body': 'Hard money is scarce by design. Fiat currency is printed by choice. Since 1971 every dollar has been backed by a promise. Understanding this is 21st century financial literacy.',
+      'heading': 'Debt is a tool, not a character flaw.',
+      'body': 'Productive debt builds assets. Consumptive debt funds things that disappear. The question is: will what I borrowed for still exist when the debt is paid?',
     },
     {
       'number': '10',
@@ -96,7 +97,7 @@ class PrinciplesPage extends StatelessWidget {
                 ),
               ),
               title: Text(
-                'The Ten Principles',
+                'Her Long Game: The Ten Principles',
                 style: GoogleFonts.dmSans(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -121,7 +122,7 @@ class PrinciplesPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Not rules. Not advice. Principles — the kind that held true in 1971 and will hold true when you explain them to your daughter.',
+                      'Not rules. Not advice. Principles – the kind that held true in 1971 and will hold true when you explain them to your daughter.',
                       style: GoogleFonts.dmSans(
                         fontSize: 14,
                         color: midSage,

@@ -8,7 +8,7 @@ import 'package:her_long_game/screens/auth/auth_page.dart';
 import 'package:her_long_game/screens/auth/founder_note_screen.dart';
 import 'package:her_long_game/screens/auth/welcome_screen.dart';
 import 'package:her_long_game/screens/checkpoint/checkpoint_page.dart';
-import 'package:her_long_game/screens/home/home_page.dart';
+import 'package:her_long_game/screens/learn/home/home_page.dart';
 import 'package:her_long_game/flow/phase_progress_controller.dart';
 import 'package:her_long_game/screens/lesson/lesson_page.dart';
 import 'package:her_long_game/screens/lesson/lesson_close_page.dart';
@@ -28,6 +28,8 @@ import 'package:her_long_game/screens/profile/learning_progress_overview_page.da
 import 'package:her_long_game/screens/profile/payment_page.dart';
 import 'package:her_long_game/screens/profile/referral_page.dart';
 import 'package:her_long_game/screens/system/her_bookmarks_page.dart';
+import 'package:her_long_game/screens/system/her_direction_page.dart';
+import 'package:her_long_game/screens/system/her_perspective_page.dart';
 import 'package:her_long_game/screens/system/her_system_page.dart';
 import 'package:her_long_game/screens/system/her_tools_page.dart';
 import 'package:her_long_game/screens/splash/splash_page.dart';
@@ -173,6 +175,7 @@ class AppRouter {
            ),
           GoRoute(path: AppRoutes.wisdom, name: 'wisdom', pageBuilder: (context, state) => const NoTransitionPage(child: WisdomPage())),
           GoRoute(path: AppRoutes.tools, name: 'tools', pageBuilder: (context, state) => const MaterialPage(child: HerToolsPage())),
+          GoRoute(path: AppRoutes.perspective, name: 'perspective', pageBuilder: (context, state) => const MaterialPage(child: HerPerspectivePage())),
           GoRoute(path: AppRoutes.profile, name: 'profile', pageBuilder: (context, state) => const NoTransitionPage(child: ProfilePage())),
           GoRoute(
             path: AppRoutes.profileNotes,
@@ -213,7 +216,7 @@ class AppRouter {
            GoRoute(
              path: AppRoutes.direction,
              name: 'direction',
-             pageBuilder: (context, state) => const MaterialPage(child: NowPage()),
+             pageBuilder: (context, state) => const MaterialPage(child: HerDirectionPage()),
            ),
         ],
       ),
@@ -272,6 +275,7 @@ class AppRoutes {
   static const String profileReferral = '/profile/referral';
   static const String bookmarks = '/bookmarks';
   static const String direction = '/direction';
+  static const String perspective = '/perspective';
 }
 
 class _TabScaffold extends StatelessWidget {
@@ -286,6 +290,7 @@ class _TabScaffold extends StatelessWidget {
     if (location.startsWith(AppRoutes.system)) return 1;
     if (location.startsWith(AppRoutes.bookmarks)) return 1;
     if (location.startsWith(AppRoutes.direction)) return 1;
+    if (location.startsWith(AppRoutes.perspective)) return 1;
     if (location.startsWith(AppRoutes.now)) return 1;
     if (location.startsWith(AppRoutes.learn)) return 2;
     if (location.startsWith(AppRoutes.wisdom)) return 3;

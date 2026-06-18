@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:her_long_game/theme.dart';
 
 class BubbleIndexWidget extends StatefulWidget {
   final Function(Map<String, dynamic> outputs)? onSave;
+  final Future<void> Function(String goalLabel)? onAddGoal;
 
-  const BubbleIndexWidget({super.key, this.onSave});
+  const BubbleIndexWidget({super.key, this.onSave, this.onAddGoal});
 
   @override
   State<BubbleIndexWidget> createState() => _BubbleIndexWidgetState();
 }
 
 class _BubbleIndexWidgetState extends State<BubbleIndexWidget> {
-  static const Color deepSage = Color(0xFF5C7A62);
-  static const Color sagePale = Color(0xFFD4E0D6);
-  static const Color crownGold = Color(0xFFB8923A);
-  static const Color warmCream = Color(0xFFF7F5F0);
-  static const Color night = Color(0xFF161E17);
-  static const Color horizonOrange = Color(0xFFD4621A);
-  static const Color midSage = Color(0xFF8A9E8D);
-  static const Color petal = Color(0xFFEDE0D4);
-  static const Color textBody = Color(0xFF2A3A2C);
+  static const Color deepSage = HLGColors.deepSage;
+  static Color get sagePale => HLGColors.sagePale;
+  static const Color crownGold = HLGColors.crownGold;
+  static const Color warmCream = HLGColors.warmCream;
+  static const Color night = HLGColors.night;
+  static const Color horizonOrange = HLGColors.horizonOrange;
+  static const Color midSage = HLGColors.midSage;
+  static Color get petal => HLGColors.petal;
+  static const Color textBody = HLGColors.textBody;
 
   // Historical Bubble O Bill prices
   static const Map<int, double> _bobPrices = {
@@ -50,6 +52,7 @@ class _BubbleIndexWidgetState extends State<BubbleIndexWidget> {
   double _assetValueThen = 10000;
   double _assetValueNow = 12000;
   bool _hasResult = false;
+  Map<String, dynamic> _outputs = const {};
 
   double get _iceCreamsThen => _assetValueThen / _snackPriceThen;
   double get _iceCreamsNow => _assetValueNow / _snackPriceNow;
@@ -82,11 +85,54 @@ class _BubbleIndexWidgetState extends State<BubbleIndexWidget> {
           if (_hasResult) ...[
             const SizedBox(height: 24),
             _buildResult(),
+            const SizedBox(height: 18),
+            _buildButtons(),
           ],
           const SizedBox(height: 16),
           _buildDisclaimer(),
         ],
       ),
+    );
+  }
+
+  Widget _buildButtons() {
+    final canSave = widget.onSave != null && _outputs.isNotEmpty;
+    final canAddGoal = widget.onAddGoal != null && _outputs.isNotEmpty;
+
+    if (!canSave && !canAddGoal) return const SizedBox.shrink();
+
+    return Column(
+      children: [
+        if (canSave)
+          SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: ElevatedButton(
+              onPressed: () => widget.onSave?.call(_outputs),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: deepSage,
+                foregroundColor: warmCream,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+              ),
+              child: Text('Save to my dashboard', style: GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w600)),
+            ),
+          ),
+        if (canSave && canAddGoal) const SizedBox(height: 10),
+        if (canAddGoal)
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: OutlinedButton(
+              onPressed: () => widget.onAddGoal?.call('Track purchasing power monthly (not just dollars)'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: deepSage,
+                side: const BorderSide(color: deepSage, width: 1.5),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+              ),
+              child: Text('Add to my goals', style: GoogleFonts.dmSans(fontSize: 14)),
+            ),
+          ),
+      ],
     );
   }
 
@@ -128,7 +174,7 @@ class _BubbleIndexWidgetState extends State<BubbleIndexWidget> {
         ),
         const SizedBox(height: 12),
         Text(
-          'The number goes up. But what it buys you quietly goes down. This tool shows you both — because the system only ever shows you one.',
+          'The number goes up. But what it buys you quietly goes down. This tool shows you both – because the system only ever shows you one.',
           style: GoogleFonts.dmSans(
             fontSize: 13,
             color: midSage,
@@ -474,8 +520,7 @@ class _BubbleIndexWidgetState extends State<BubbleIndexWidget> {
       height: 52,
       child: ElevatedButton(
         onPressed: () {
-          setState(() => _hasResult = true);
-          widget.onSave?.call({
+          final outputs = <String, dynamic>{
             'snack': _selectedSnack,
             'snack_price_then': _snackPriceThen,
             'snack_price_now': _snackPriceNow,
@@ -487,6 +532,11 @@ class _BubbleIndexWidgetState extends State<BubbleIndexWidget> {
             'dollar_growth_percent': _dollarGrowthPercent,
             'snack_change': _iceCreamChange,
             'snack_change_percent': _iceCreamChangePercent,
+          };
+
+          setState(() {
+            _hasResult = true;
+            _outputs = outputs;
           });
         },
         style: ElevatedButton.styleFrom(
@@ -576,11 +626,13 @@ class _BubbleIndexWidgetState extends State<BubbleIndexWidget> {
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: _gotRicherInIceCreams ? deepSage.withOpacity(0.08) : const Color(0xFF6B1A2A).withOpacity(0.08),
+            color: _gotRicherInIceCreams
+                ? deepSage.withValues(alpha: 0.08)
+                : HLGColors.antiqueRose.withValues(alpha: 0.10),
             borderRadius: BorderRadius.circular(12),
             border: Border(
               left: BorderSide(
-                color: _gotRicherInIceCreams ? deepSage : const Color(0xFF6B1A2A),
+                color: _gotRicherInIceCreams ? deepSage : HLGColors.antiqueRose,
                 width: 4,
               ),
             ),
@@ -593,7 +645,7 @@ class _BubbleIndexWidgetState extends State<BubbleIndexWidget> {
                 style: GoogleFonts.dmSans(
                   fontSize: 9,
                   fontWeight: FontWeight.w600,
-                  color: _gotRicherInIceCreams ? deepSage : const Color(0xFF6B1A2A),
+                  color: _gotRicherInIceCreams ? deepSage : HLGColors.antiqueRose,
                   letterSpacing: 1.5,
                 ),
               ),
@@ -616,7 +668,7 @@ class _BubbleIndexWidgetState extends State<BubbleIndexWidget> {
                           '${_gotRicherInIceCreams ? '+' : ''}${_iceCreamChange.toStringAsFixed(0)} ${_selectedSnack.toLowerCase()}s (${_iceCreamChangePercent.toStringAsFixed(1)}%)',
                           style: GoogleFonts.dmSans(
                             fontSize: 14,
-                            color: _gotRicherInIceCreams ? deepSage : const Color(0xFF6B1A2A),
+                            color: _gotRicherInIceCreams ? deepSage : HLGColors.antiqueRose,
                             fontWeight: FontWeight.w600,
                           ),
                         ),

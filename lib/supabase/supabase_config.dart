@@ -26,12 +26,10 @@ class SupabaseConfig {
 class AppRuntimeState {
   static String? currentUserId;
   static String? emotionalBaseline;
-  static bool? portraitGenerated;
 
   static void clear() {
     currentUserId = null;
     emotionalBaseline = null;
-    portraitGenerated = null;
   }
 }
 

@@ -10,6 +10,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:her_long_game/utils/lesson_flow.dart';
 import 'package:her_long_game/supabase/supabase_config.dart';
 import 'package:her_long_game/theme.dart';
+import 'package:her_long_game/widgets/her_app_bar.dart';
 import 'package:her_long_game/widgets/principles_card.dart';
 
 class HomePage extends StatefulWidget {
@@ -23,26 +24,47 @@ class _HomePageState extends State<HomePage> {
 
   final LessonRepository _lessonRepo = LessonRepository();
 
+  // V4 lesson duration estimates (minutes). Mirrors lesson_list_page.dart.
   static const Map<String, int> _lessonMinutes = {
-    'LA': 9,
-    'L1': 8,
-    'L1b': 9,
-    'LB': 8,
-    'L2': 9,
-    'L3': 7,
-    'L4': 7,
-    'LD': 8,
-    'LE': 6,
-    'L5': 8,
-    'L6': 7,
-    'L7': 8,
-    'L7b': 8,
-    'LC': 10,
-    'LF': 8,
-    'L8': 8,
-    'L8a': 9,
-    'L9': 8,
-    'L10': 10,
+    // ── Welcome / Onboarding ────────────────────────────────────────────────
+    'O1': 5,
+    'O2': 5,
+    'O3': 5,
+    'O4': 5,
+    'O5': 4,
+
+    // ── The Past ────────────────────────────────────────────────────────────
+    'P1': 7,
+    'P2': 8,
+    'P3': 7,
+    'P4': 7,
+    'P5': 8,
+    'P6': 9,
+
+    // ── The Present ─────────────────────────────────────────────────────────
+    'N1': 8,
+    'N2': 8,
+    'N3': 7,
+    'N4': 7,
+    'N5': 7,
+    'N6': 8,
+    'N7': 7,
+    'N8': 7,
+    'N9': 7,
+    'N10': 7,
+    'N11': 8,
+    'N12': 7,
+    'N13': 7,
+
+    // ── The Future ──────────────────────────────────────────────────────────
+    'F1': 8,
+    'F2': 8,
+    'F3': 8,
+    'F4': 8,
+    'F5': 8,
+    'F6': 7,
+    'F7': 9,
+    'F8': 8,
   };
 
   bool _isLoading = true;
@@ -75,12 +97,23 @@ class _HomePageState extends State<HomePage> {
           .eq('user_id', userId)
           .is_('archived_at', null)
           .is_('completed_at', null)
-          .neq('goal_type', 'portrait')
           .order('created_at', ascending: false)
-          .limit(3);
+          .limit(12);
+
+      // Deduplicate by label so repeated saves of the same goal don't clutter Home.
+      final seen = <String>{};
+      final unique = <Map<String, dynamic>>[];
+      for (final row in (rows as List).cast<Map<String, dynamic>>()) {
+        final label = (row['label'] ?? '').toString().trim();
+        final key = label.toLowerCase();
+        if (seen.contains(key)) continue;
+        seen.add(key);
+        unique.add(row);
+        if (unique.length >= 3) break;
+      }
 
       if (!mounted) return;
-      setState(() => _goalsSnapshot = (rows as List).cast<Map<String, dynamic>>());
+      setState(() => _goalsSnapshot = unique);
     } catch (e) {
       debugPrint('[HomePage] Failed to load goals snapshot: $e');
       if (!mounted) return;
@@ -155,6 +188,7 @@ class _HomePageState extends State<HomePage> {
       ),
       child: Scaffold(
         backgroundColor: HLGColors.warmCream,
+        appBar: const HerAppBar(actions: [HerLogoutIconButton()]),
         body: SafeArea(
           bottom: false,
           child: RefreshIndicator(
@@ -167,31 +201,7 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
-                    child: Row(
-                      children: [
-                        Semantics(
-                          label: 'Her Long Game',
-                          image: true,
-                          child: Image.asset(
-                            'assets/images/Her_Long_Game-01.png',
-                            height: 28,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
-                    child: _hasStartedLongGame
-                        ? const SizedBox.shrink()
-                        : _BeginLongGameCta(
-                            // Source of truth: start in THE PAST.
-                            onPressed: () => context.push('/learn/phase/1/entry'),
-                          ),
-                  ),
+                  const SizedBox(height: 10),
                   _NextLessonSection(
                     isLoading: _isLoading,
                     error: _error,
@@ -203,8 +213,6 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 8),
                   _GoalsSnapshotSection(goals: _goalsSnapshot),
                   const SizedBox(height: 8),
-                  const _PortraitPlaceholderSection(),
-                  const SizedBox(height: 16),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16),
                     child: PrinciplesCard(),
@@ -232,7 +240,7 @@ _NextLesson? _computeNextFromProgress(Map<String, String> progressByLessonCode) 
   // - Prefer lessons over checkpoints for the primary "Up Next" action.
   // - However, if there are *no remaining lessons* and the user is blocked on a
   //   checkpoint (e.g. CK3), we must surface that checkpoint instead of showing
-  //   “course finished.”
+  //   "course finished."
 
   // Pass 1: first incomplete lesson.
   for (final code in LessonFlow.lessonSequence) {
@@ -251,51 +259,6 @@ _NextLesson? _computeNextFromProgress(Map<String, String> progressByLessonCode) 
   }
 
   return null;
-}
-
-class _PortraitPlaceholderSection extends StatelessWidget {
-  const _PortraitPlaceholderSection();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(28),
-      decoration: BoxDecoration(
-        color: HLGColors.textBody,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'YOUR FINANCIAL PORTRAIT',
-            style: HLGTextStyles.eyebrowAllCaps(color: HLGColors.crownGold),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            'Your financial portrait is waiting.',
-            style: HLGTextStyles.homePortraitHeading(color: HLGColors.warmCream),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'Complete the course to unlock your personalised retirement target.',
-            style: HLGTextStyles.homeBody14(color: HLGColors.midSage),
-          ),
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 20),
-            height: 1,
-            width: double.infinity,
-            color: HLGColors.horizonOrange,
-          ),
-          Text(
-            'Understand the system. Play the long game.',
-            style: HLGTextStyles.labelMedium(color: HLGColors.midSage).copyWith(fontStyle: FontStyle.italic),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _NextLessonSection extends StatelessWidget {
@@ -494,60 +457,4 @@ class _NextLesson {
 
   final String code;
   final String? status;
-}
-
-class _BeginLongGameCta extends StatelessWidget {
-  const _BeginLongGameCta({required this.onPressed});
-
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: HLGColors.petal,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: HLGColors.deepSage,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(Icons.school_rounded, color: HLGColors.white, size: 20),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('BEGIN', style: HLGTextStyles.eyebrowAllCaps(color: HLGColors.midSage)),
-                const SizedBox(height: 4),
-                Text('Begin my long game →', style: HLGTextStyles.homePortraitHeading(color: HLGColors.night)),
-              ],
-            ),
-          ),
-          const SizedBox(width: 10),
-          SizedBox(
-            height: 44,
-            child: FilledButton(
-              style: ButtonStyle(
-                backgroundColor: const WidgetStatePropertyAll(HLGColors.horizonOrange),
-                foregroundColor: const WidgetStatePropertyAll(HLGColors.white),
-                textStyle: WidgetStatePropertyAll(HLGTextStyles.homeCta15(color: HLGColors.white)),
-                shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                overlayColor: WidgetStatePropertyAll(HLGColors.sage.withValues(alpha: 0.18)),
-              ),
-              onPressed: onPressed,
-              child: const Text('Start'),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

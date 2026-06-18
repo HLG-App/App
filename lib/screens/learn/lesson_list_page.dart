@@ -50,8 +50,9 @@ class _LessonListPageState extends State<LessonListPage> {
         final name = (r['display_name'] ?? '').toString().trim();
         if (code.isEmpty || name.isEmpty) continue;
         map[code] = name;
-            }
-    
+
+      }
+
       if (!mounted) return;
       setState(() {
         _displayNameByLessonCode
@@ -119,7 +120,7 @@ class _LessonListPageState extends State<LessonListPage> {
           fallbackRoute: '/learn',
           backgroundColor: HLGColors.warmCream,
           surfaceTintColor: Colors.transparent,
-          title: Text('Module', style: HLGTextStyles.moduleTitle(color: HLGColors.night)),
+          title: Text('Module', style: HLGTextStyles.moduleTitle(color: HLGColors.textBody)),
         ),
         body: const Center(child: Text('Unknown module.')),
       );
@@ -133,7 +134,7 @@ class _LessonListPageState extends State<LessonListPage> {
         fallbackRoute: '/learn',
         backgroundColor: HLGColors.warmCream,
         surfaceTintColor: Colors.transparent,
-        title: Text(module.title, style: HLGTextStyles.moduleTitle(color: HLGColors.night)),
+        title: Text(module.title, style: HLGTextStyles.moduleTitle(color: HLGColors.textBody)),
         actions: [IconButton(onPressed: _isLoading ? null : _loadProgress, icon: const Icon(Icons.refresh, color: HLGColors.textBody), tooltip: 'Refresh')],
       ),
       body: SafeArea(
@@ -255,9 +256,9 @@ class LessonCard extends StatelessWidget {
         : lessonMicroLabels[lessonCode];
     final base = Container(
       decoration: BoxDecoration(
-        color: HLGColors.warmCream,
+        color: HLGColors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: HLGColors.midSage, width: 1),
+        border: Border.all(color: HLGColors.deepSage.withValues(alpha: 0.12), width: 1),
       ),
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -274,13 +275,13 @@ class LessonCard extends StatelessWidget {
                       const SizedBox(width: 10),
                     ],
                     if (minutes != null)
-                      Text('${minutes}m', style: HLGTextStyles.labelMedium(color: HLGColors.midSage)),
+                      Text('${minutes}m', style: HLGTextStyles.labelMedium(color: HLGColors.textMuted)),
                   ],
                 ),
                 const SizedBox(height: 10),
                 Text(
                   title,
-                  style: HLGTextStyles.body(color: HLGColors.night),
+                  style: HLGTextStyles.body(color: HLGColors.textBody),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -297,7 +298,7 @@ class LessonCard extends StatelessWidget {
 
     return InkWell(
       onTap: effectiveTap,
-      overlayColor: WidgetStatePropertyAll(HLGColors.sage.withValues(alpha: 0.12)),
+      overlayColor: WidgetStatePropertyAll(HLGColors.sage.withValues(alpha: 0.10)),
       borderRadius: BorderRadius.circular(12),
       child: base,
     );
@@ -327,8 +328,8 @@ class _LessonStatusIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!unlocked) return const Icon(Icons.lock, color: HLGColors.midSage, size: 20);
-    if (status == 'complete') return const Icon(Icons.check_circle, color: HLGColors.growth, size: 20);
+    if (!unlocked) return const Icon(Icons.lock, color: HLGColors.textMuted, size: 20);
+    if (status == 'complete') return const Icon(Icons.check_circle, color: HLGColors.crownGold, size: 20);
     if (status == 'in_progress') {
       return const Icon(Icons.radio_button_unchecked, color: HLGColors.horizonOrange, size: 20);
     }
@@ -337,11 +338,9 @@ class _LessonStatusIcon extends StatelessWidget {
 }
 
 const Map<String, List<String>> _checkpointPrereqs = {
-  // Module 1 checkpoint should not unlock until the Pre-Course is also complete.
-  'CK1': ['L0', 'LA', 'L1', 'L1b', 'LB', 'L2'],
-  'CK2': ['L3', 'L4', 'LD', 'LE'],
-  'CK3': ['L5', 'L6', 'L7', 'L7b', 'LC', 'LF'],
-  'CK4': ['L8', 'L8a', 'L9', 'L10'],
+  // V4: no additional cross-module prereqs needed here.
+  // Module unlock rules in LearningCatalog and sequential lesson gating in
+  // _isLessonUnlockedInModule already cover all prerequisites.
 };
 
 
@@ -350,24 +349,16 @@ int? _lessonMinutes(String code) => _lessonMinutesMap[code];
 // Lesson names are centralized in lib/data/lesson_names.dart
 
 const Map<String, int> _lessonMinutesMap = {
-  'L0': 5,
-  'LA': 9,
-  'L1': 8,
-  'L1b': 9,
-  'LB': 8,
-  'L2': 9,
-  'L3': 7,
-  'L4': 7,
-  'LD': 8,
-  'LE': 6,
-  'L5': 8,
-  'L6': 7,
-  'L7': 8,
-  'L7b': 8,
-  'LC': 10,
-  'LF': 8,
-  'L8': 8,
-  'L8a': 9,
-  'L9': 8,
-  'L10': 10,
+  // ── Welcome / Onboarding ────────────────────────────────────────────────
+  'O1': 5, 'O2': 5, 'O3': 5, 'O4': 5, 'O5': 4,
+
+  // ── The Past ────────────────────────────────────────────────────────────
+  'P1': 7, 'P2': 8, 'P3': 7, 'P4': 7, 'P5': 8, 'P6': 9,
+
+  // ── The Present ─────────────────────────────────────────────────────────
+  'N1': 8, 'N2': 8, 'N3': 7, 'N4': 7, 'N5': 7, 'N6': 8, 'N7': 7, 'N8': 7,
+  'N9': 7, 'N10': 7, 'N11': 8, 'N12': 7, 'N13': 7,
+
+  // ── The Future ──────────────────────────────────────────────────────────
+  'F1': 8, 'F2': 8, 'F3': 8, 'F4': 8, 'F5': 8, 'F6': 7, 'F7': 9, 'F8': 8,
 };

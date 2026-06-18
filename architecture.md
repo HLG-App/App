@@ -1,8 +1,8 @@
 # Architecture (Her Long Game)
 
-This document is generated from the current codebase layout under `lib/` and the Supabase SQL files under `lib/supabase/`.
+This document is a maintained mapping between the intended architecture and what is currently implemented under `lib/`.
 
-Last updated: 2026-05-11
+Last updated: 2026-06-14
 
 ---
 
@@ -27,9 +27,26 @@ Last updated: 2026-05-11
 
 ## Colour palette (brand)
 
-- night: `#161E17` — Night — replaces pure black. Warmer, still premium.
-- antiqueRose: `#C4756A` — Warmth · Callouts · Contrast
-  - Used for warmth and human moments only. Maximum one use per screen. Appropriate for: Her Notes accents, debt/cost warning cards, community insight borders, stopping-cost callouts. Never use for CTAs, navigation, backgrounds, or body text.
+| Token | Hex | Usage |
+|---|---|---|
+| `deepSage` | `#5C7A62` | Primary · CTAs · Key UI |
+| `sage` | `#7A9279` | Secondary · Hover · Gradients |
+| `midSage` | `#8A9E8D` | Body text · Labels |
+| `crownGold` | `#B8923A` | Gold accent |
+| `warmCream` | `#F2EFE8` | Primary background |
+| `petal` | `#E1E2D8` | Soft surface tint (derived) |
+| `night` | `#1E2B22` | Ink text alias (app code uses for primary text) |
+| `growth` | `#7ECFA0` | Positive indicators |
+| `horizonOrange` | `#D4621A` | Accent only |
+| `antiqueRose` | `#C4756A` | Warmth · Callouts · Contrast |
+| `deepForest` | `#1E2E20` | Premium onboarding screens |
+| `deepForestSurface` | `#1A2E1C` |  |
+| `sagePale` | `#D8DBD0` | Soft surface tint (derived) |
+| `textBody` | `#1E2B22` | Primary “ink” body text |
+| `textMuted` | `#56665A` | Secondary/muted text |
+| `white` | `#FFFFFF` |  |
+
+Antique Rose usage rule (from brand system): maximum one use per screen. Appropriate for: Her Notes accents, debt/cost warning cards, community insight borders, stopping-cost callouts. Never use for CTAs, navigation, backgrounds, or body text.
 
 ---
 
@@ -54,7 +71,7 @@ Source of truth: `lib/app.dart`.
 | `financialWellbeingDiagnostic` | `/onboarding/diagnostic` | `FinancialWellbeingDiagnosticScreen` | Onboarding step. |
 | `lessonCover` | `/lesson/:code` | `LessonPage(lessonCode)` | Lesson “cover/entry” screen. |
 | `lessonScreen` | `/lesson/:code/screen?start=0` | `LessonScreenPage(lessonCode, initialScreenIndex)` | Renders lesson screens; drives Continue flow. |
-| `lessonClose` | `/lesson/:code/close` | `_LessonCloseRedirect` | Back-compat “close” deep link; redirects to `/learn`. |
+| `lessonClose` | `/lesson/:code/close` | `LessonClosePage(lessonCode)` | “Carry this” close screen. |
 | `checkpoint` | `/checkpoint/:num` | `CheckpointPage(checkpointNumber)` | Checkpoint flow. |
 
 ### ShellRoute (tab scaffold)
@@ -65,8 +82,10 @@ Bottom nav order (see `_TabScaffold._indexForLocation`):
 1) Home
 2) System
 3) Learn
-4) Perspective (Wisdom)
+4) Wisdom
 5) Profile
+
+Note: `/now` exists as a route (`NowPage`) but is **not** represented as a bottom-tab destination.
 
 #### Shell routes
 
@@ -74,6 +93,7 @@ Bottom nav order (see `_TabScaffold._indexForLocation`):
 |---|---|---|
 | `system` | `/system` | `HerSystemPage` |
 | `home` | `/home` | `HomePage` |
+| `principles` | `/principles` | `PrinciplesPage` |
 | `learn` | `/learn` | `LearnPage` |
 | `now` | `/now` | `NowPage` |
 | `wisdom` | `/wisdom` | `WisdomPage` |
@@ -88,6 +108,7 @@ Bottom nav order (see `_TabScaffold._indexForLocation`):
 | `profileReferral` | `/profile/referral` | `ReferralPage` |
 | `bookmarks` | `/bookmarks` | `HerBookmarksPage` |
 | `direction` | `/direction` | `HerDirectionPage` |
+| `perspective` | `/perspective` | `HerPerspectivePage` |
 
 #### Nested learn routes
 
@@ -106,34 +127,35 @@ Bottom nav order (see `_TabScaffold._indexForLocation`):
 - Config: `lib/supabase/supabase_config.dart`
 - Initialized at app start: `SupabaseConfig.initialize()` in `lib/main.dart`
 
-### Tables (expected by repositories + SQL)
+### Tables (expected by repositories)
 
-The code expects these Postgres tables (names as used in `from('<table>')` calls and SQL files):
+The code expects these Postgres tables (names as used in `from('<table>')` calls in Dart):
 
 | Table | Purpose | Primary access layer |
 |---|---|---|
 | `users` | App user profile row keyed to `auth.users.id` | `UserRepository` / `SupabaseUserStateRepository` |
-| `lesson_screens` | Lesson screen content (per `lesson_code`, `screen_index`) | `LessonRepository` |
+| `lesson_screens` | Lesson screen content (per `lesson_code`, `screen_index`) | (read path lives in lesson UI; repository coverage is partial) |
 | `lesson_progress` | Per-user lesson progress snapshots | `LessonRepository` |
 | `phase_progress` | Per-user seen/entry tracking for phases | `PhaseProgressRepository` / `PhaseProgressController` |
 | `tool_states` | Latest tool snapshot per user/tool | `ToolRepository.saveToolState` |
 | `tool_state_events` | Append-only tool history log | `ToolRepository._insertToolEvent` / `getToolHistory` |
 | `goals` | User goals (often created from tools) | `GoalRepository` |
-| `her_notes` | User notes | `UserRepository` / `HerNotesPage` (via repository) |
-| `portraits` | “Future Self Portrait” generated content | `UserRepository` / portrait tool widget |
-| `passed_on` | De-identified community insights | `PassedOnWidget` / related repository |
+| `her_notes` | Notes + takeaways | `HerNotesPage`, `LessonClosePage`, `HerBookmarksPage` |
+| `passed_on` | De-identified community insights | `WisdomPage`, `LessonClosePage`, `PassedOnWidget` |
 
-**SQL sources reviewed:**
-- `lib/supabase/supabase_tables.sql`
-- `lib/supabase/supabase_policies.sql`
-- `lib/supabase/migrations/*.sql`
+### Note — Her Perspective vs Wisdom
+
+- **Wisdom** remains a curated reading + reflection space.
+- **Her Perspective** is the community feed of “passed on” notes (from `passed_on`).
+- The Her pillar should not deep-link to Wisdom.
+
+Note: SQL/migrations are managed in Supabase; this repo may not include local SQL sources.
 
 ### RLS policies
 
-RLS policy definitions exist in `lib/supabase/supabase_policies.sql` and cover:
-- `users`, `lesson_screens`, `lesson_progress`, `tool_states`, `tool_state_events`, `goals`, `her_notes`, `portraits`, `passed_on`
+RLS policies must exist for all user-owned tables (e.g., `users`, `lesson_progress`, `phase_progress`, `tool_states`, `tool_state_events`, `goals`, `her_notes`, `passed_on`).
 
-Note: `phase_progress` RLS is defined in its migration `0009_create_phase_progress.sql`.
+This repo does not currently include local SQL policy sources; treat Supabase as the source of truth.
 
 ---
 
@@ -204,6 +226,7 @@ Source of truth: `lib/utils/lesson_flow.dart` (`LessonFlowController`)
 ### Shared widgets (`lib/widgets/`)
 
 - `AppBackButton` — `lib/widgets/app_back_button.dart`
+- `HerAppBar` — `lib/widgets/her_app_bar.dart`
 - `FounderNoteCard` — `lib/widgets/founder_note_card.dart`
 - `HerCheatSheet` — `lib/widgets/her_cheat_sheet.dart`
 - `LessonBodyRenderer` — `lib/widgets/lesson_body_renderer.dart`
@@ -223,7 +246,6 @@ Source of truth: `lib/utils/lesson_flow.dart` (`LessonFlowController`)
 - `FortressWidget` — `fortress_widget.dart`
 - `SuperWarpWidget` — `super_warp_widget.dart`
 - `InvisibleInvoiceWidget` — `invisible_invoice_widget.dart`
-- `PortraitBuilderWidget` — `portrait_builder_widget.dart`
 
 ---
 
@@ -244,7 +266,6 @@ Source: `lib/widgets/tool_bottom_sheet.dart` (also mirrored in `HerToolsPage`).
 | `T5` | Emergency Fund Fortress | `FortressWidget` |
 | `T6` | Super Time Warp | `SuperWarpWidget` |
 | `T7` | Invisible Invoice | `InvisibleInvoiceWidget` |
-| `T8` | Future Self Portrait | `PortraitBuilderWidget` |
 
 ### Tool persistence model
 
@@ -281,6 +302,10 @@ Persistence behavior:
 4) **Learning content availability is Supabase-driven**
    - Lesson screens come from `lesson_screens`. If a lesson code exists in `LearningCatalog` but has 0 screens, it must be marked skippable via `LessonFlowController.setSkippableLessons` (loaded by app logic elsewhere).
    - Without a consistent “completeness” check, flow can dead-end or feel inconsistent.
+
+5) **Schema drift risk: `users.name` / `users.display_name`**
+   - Some environments do not have `name`/`display_name` columns on `users`.
+   - `UserRepository.upsertProfile` is tolerant: if those columns are missing it retries without them.
 
 ---
 
@@ -325,3 +350,29 @@ The diagnostic also populates: `diagnostic_complete`, `diagnostic_archetype`, `d
 - `founder_note_seen` — set to true when founder note button is tapped
 - `diagnostic_complete` — set to true when diagnostic is finished
 - `onboarding_complete` — set to true after first lesson is completed
+
+---
+
+## 13) Notes vs Takeaways (current implementation)
+
+Both “notes” and “takeaways” persist to the `her_notes` table.
+
+- **Her Notes**: rows where `prompt != 'TAKEAWAY'`
+- **Her Bookmarks (Takeaways)**: rows where `prompt == 'TAKEAWAY'` (saved from `LessonClosePage`)
+
+This keeps the feature lightweight without introducing a new table.
+
+---
+
+## 14) Keeping this document accurate
+
+Update this file when you change any of:
+
+1) **Routes**: add/edit paths in `lib/app.dart` (or any go_router redirects)
+2) **Persistence**: add new `from('<table>')` usage or change a table/column assumption
+3) **Flow decisions**: onboarding or lesson progression logic (`lib/flow/*`, `lib/utils/lesson_flow.dart`)
+4) **Cross-cutting UI primitives**: theme tokens in `lib/theme.dart`, shared widgets in `lib/widgets/*`
+
+Suggested workflow:
+- In the PR that changes architecture, include an “Architecture.md updated” checkbox.
+- Keep `Last updated` current.

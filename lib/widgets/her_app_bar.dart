@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:her_long_game/app.dart';
+import 'package:her_long_game/supabase/supabase_config.dart';
 import 'package:her_long_game/theme.dart';
 import 'package:her_long_game/widgets/app_back_button.dart';
 
@@ -49,16 +52,112 @@ class HerAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final titleWidget = title ?? (titleText == null ? const SizedBox.shrink() : Text(titleText!));
 
+    // The app uses Cream as the dominant surface. Only a small number of
+    // screens should ever place AppBar text on a dark panel.
+    final resolvedBg = backgroundColor ?? Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).colorScheme.surface;
+    final isDarkBrandPanel = resolvedBg == HLGColors.deepSage || resolvedBg == HLGColors.night;
+    final titleColor = isDarkBrandPanel ? HLGColors.warmCream : HLGColors.textBody;
+
     return AppBar(
       backgroundColor: backgroundColor,
-      surfaceTintColor: surfaceTintColor,
+      surfaceTintColor: surfaceTintColor ?? Colors.transparent,
       automaticallyImplyLeading: false,
       centerTitle: centerTitle,
       toolbarHeight: toolbarHeight,
       leadingWidth: showBack ? 132 : 72,
       leading: showBack ? _BackAndLogo(fallbackRoute: fallbackRoute, backButtonColor: backButtonColor) : const _CornerLogo(),
-      title: titleWidget,
+      title: DefaultTextStyle(style: Theme.of(context).textTheme.titleMedium?.copyWith(color: titleColor) ?? TextStyle(color: titleColor), child: titleWidget),
       actions: actions,
+    );
+  }
+}
+
+/// Standard top-right logout affordance used across main tabs.
+///
+/// Keeps the interaction calm by using a confirmation bottom sheet.
+class HerLogoutIconButton extends StatelessWidget {
+  const HerLogoutIconButton({super.key, this.color});
+
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      tooltip: 'Log out',
+      onPressed: () => _showLogoutSheet(context),
+      icon: Icon(Icons.logout_rounded, size: 20, color: color ?? HLGColors.textMuted),
+    );
+  }
+
+  Future<void> _showLogoutSheet(BuildContext context) async {
+    if (!context.mounted) return;
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      useSafeArea: true,
+      backgroundColor: HLGColors.warmCream,
+      builder: (sheetContext) {
+        bool isSigningOut = false;
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            Future<void> onConfirm() async {
+              if (isSigningOut) return;
+              setState(() => isSigningOut = true);
+              try {
+                await SupabaseConfig.auth.signOut();
+                AppRuntimeState.clear();
+                if (!sheetContext.mounted) return;
+                sheetContext.pop();
+                if (!context.mounted) return;
+                context.go(AppRoutes.auth);
+              } catch (e) {
+                debugPrint('[HerLogoutIconButton] Sign out failed: $e');
+                if (!sheetContext.mounted) return;
+                ScaffoldMessenger.of(sheetContext).showSnackBar(
+                  SnackBar(
+                    content: Text('Could not log out. Please try again.', style: HLGTextStyles.body(color: HLGColors.warmCream)),
+                    backgroundColor: HLGColors.deepSage,
+                  ),
+                );
+              } finally {
+                if (sheetContext.mounted) setState(() => isSigningOut = false);
+              }
+            }
+
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Log out', style: HLGTextStyles.lessonHeading(color: HLGColors.textBody)),
+                  const SizedBox(height: 8),
+                  Text('You can sign back in any time.', style: HLGTextStyles.body(color: HLGColors.textMuted)),
+                  const SizedBox(height: 18),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: isSigningOut ? null : () => sheetContext.pop(),
+                          child: Text('Cancel', style: HLGTextStyles.labelMedium(color: HLGColors.textBody)),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: FilledButton(
+                          onPressed: isSigningOut ? null : onConfirm,
+                          child: Text(isSigningOut ? 'Logging out…' : 'Log out', style: HLGTextStyles.labelMedium(color: HLGColors.warmCream)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

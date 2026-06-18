@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:her_long_game/flow/lesson_entry_repository.dart';
-import 'package:her_long_game/utils/lesson_flow.dart';
 
 /// Centralizes the logic for entering a lesson.
 ///
@@ -19,8 +18,13 @@ class LessonEntryController {
     try {
       final hasScreens = await _repo.lessonHasAnyScreens(lessonCode: lessonCode);
       if (!hasScreens) {
-        debugPrint('[LessonEntryController] No screens for $lessonCode; skipping forward.');
-        return LessonFlowController.instance.nextRouteAfterLesson(lessonCode);
+        // IMPORTANT:
+        // Skipping forward creates a “dead end” UX when the curriculum expects
+        // a lesson to exist (e.g., L0) but the DB isn’t populated yet.
+        // Route into the lesson screen page, which will show a proper
+        // “Coming soon” fallback instead.
+        debugPrint('[LessonEntryController] No screens for $lessonCode; showing coming-soon fallback.');
+        return '/lesson/$lessonCode/screen?start=0';
       }
 
       final start = await _repo.getResumeScreenIndex(lessonCode: lessonCode) ?? 0;

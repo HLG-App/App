@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:her_long_game/data/term_glossary.dart';
+import 'package:her_long_game/theme.dart';
 
 class HerCheatSheet extends StatelessWidget {
   final String term;
@@ -10,21 +11,13 @@ class HerCheatSheet extends StatelessWidget {
 
   const HerCheatSheet({super.key, required this.term, required this.displayText});
 
-  static const Color _deepSage = Color(0xFF5C7A62);
-  static const Color _crownGold = Color(0xFFB8923A);
-  static const Color _horizonOrange = Color(0xFFD4621A);
-  static const Color _warmCream = Color(0xFFF7F5F0);
-  static const Color _midSage = Color(0xFF8A9E8D);
-  static const Color _textBody = Color(0xFF2A3A2C);
-  static const Color _petal = Color(0xFFEDE0D4);
-
   void _showSheet(BuildContext context) {
     final entry = termGlossary[term.toLowerCase()] ?? termGlossary[term];
     if (entry == null) return;
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: _warmCream,
+      backgroundColor: HLGColors.warmCream,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
       builder: (context) => Padding(
         padding: const EdgeInsets.fromLTRB(24, 24, 24, 40),
@@ -37,41 +30,41 @@ class HerCheatSheet extends StatelessWidget {
                 width: 40,
                 height: 4,
                 margin: const EdgeInsets.only(bottom: 20),
-                decoration: BoxDecoration(color: _midSage.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(2)),
+                decoration: BoxDecoration(color: HLGColors.midSage.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(2)),
               ),
             ),
             Text(
               'HER CHEAT SHEET',
-              style: GoogleFonts.dmSans(fontSize: 9, fontWeight: FontWeight.w500, color: _crownGold, letterSpacing: 2.0),
+              style: GoogleFonts.dmSans(fontSize: 9, fontWeight: FontWeight.w500, color: HLGColors.crownGold, letterSpacing: 2.0),
             ),
             const SizedBox(height: 8),
             Text(
               displayText,
-              style: GoogleFonts.playfairDisplay(fontSize: 22, fontStyle: FontStyle.italic, color: _deepSage),
+              style: GoogleFonts.playfairDisplay(fontSize: 22, fontStyle: FontStyle.italic, color: HLGColors.deepSage),
             ),
             const SizedBox(height: 12),
-            Container(height: 1, color: _crownGold),
+            Container(height: 1, color: HLGColors.crownGold),
             const SizedBox(height: 16),
-            Text(entry.plainEnglish, style: GoogleFonts.dmSans(fontSize: 16, color: _textBody, height: 1.6)),
+            Text(entry.plainEnglish, style: GoogleFonts.dmSans(fontSize: 16, color: HLGColors.textBody, height: 1.6)),
             const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: _petal,
+                color: HLGColors.petal,
                 borderRadius: BorderRadius.circular(8),
-                border: const Border(left: BorderSide(color: _horizonOrange, width: 4)),
+                border: Border(left: BorderSide(color: HLGColors.horizonOrange, width: 4)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'CUT THE CRAP',
-                    style: GoogleFonts.dmSans(fontSize: 9, fontWeight: FontWeight.w500, color: _horizonOrange, letterSpacing: 2.0),
+                    style: GoogleFonts.dmSans(fontSize: 9, fontWeight: FontWeight.w500, color: HLGColors.horizonOrange, letterSpacing: 2.0),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     entry.cutTheCrap,
-                    style: GoogleFonts.dmSans(fontSize: 14, fontStyle: FontStyle.italic, color: _midSage, height: 1.6),
+                    style: GoogleFonts.dmSans(fontSize: 14, fontStyle: FontStyle.italic, color: HLGColors.midSage, height: 1.6),
                   ),
                 ],
               ),
@@ -80,10 +73,10 @@ class HerCheatSheet extends StatelessWidget {
             Center(
               child: TextButton(
                 onPressed: () => context.pop(),
-                style: TextButton.styleFrom(foregroundColor: _deepSage),
+                style: TextButton.styleFrom(foregroundColor: HLGColors.deepSage),
                 child: Text(
                   'Got it',
-                  style: GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w600, color: _deepSage),
+                  style: GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w600, color: HLGColors.deepSage),
                 ),
               ),
             ),
@@ -106,7 +99,7 @@ class HerCheatSheet extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 1),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFB8923A).withValues(alpha: 0.18),
+                  color: HLGColors.crownGold.withValues(alpha: 0.18),
                   borderRadius: BorderRadius.circular(3),
                 ),
                 child: Text(
@@ -114,7 +107,7 @@ class HerCheatSheet extends StatelessWidget {
                   style: GoogleFonts.dmSans(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF2A3A2C),
+                    color: HLGColors.textBody,
                     height: 1.4,
                   ),
                 ),

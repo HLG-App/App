@@ -188,7 +188,7 @@ class _FortressSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pct = targetAmount <= 0 ? 0.0 : (currentSavings / targetAmount).clamp(0, 1).toDouble();
-    final monthsLabel = monthsToGoal.isFinite ? monthsToGoal.ceil().toString() : '—';
+    final monthsLabel = monthsToGoal.isFinite ? monthsToGoal.ceil().toString() : '-';
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),

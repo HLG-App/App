@@ -27,7 +27,7 @@ class FounderNoteCard extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: HLGColors.night,
+            color: HLGColors.petal,
             borderRadius: BorderRadius.circular(16),
             border: const Border(top: BorderSide(color: HLGColors.horizonOrange, width: 4)),
           ),
@@ -40,8 +40,8 @@ class FounderNoteCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'From as early as I can remember, people in my life have asked me for advice.',
-                style: GoogleFonts.playfairDisplay(fontSize: 18, fontStyle: FontStyle.italic, color: HLGColors.warmCream),
+                'I am definitely not here to tell you to manifest wealth while journalling beside a beige candle.',
+                style: GoogleFonts.playfairDisplay(fontSize: 18, fontStyle: FontStyle.italic, color: HLGColors.night, height: 1.5),
               ),
               const SizedBox(height: 12),
               Text(
@@ -54,7 +54,7 @@ class FounderNoteCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       'Read the full note →',
-                      style: GoogleFonts.dmSans(fontSize: 13, color: HLGColors.horizonOrange),
+                      style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.w600, color: HLGColors.horizonOrange),
                     ),
                   ),
                   const Icon(Icons.chevron_right_rounded, color: HLGColors.horizonOrange),

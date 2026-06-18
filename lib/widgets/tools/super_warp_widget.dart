@@ -29,10 +29,10 @@ class _SuperWarpWidgetState extends State<SuperWarpWidget> {
   static const Color sagePale = Color(0xFFD4E0D6);
   static const Color crownGold = Color(0xFFB8923A);
   static const Color warmCream = Color(0xFFF7F5F0);
-  static const Color night = Color(0xFF161E17);
+  static const Color night = deepSage;
   static const Color horizonOrange = Color(0xFFD4621A);
   static const Color midSage = Color(0xFF8A9E8D);
-  static const Color petal = Color(0xFFEDE0D4);
+  static const Color petal = Color(0xFFF2EFE8);
 
   bool _consolidate = false;
   bool _switchToGrowth = false;
@@ -360,7 +360,7 @@ class _SuperWarpWidgetState extends State<SuperWarpWidget> {
         color: value ? sagePale : warmCream,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: value ? deepSage : const Color(0xFFD4E0D6),
+            color: value ? deepSage : sagePale,
           width: 1,
         ),
       ),

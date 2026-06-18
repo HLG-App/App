@@ -5,19 +5,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:her_long_game/data/research_refs.dart';
+import 'package:her_long_game/theme.dart';
 
 class ResearchRefWidget extends StatelessWidget {
   final String refId;
 
   const ResearchRefWidget({super.key, required this.refId});
 
-  static const Color _deepSage = Color(0xFF5C7A62);
-  static const Color _crownGold = Color(0xFFB8923A);
-  static const Color _horizonOrange = Color(0xFFD4621A);
-  static const Color _warmCream = Color(0xFFF7F5F0);
-  static const Color _night = Color(0xFF2A3A2C);
-  static const Color _midSage = Color(0xFF8A9E8D);
-  static const Color _textBody = Color(0xFF2A3A2C);
+  static const Color _crownGold = HLGColors.crownGold;
+  static const Color _warmCream = HLGColors.warmCream;
+  static const Color _night = HLGColors.textBody;
+  static const Color _midSage = HLGColors.midSage;
+  static const Color _textBody = HLGColors.textBody;
 
   void _showSheet(BuildContext context) {
     final ref = researchRefs[refId];
@@ -79,9 +78,9 @@ class ResearchRefWidget extends StatelessWidget {
                 ref.url.trim().replaceFirst('https://', ''),
                 style: GoogleFonts.dmSans(
                   fontSize: 13,
-                  color: _horizonOrange,
+                  color: HLGColors.horizonOrange,
                   decoration: TextDecoration.underline,
-                  decorationColor: _horizonOrange,
+                  decorationColor: HLGColors.horizonOrange,
                 ),
               ),
             ),
@@ -89,7 +88,7 @@ class ResearchRefWidget extends StatelessWidget {
             Center(
               child: TextButton(
                 onPressed: () => context.pop(),
-                child: Text('Got it', style: GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w600, color: _deepSage)),
+                child: Text('Got it', style: GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w600, color: HLGColors.deepSage)),
               ),
             ),
           ],

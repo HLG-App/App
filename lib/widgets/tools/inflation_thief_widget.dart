@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:math' as math;
 
+import 'package:her_long_game/theme.dart';
+
 class InflationThiefWidget extends StatefulWidget {
   final double cashAmount;
   final Function(Map<String, dynamic> outputs) onSave;
+  final Future<void> Function(String goalLabel)? onAddGoal;
 
   const InflationThiefWidget({
     Key? key,
     required this.cashAmount,
     required this.onSave,
+    this.onAddGoal,
   }) : super(key: key);
 
   @override
@@ -17,15 +21,15 @@ class InflationThiefWidget extends StatefulWidget {
 }
 
 class _InflationThiefWidgetState extends State<InflationThiefWidget> {
-  static const Color deepSage = Color(0xFF5C7A62);
-  static const Color sagePale = Color(0xFFD4E0D6);
-  static const Color crownGold = Color(0xFFB8923A);
-  static const Color warmCream = Color(0xFFF7F5F0);
-  static const Color night = Color(0xFF161E17);
-  static const Color horizonOrange = Color(0xFFD4621A);
-  static const Color midSage = Color(0xFF8A9E8D);
-  static const Color petal = Color(0xFFEDE0D4);
-  static const Color textBody = Color(0xFF2A3A2C);
+  static const Color deepSage = HLGColors.deepSage;
+  static Color get sagePale => HLGColors.sagePale;
+  static const Color crownGold = HLGColors.crownGold;
+  static const Color warmCream = HLGColors.warmCream;
+  static const Color night = HLGColors.night;
+  static const Color horizonOrange = HLGColors.horizonOrange;
+  static const Color midSage = HLGColors.midSage;
+  static Color get petal => HLGColors.petal;
+  static const Color textBody = HLGColors.textBody;
 
   double _years = 10;
   String _selectedAsset = 'HISA';
@@ -94,9 +98,33 @@ class _InflationThiefWidgetState extends State<InflationThiefWidget> {
           const SizedBox(height: 20),
           _buildYearSlider(),
           const SizedBox(height: 28),
-          _buildSaveButton(),
+          _buildButtons(),
         ],
       ),
+    );
+  }
+
+  Widget _buildButtons() {
+    return Column(
+      children: [
+        _buildSaveButton(),
+        if (widget.onAddGoal != null) ...[
+          const SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: OutlinedButton(
+              onPressed: () => widget.onAddGoal?.call('Move some cash into a growth asset (so inflation stops winning by default)'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: deepSage,
+                side: const BorderSide(color: deepSage, width: 1.5),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+              ),
+              child: Text('Add to my goals', style: GoogleFonts.dmSans(fontSize: 14)),
+            ),
+          ),
+        ],
+      ],
     );
   }
 
@@ -140,7 +168,7 @@ class _InflationThiefWidgetState extends State<InflationThiefWidget> {
         const SizedBox(height: 8),
         Row(
           children: [
-            const Text('\$', style: TextStyle(fontSize: 18, color: Color(0xFF2A3A2C))),
+            const Text('\$', style: TextStyle(fontSize: 18, color: HLGColors.textBody)),
             const SizedBox(width: 8),
             Expanded(
               child: Slider(
@@ -216,7 +244,7 @@ class _InflationThiefWidgetState extends State<InflationThiefWidget> {
                         '${((_assetRates[asset] ?? 0) * 100).toStringAsFixed(1)}%',
                         style: GoogleFonts.dmSans(
                           fontSize: 11,
-                          color: selected ? const Color(0xFFD4E0D6) : midSage,
+                            color: selected ? sagePale : midSage,
                         ),
                       ),
                     ],
@@ -243,7 +271,7 @@ class _InflationThiefWidgetState extends State<InflationThiefWidget> {
             value: _cashRealValue,
             original: _cashInput,
             fillPercent: jarAPercent,
-            fillColor: const Color(0xFFB0B8B0),
+            fillColor: midSage,
             note: 'Purchasing power: ${(jarAPercent * 100).toStringAsFixed(0)}%',
           ),
         ),
@@ -295,7 +323,7 @@ class _InflationThiefWidgetState extends State<InflationThiefWidget> {
           height: 140,
           width: double.infinity,
           decoration: BoxDecoration(
-            color: const Color(0xFFEEEBE4),
+            color: warmCream,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: sagePale, width: 1.5),
           ),
@@ -306,7 +334,7 @@ class _InflationThiefWidgetState extends State<InflationThiefWidget> {
                 heightFactor: fillPercent,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: fillColor.withOpacity(0.7),
+                    color: fillColor.withValues(alpha: 0.7),
                     borderRadius: const BorderRadius.vertical(bottom: Radius.circular(10)),
                   ),
                 ),
@@ -344,7 +372,7 @@ class _InflationThiefWidgetState extends State<InflationThiefWidget> {
         border: const Border(left: BorderSide(color: crownGold, width: 4)),
       ),
       child: Text(
-        'The gap: ${_formatCurrency(_gap)} — that\'s about ${_humanTerms(_gap)}.',
+        'The gap: ${_formatCurrency(_gap)} – that\'s about ${_humanTerms(_gap)}.',
         style: GoogleFonts.playfairDisplay(
           fontSize: 16,
           fontStyle: FontStyle.italic,

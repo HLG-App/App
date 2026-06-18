@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:her_long_game/supabase/supabase_config.dart';
 import 'package:her_long_game/theme.dart';
 import 'package:her_long_game/widgets/founder_note_card.dart';
+import 'package:her_long_game/widgets/her_app_bar.dart';
 import 'package:her_long_game/widgets/principles_card.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -78,7 +79,7 @@ class _WisdomPageState extends State<WisdomPage> {
   String _baselineFirstWord(String baseline) {
     final cleaned = baseline.trim();
     if (cleaned.isEmpty) return '';
-    final parts = cleaned.split(RegExp(r'[\s—-]+'));
+    final parts = cleaned.split(RegExp(r'[\s–-]+'));
     return (parts.isEmpty ? cleaned : parts.first).toLowerCase();
   }
 
@@ -128,6 +129,7 @@ class _WisdomPageState extends State<WisdomPage> {
 
     return Scaffold(
       backgroundColor: HLGColors.warmCream,
+      appBar: HerAppBar(title: Text('Wisdom', style: HLGTextStyles.labelMedium(color: HLGColors.textBody)), actions: const [HerLogoutIconButton()]),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.only(bottom: 80),
@@ -135,7 +137,7 @@ class _WisdomPageState extends State<WisdomPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // HEADER
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
@@ -204,7 +206,7 @@ class _WisdomPageState extends State<WisdomPage> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Women who felt ${_baselineFirstWord(baseline!)} — and kept going.',
+                          'Women who felt ${_baselineFirstWord(baseline!)} – and kept going.',
                           style: GoogleFonts.dmSans(fontSize: 14, fontStyle: FontStyle.italic, color: HLGColors.midSage),
                         ),
                         const SizedBox(height: 16),
@@ -356,7 +358,7 @@ class _BaselineInsightCard extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: Text(
-                '— ${firstName!.trim()}',
+                '– ${firstName!.trim()}',
                 style: GoogleFonts.dmSans(fontSize: 12, color: HLGColors.midSage),
               ),
             ),
@@ -394,7 +396,7 @@ class _ModuleInsightCard extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: Text(
-                '— ${firstName!.trim()}',
+                '– ${firstName!.trim()}',
                 style: GoogleFonts.dmSans(fontSize: 11, color: HLGColors.midSage),
               ),
             ),

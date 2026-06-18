@@ -16,7 +16,7 @@ values
     1,
     'story',
     'Her Long Game is for women who were never taught.',
-    'Not women who failed to learn. Women who were never taught. There is a difference. A big one. 70% of women report never receiving formal financial education. Not a class, not a book, not a conversation. Nothing. If you''ve ever felt like everyone else just knows this stuff — you didn''t miss it. The memo was never sent.',
+    'Not women who failed to learn. Women who were never taught. There is a difference. A big one. 70% of women report never receiving formal financial education. Not a class, not a book, not a conversation. Nothing. If you''ve ever felt like everyone else just knows this stuff – you didn''t miss it. The memo was never sent.',
     null
   ),
   (
@@ -33,7 +33,7 @@ values
     'feeling',
     'How do you feel about money, right now?',
     'Not what you know about it, how you feel about it. We''ll come back to this question throughout the course.',
-    '["Anxious — there''s never quite enough", "Avoidant — I''d rather not think about it", "Confused — I don''t know where to start", "Curious — I want to understand it better", "Frustrated — I work hard and it doesn''t seem to add up"]'::jsonb
+    '["Anxious – there''s never quite enough", "Avoidant – I''d rather not think about it", "Confused – I don''t know where to start", "Curious – I want to understand it better", "Frustrated – I work hard and it doesn''t seem to add up"]'::jsonb
   ),
   (
     'L0',

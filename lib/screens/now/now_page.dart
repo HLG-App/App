@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:her_long_game/theme.dart';
 
 class NowPage extends StatefulWidget {
   const NowPage({super.key});
@@ -11,19 +12,18 @@ class NowPage extends StatefulWidget {
 }
 
 class _NowPageState extends State<NowPage> {
-  static const Color deepSage = Color(0xFF5C7A62);
-  static const Color sagePale = Color(0xFFD4E0D6);
-  static const Color crownGold = Color(0xFFB8923A);
-  static const Color warmCream = Color(0xFFF7F5F0);
-  static const Color night = Color(0xFF161E17);
-  static const Color horizonOrange = Color(0xFFD4621A);
-  static const Color midSage = Color(0xFF8A9E8D);
-  static const Color petal = Color(0xFFEDE0D4);
-  static const Color textBody = Color(0xFF2A3A2C);
+  static const Color deepSage = HLGColors.deepSage;
+  static Color get sagePale => HLGColors.sagePale;
+  static const Color crownGold = HLGColors.crownGold;
+  static const Color warmCream = HLGColors.warmCream;
+  static const Color night = HLGColors.night;
+  static const Color horizonOrange = HLGColors.horizonOrange;
+  static const Color midSage = HLGColors.midSage;
+  static Color get petal => HLGColors.petal;
+  static const Color textBody = HLGColors.textBody;
 
   List<Map<String, dynamic>> _weeklyGoals = [];
   List<Map<String, dynamic>> _longtermGoals = [];
-  Map<String, dynamic>? _portraitGoal;
   bool _loading = true;
   bool _showArchived = false;
   List<Map<String, dynamic>> _archivedGoals = [];
@@ -34,12 +34,6 @@ class _NowPageState extends State<NowPage> {
     _loadGoals();
   }
 
-  Map<String, dynamic>? _firstWhereOrNull(List<Map<String, dynamic>> items, bool Function(Map<String, dynamic>) test) {
-    for (final item in items) {
-      if (test(item)) return item;
-    }
-    return null;
-  }
 
   Future<void> _loadGoals() async {
     setState(() => _loading = true);
@@ -68,7 +62,6 @@ class _NowPageState extends State<NowPage> {
 
       final castRows = (rows as List).cast<Map<String, dynamic>>();
       setState(() {
-        _portraitGoal = _firstWhereOrNull(castRows, (g) => g['goal_type'] == 'portrait');
         _weeklyGoals = castRows.where((g) => g['goal_type'] == 'weekly').toList();
         _longtermGoals = castRows
             .where((g) => g['goal_type'] == 'longterm' || (g['goal_type'] == null || g['goal_type'] == ''))
@@ -237,9 +230,9 @@ class _NowPageState extends State<NowPage> {
   Widget build(BuildContext context) {
     if (_loading) {
       return const Scaffold(
-        backgroundColor: Color(0xFFF7F5F0),
+        backgroundColor: HLGColors.warmCream,
         body: Center(
-          child: CircularProgressIndicator(color: Color(0xFF5C7A62), strokeWidth: 2),
+          child: CircularProgressIndicator(color: HLGColors.deepSage, strokeWidth: 2),
         ),
       );
     }
@@ -258,8 +251,6 @@ class _NowPageState extends State<NowPage> {
               children: [
                 _buildHeader(),
                 const SizedBox(height: 24),
-                _buildPortraitSection(),
-                const SizedBox(height: 32),
                 _buildWeeklySection(),
                 const SizedBox(height: 32),
                 _buildLongtermSection(),
@@ -302,75 +293,12 @@ class _NowPageState extends State<NowPage> {
         Text('Now.', style: GoogleFonts.playfairDisplay(fontSize: 32, fontStyle: FontStyle.italic, color: night)),
         const SizedBox(height: 4),
         Text(
-          'What you\'re doing — not just what you\'re learning.',
+          'What you\'re doing – not just what you\'re learning.',
           style: GoogleFonts.dmSans(fontSize: 13, color: midSage, fontStyle: FontStyle.italic),
         ),
         const SizedBox(height: 16),
         Container(height: 1, color: crownGold.withValues(alpha: 0.3)),
       ],
-    );
-  }
-
-  Widget _buildPortraitSection() {
-    if (_portraitGoal == null) {
-      return Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: night,
-          borderRadius: BorderRadius.circular(16),
-          border: const Border(top: BorderSide(color: Color(0xFFB8923A), width: 4)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'THE LONG GAME',
-              style: GoogleFonts.dmSans(fontSize: 9, fontWeight: FontWeight.w600, color: crownGold, letterSpacing: 2),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'What are you building toward?',
-              style: GoogleFonts.playfairDisplay(fontSize: 20, fontStyle: FontStyle.italic, color: warmCream),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Complete Module 4 to build your Future Self Portrait — the reason behind every other goal on this page.',
-              style: GoogleFonts.dmSans(fontSize: 13, color: midSage, height: 1.6),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: night,
-        borderRadius: BorderRadius.circular(16),
-        border: const Border(top: BorderSide(color: Color(0xFFB8923A), width: 4)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('THE LONG GAME', style: GoogleFonts.dmSans(fontSize: 9, fontWeight: FontWeight.w600, color: crownGold, letterSpacing: 2)),
-          const SizedBox(height: 12),
-          Text(
-            _portraitGoal!['label'] ?? '',
-            style: GoogleFonts.playfairDisplay(fontSize: 20, fontStyle: FontStyle.italic, color: warmCream, height: 1.5),
-          ),
-          if (_portraitGoal!['target_amount'] != null) ...[
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(color: crownGold.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(4)),
-              child: Text(
-                '\$${_portraitGoal!['target_amount']}/month target',
-                style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.w600, color: crownGold),
-              ),
-            ),
-          ],
-        ],
-      ),
     );
   }
 

@@ -17,11 +17,11 @@ class _TimeMachineWidgetState extends State<TimeMachineWidget> {
   static const Color sagePale = Color(0xFFD4E0D6);
   static const Color crownGold = Color(0xFFB8923A);
   static const Color warmCream = Color(0xFFF7F5F0);
-  static const Color night = Color(0xFF161E17);
+  static const Color night = deepSage;
   static const Color horizonOrange = Color(0xFFD4621A);
   static const Color midSage = Color(0xFF8A9E8D);
-  static const Color petal = Color(0xFFEDE0D4);
-  static const Color textBody = Color(0xFF2A3A2C);
+  static const Color petal = Color(0xFFF2EFE8);
+  static const Color textBody = midSage;
 
   String _selectedHabit = 'Daily coffee';
   double _habitCost = 5.50;
@@ -200,7 +200,7 @@ class _TimeMachineWidgetState extends State<TimeMachineWidget> {
         ),
         Center(
           child: Text(
-            '${_redirectPercent.toStringAsFixed(0)}% redirected — ${_formatCurrency(_annualRedirect)}/year',
+            '${_redirectPercent.toStringAsFixed(0)}% redirected – ${_formatCurrency(_annualRedirect)}/year',
             style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: horizonOrange),
           ),
         ),

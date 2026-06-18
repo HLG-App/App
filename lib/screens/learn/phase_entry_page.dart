@@ -44,13 +44,13 @@ class PhaseEntryPage extends StatelessWidget {
   static String _phaseBody(int phaseId) {
     switch (phaseId) {
       case 1:
-        return 'You did not miss a memo. The financial system has a history — and most of it was never explained to you.\n\nThis phase covers where money came from, how the rules changed in 1971, what banks are actually doing with your deposits, and why women have always been capable with money even when the system made it harder.\n\nBy the end you will not feel behind. You will feel like someone finally told you the truth.';
+        return 'You did not miss a memo. The financial system has a history – and most of it was never explained to you.\n\nThis phase covers where money came from, how the rules changed in 1971, what banks are actually doing with your deposits, and why women have always been capable with money even when the system made it harder.\n\nBy the end you will not feel behind. You will feel like someone finally told you the truth.';
       case 2:
-        return 'This is where the foundations get personal.\n\nYou will look at your actual money situation — clearly, without judgment. Your income, your spending, your debt, your super. Not to shame you into changing everything. To show you what you are actually working with.\n\nAwareness is not the same as action. But you cannot take meaningful action without it.';
+        return 'This is where the foundations get personal.\n\nYou will look at your actual money situation – clearly, without judgment. Your income, your spending, your debt, your super. Not to shame you into changing everything. To show you what you are actually working with.\n\nAwareness is not the same as action. But you cannot take meaningful action without it.';
       case 3:
-        return 'This is the long game in practice.\n\nCompound growth. Index funds. Sound money. The future self portrait. The tools that turn principles into a plan that is specifically, deliberately yours.\n\nBy the end you will not just understand money. You will have a view of your long game — and the tools to build it.';
+        return 'This is the long game in practice.\n\nCompound growth. Index funds. Sound money. The tools that turn principles into a plan that is specifically, deliberately yours.\n\nBy the end you will not just understand money. You will have a view of your long game – and the tools to build it.';
       default:
-        return 'The foundations you were never taught — in the order that makes them land.';
+        return 'The foundations you were never taught – in the order that makes them land.';
     }
   }
 
@@ -149,7 +149,16 @@ class PhaseEntryPage extends StatelessWidget {
                     try {
                       await onContinue();
                     } finally {
-                      if (context.mounted) context.pop();
+                      if (!context.mounted) return;
+                      // If this screen is opened as a revisit/info modal, close it.
+                      // If it's the first-time "start" entry (often launched from Home),
+                      // route forward into Learn so we don't land back on Home.
+                      if (canClose) {
+                        context.pop();
+                      } else {
+                        final target = '/learn/phase/$phaseId';
+                        context.go(target);
+                      }
                     }
                   },
                   style: FilledButton.styleFrom(

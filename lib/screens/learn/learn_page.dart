@@ -65,7 +65,7 @@ class _LearnPageState extends State<LearnPage> {
 
       for (final module in LearningCatalog.instance.modules) {
         debugPrint('');
-        debugPrint('[Module ${module.index}] ${module.label} — ${module.title}');
+        debugPrint('[Module ${module.index}] ${module.label} - ${module.title}');
         for (final item in module.items) {
           final code = item.code;
           final c = counts[code] ?? 0;
@@ -149,7 +149,10 @@ class _LearnPageState extends State<LearnPage> {
     return Scaffold(
       appBar: HerAppBar(
         title: Text('Learn', style: HLGTextStyles.labelMedium(color: HLGColors.textBody)),
-        actions: [IconButton(onPressed: _isLoading ? null : _loadProgress, icon: const Icon(Icons.refresh, color: HLGColors.textBody), tooltip: 'Refresh')],
+          actions: [
+            IconButton(onPressed: _isLoading ? null : _loadProgress, icon: const Icon(Icons.refresh, color: HLGColors.textBody), tooltip: 'Refresh'),
+            const HerLogoutIconButton(),
+          ],
       ),
       body: SafeArea(
         child: Padding(
@@ -233,7 +236,7 @@ class PhaseCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          Text(phase.subtitle, style: HLGTextStyles.moduleTitle(color: HLGColors.night)),
+          Text(phase.subtitle, style: HLGTextStyles.moduleTitle(color: HLGColors.textBody)),
           const SizedBox(height: 10),
           Text(phase.learnerFeels, style: HLGTextStyles.labelMedium(color: HLGColors.textBody)),
           const SizedBox(height: 12),
@@ -244,8 +247,8 @@ class PhaseCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 8,
-              backgroundColor: HLGColors.sagePale,
-              valueColor: const AlwaysStoppedAnimation<Color>(HLGColors.deepSage),
+              backgroundColor: HLGColors.creamWarm,
+              valueColor: const AlwaysStoppedAnimation<Color>(HLGColors.crownGold),
             ),
           ),
         ],

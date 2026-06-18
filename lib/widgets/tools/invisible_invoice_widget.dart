@@ -16,11 +16,11 @@ class _InvisibleInvoiceWidgetState extends State<InvisibleInvoiceWidget> {
   static const Color sagePale = Color(0xFFD4E0D6);
   static const Color crownGold = Color(0xFFB8923A);
   static const Color warmCream = Color(0xFFF7F5F0);
-  static const Color night = Color(0xFF161E17);
+  static const Color night = deepSage;
   static const Color horizonOrange = Color(0xFFD4621A);
   static const Color midSage = Color(0xFF8A9E8D);
-  static const Color petal = Color(0xFFEDE0D4);
-  static const Color textBody = Color(0xFF2A3A2C);
+  static const Color petal = Color(0xFFF2EFE8);
+  static const Color textBody = midSage;
 
   double _salary = 75000;
   int _age = 35;
@@ -185,11 +185,11 @@ class _InvisibleInvoiceWidgetState extends State<InvisibleInvoiceWidget> {
             ),
           ),
           ...[
-            _InvoiceLine('Annual gap — this year', _annualGap),
+            _InvoiceLine('Annual gap – this year', _annualGap),
             _InvoiceLine('Career-to-date gap (${_yearsInWorkforce} yrs)', _careerToDateGap),
             _InvoiceLine('Projected future gap (${_yearsRemaining} yrs)', _futureGap),
-            _InvoiceLine('Super impact — to date', _superGapToDate),
-            _InvoiceLine('Super impact — projected', _superGapFuture),
+            _InvoiceLine('Super impact – to date', _superGapToDate),
+            _InvoiceLine('Super impact – projected', _superGapFuture),
           ].map(
             (line) => Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
@@ -237,7 +237,7 @@ class _InvisibleInvoiceWidgetState extends State<InvisibleInvoiceWidget> {
           const SizedBox(height: 6),
           Text('2. Add \$25/fortnight voluntary super → see Super Time Warp (T6)', style: GoogleFonts.dmSans(fontSize: 13, color: textBody)),
           const SizedBox(height: 6),
-          Text('3. Build income outside employment — where you set the rate', style: GoogleFonts.dmSans(fontSize: 13, color: textBody)),
+          Text('3. Build income outside employment – where you set the rate', style: GoogleFonts.dmSans(fontSize: 13, color: textBody)),
         ],
       ),
     );
@@ -271,7 +271,7 @@ class _InvisibleInvoiceWidgetState extends State<InvisibleInvoiceWidget> {
           width: double.infinity,
           height: 48,
           child: OutlinedButton(
-            onPressed: _loading ? null : () => widget.onAddGoal('Ask for a raise — my annual gap is ${_formatCurrency(_annualGap)}'),
+            onPressed: _loading ? null : () => widget.onAddGoal('Ask for a raise – my annual gap is ${_formatCurrency(_annualGap)}'),
             style: OutlinedButton.styleFrom(foregroundColor: deepSage, side: const BorderSide(color: deepSage, width: 1.5), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999))),
             child: Text('Add to my goals', style: GoogleFonts.dmSans(fontSize: 14)),
           ),

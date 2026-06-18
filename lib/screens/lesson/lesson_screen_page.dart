@@ -32,6 +32,7 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
   bool _isLoading = true;
   bool _isSaving = false;
   String? _error;
+  bool _comingSoon = false;
 
   _LessonScreen? _screen;
   String? _selectedOption;
@@ -51,6 +52,7 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
       _selectedOption = null;
       _screen = null;
       _error = null;
+      _comingSoon = false;
       _isLoading = true;
       _loadScreen();
     }
@@ -60,6 +62,7 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
     setState(() {
       _isLoading = true;
       _error = null;
+      _comingSoon = false;
     });
 
     try {
@@ -103,24 +106,80 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
           '[LessonScreenPage] No content found for lesson_code=${widget.lessonCode} screen_index=$_currentScreenIndex. '
           'Auto-advancing to keep the flow smooth.',
         );
-        if (!mounted) return;
-        context.pushReplacement(LessonFlow.nextRouteAfterLesson(widget.lessonCode));
-        return;
-      }
 
-      // Product copy override: L0 screen 0 ("Before We Begin" / entry screen).
-      // We keep the existing lesson screen UI/CTA behavior, and only swap the
-      // copy for this specific screen.
-      if (widget.lessonCode == 'L0' && _currentScreenIndex == 0) {
-        row = Map<String, dynamic>.from(row);
-        row['screen_type'] = 'reminder';
-        row['heading'] = 'Reminder';
-        row['body_text'] =
-            'You found this app. Maybe someone sent it to you. Maybe you\'ve been meaning to sort out your finances for a while and kept not doing it. Whatever brought you here: you\'re in the right place.\n'
-            '\n'
-            'First, we\'ll meet you where you are. We\'ll look at what you think you know, what you actually do with money, how you feel about it, how it\'s affecting you, and how much agency you believe you have.\n'
-            '\n'
-            'Nobody handed you a manual. It turns out there wasn\'t one.';
+        // IMPORTANT:
+        // Many lessons (especially early “Before We Begin” content) may have a
+        // finite set of authored screens without an explicit `complete` screen.
+        // Previously, hitting the first missing screen index would route to the
+        // close page, which could appear “blank” when no complete screen exists.
+        //
+        // Here we:
+        // 1) Check if a `complete` screen exists for this lesson.
+        // 2) If it exists → route to close.
+        // 3) If not → mark the lesson complete and advance to the next lesson.
+        if (!mounted) return;
+
+        bool hasCompleteScreen = false;
+        try {
+          final complete = await SupabaseConfig.client
+              .from('lesson_screens')
+              .select('screen_type')
+              .eq('lesson_code', widget.lessonCode)
+              .eq('screen_type', 'complete')
+              .limit(1);
+          // ignore: unnecessary_type_check
+          hasCompleteScreen = (complete is List) && complete.isNotEmpty;
+        } catch (e) {
+          debugPrint('[LessonScreenPage] Failed to check complete screen for ${widget.lessonCode}: $e');
+        }
+
+        // If we are at the beginning and nothing exists, do NOT route away.
+        // Show a calm “Coming soon” state so the user isn’t stranded.
+        if (_currentScreenIndex == 0 && !hasCompleteScreen) {
+          bool hasAnyScreens = true;
+          try {
+            final any = await SupabaseConfig.client
+                .from('lesson_screens')
+                .select('screen_index')
+                .eq('lesson_code', widget.lessonCode)
+                .limit(1);
+            // ignore: unnecessary_type_check
+            hasAnyScreens = (any is List) && any.isNotEmpty;
+          } catch (e) {
+            debugPrint('[LessonScreenPage] Failed to check any screen for ${widget.lessonCode}: $e');
+          }
+
+          if (!hasAnyScreens) {
+            if (!mounted) return;
+            setState(() {
+              _comingSoon = true;
+              _screen = null;
+            });
+            return;
+          }
+        }
+
+        if (hasCompleteScreen) {
+          context.pushReplacement(LessonFlow.nextRouteAfterLesson(widget.lessonCode));
+          return;
+        }
+
+        // No complete screen authored: complete silently and move on.
+        try {
+          final userId = SupabaseConfig.auth.currentUser?.id;
+          if (userId != null) {
+            await _lessonRepo.completeLesson(
+              userId: userId,
+              lessonCode: widget.lessonCode,
+              finalScreenIndex: (_currentScreenIndex - 1).clamp(0, 1 << 30),
+            );
+          }
+        } catch (e) {
+          debugPrint('[LessonScreenPage] Failed to auto-complete ${widget.lessonCode}: $e');
+        }
+
+        context.pushReplacement(LessonFlow.nextRouteAfterClose(widget.lessonCode));
+        return;
       }
 
       setState(() {
@@ -135,6 +194,13 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  void _onComingSoonBack() => context.go('/learn');
+
+  void _onComingSoonSkip() {
+    final next = LessonFlowController.instance.nextRouteAfterLesson(widget.lessonCode);
+    context.go(next);
   }
 
   bool get _requiresSelection => _screen?.screenType == 'feeling' || _screen?.screenType == 'action';
@@ -189,9 +255,6 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
       }
 
       if (isComplete) {
-        if (widget.lessonCode == 'L0') {
-          await SupabaseConfig.client.from('users').update({'onboarding_complete': true}).eq('id', userId);
-        }
         if (!mounted) return;
         // Use pushReplacement so the user can navigate "back" to where they
         // came from (e.g., Learn), without leaving the completed lesson screen
@@ -215,23 +278,66 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('[L7b] lessonCode received: ${widget.lessonCode}');
+    if (_comingSoon) {
+      final title = lessonDisplayNames[widget.lessonCode] ?? widget.lessonCode;
+      return Scaffold(
+        backgroundColor: HLGColors.warmCream,
+        appBar: HerAppBar(titleText: title, showBack: true, fallbackRoute: '/learn'),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Coming soon', style: Theme.of(context).textTheme.titleLarge),
+                const SizedBox(height: 10),
+                Text(
+                  'This lesson isn’t available yet. You can go back to Learn, or skip ahead for now.',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const Spacer(),
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: FilledButton(
+                    onPressed: _onComingSoonBack,
+                    style: FilledButton.styleFrom(backgroundColor: HLGColors.deepSage, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999))),
+                    child: const Text('Back to Learn'),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: OutlinedButton(
+                    onPressed: _onComingSoonSkip,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: HLGColors.deepSage,
+                      side: BorderSide(color: HLGColors.deepSage.withValues(alpha: 0.35)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+                    ),
+                    child: const Text('Skip for now'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
     final screen = _screen;
 
-    final isL0 = widget.lessonCode == 'L0';
-
-    final page = Scaffold(
+    return Scaffold(
       appBar: HerAppBar(
-        showBack: !isL0,
+        showBack: true,
         fallbackRoute: '/learn',
         title: Text(lessonDisplayNames[widget.lessonCode] ?? 'Lesson', style: HLGTextStyles.labelMedium(color: HLGColors.textBody)),
         actions: [
-          if (!isL0)
-            TextButton(
-              onPressed: () => context.go('/home'),
-              style: TextButton.styleFrom(foregroundColor: HLGColors.midSage, textStyle: HLGTextStyles.labelMedium(color: HLGColors.midSage), padding: const EdgeInsets.symmetric(horizontal: 12)),
-              child: const Text('Exit'),
-            ),
+          TextButton(
+            onPressed: () => context.go('/home'),
+            style: TextButton.styleFrom(foregroundColor: HLGColors.midSage, textStyle: HLGTextStyles.labelMedium(color: HLGColors.midSage), padding: const EdgeInsets.symmetric(horizontal: 12)),
+            child: const Text('Exit'),
+          ),
           const SizedBox(width: 4),
         ],
       ),
@@ -261,9 +367,6 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
         ),
       ),
     );
-
-    if (!isL0) return page;
-    return PopScope(canPop: false, child: page);
   }
 }
 
@@ -360,6 +463,7 @@ class _LessonScreenScaffold extends StatelessWidget {
     'responsibility': 'YOUR MOVE',
     'action': 'YOUR TURN',
     'feeling': 'CHECK IN',
+    'interaction': 'YOUR REFLECTION',
     'complete': 'CARRY THIS',
   };
 
@@ -389,7 +493,8 @@ class _LessonScreenScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     if (screenType == 'intro') {
       return Container(
-        color: HLGColors.textBody,
+        // Premium dark intro surface; keep ink reserved for text.
+        color: HLGColors.deepForest,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -471,7 +576,8 @@ class _LessonScreenScaffold extends StatelessWidget {
               children: [
                 Text(
                   eyebrow,
-                  style: HLGTextStyles.labelMedium(color: HLGColors.midSage).copyWith(
+                  // Neutral structural label (avoid overusing green or gold).
+                  style: HLGTextStyles.labelMedium(color: HLGColors.textMuted).copyWith(
                     fontSize: 9,
                     letterSpacing: 2,
                     fontWeight: FontWeight.w600,

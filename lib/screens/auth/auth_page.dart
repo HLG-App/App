@@ -1,14 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart' as gsign;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:her_long_game/auth/supabase_auth_manager.dart';
+import 'package:her_long_game/data/repositories/user_repository.dart';
 import 'package:her_long_game/flow/onboarding_flow_controller.dart';
 import 'package:her_long_game/flow/user_progress.dart';
 import 'package:her_long_game/flow/user_state_repository.dart';
 import 'package:her_long_game/supabase/supabase_config.dart';
 import 'package:her_long_game/theme.dart';
+import 'package:her_long_game/widgets/terms_privacy_consent_text.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -31,6 +32,7 @@ class AuthPage extends StatefulWidget {
 
 class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin {
   final _auth = SupabaseAuthManager();
+  final UserRepository _userRepo = UserRepository();
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -42,6 +44,169 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
   String? _error;
   String? _transientDisplayName;
   bool _showTransientGreeting = false;
+
+  Future<void> _openResetPasswordSheet() async {
+    FocusScope.of(context).unfocus();
+
+    final controller = TextEditingController(text: _emailController.text.trim());
+    final sheetFormKey = GlobalKey<FormState>();
+    bool isSending = false;
+
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: HLGColors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
+      ),
+      builder: (context) {
+        final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
+        return Padding(
+          padding: EdgeInsets.only(bottom: bottomInset),
+          child: StatefulBuilder(
+            builder: (context, setSheetState) => SafeArea(
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 18),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Reset password',
+                            style: HLGTextStyles.moduleTitle(color: HLGColors.textBody),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: isSending ? null : () => context.pop(),
+                          icon: Icon(Icons.close, color: HLGColors.textMuted),
+                          tooltip: 'Close',
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'We’ll email you a secure link to set a new password.',
+                      style: HLGTextStyles.body(color: HLGColors.textMuted),
+                    ),
+                    const SizedBox(height: 14),
+                    Form(
+                      key: sheetFormKey,
+                      child: TextFormField(
+                        controller: controller,
+                        enabled: !isSending,
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.done,
+                        decoration: const InputDecoration(labelText: 'Email'),
+                        validator: (v) {
+                          final value = (v ?? '').trim();
+                          if (value.isEmpty) return 'Enter your email.';
+                          if (!value.contains('@')) return 'Enter a valid email.';
+                          return null;
+                        },
+                        onFieldSubmitted: (_) async {
+                          if (isSending) return;
+                          final valid = sheetFormKey.currentState?.validate() ?? false;
+                          if (!valid) return;
+                          setSheetState(() => isSending = true);
+                          try {
+                            await _auth.resetPassword(email: controller.text.trim(), context: context);
+                            if (!context.mounted) return;
+                            context.pop();
+                            ScaffoldMessenger.of(this.context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Check your email for a password reset link.',
+                                  style: HLGTextStyles.body(color: HLGColors.white),
+                                ),
+                                backgroundColor: HLGColors.deepForest,
+                              ),
+                            );
+                          } catch (e) {
+                            debugPrint('Reset password failed: $e');
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(this.context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Couldn\'t send reset email. Please try again.',
+                                  style: HLGTextStyles.body(color: HLGColors.white),
+                                ),
+                                backgroundColor: HLGColors.deepForest,
+                              ),
+                            );
+                          } finally {
+                            if (context.mounted) setSheetState(() => isSending = false);
+                          }
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    FilledButton(
+                      onPressed: isSending
+                          ? null
+                          : () async {
+                              final valid = sheetFormKey.currentState?.validate() ?? false;
+                              if (!valid) return;
+                              setSheetState(() => isSending = true);
+                              try {
+                                await _auth.resetPassword(email: controller.text.trim(), context: context);
+                                if (!context.mounted) return;
+                                context.pop();
+                                ScaffoldMessenger.of(this.context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Check your email for a password reset link.',
+                                      style: HLGTextStyles.body(color: HLGColors.white),
+                                    ),
+                                    backgroundColor: HLGColors.deepForest,
+                                  ),
+                                );
+                              } catch (e) {
+                                debugPrint('Reset password failed: $e');
+                                if (!context.mounted) return;
+                                ScaffoldMessenger.of(this.context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Couldn\'t send reset email. Please try again.',
+                                      style: HLGTextStyles.body(color: HLGColors.white),
+                                    ),
+                                    backgroundColor: HLGColors.deepForest,
+                                  ),
+                                );
+                              } finally {
+                                if (context.mounted) setSheetState(() => isSending = false);
+                              }
+                            },
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 180),
+                        child: isSending
+                            ? const SizedBox(
+                                key: ValueKey('sending'),
+                                height: 18,
+                                width: 18,
+                                child: CircularProgressIndicator(strokeWidth: 2, color: HLGColors.white),
+                              )
+                            : Text(
+                                'Send reset link',
+                                key: const ValueKey('send'),
+                                style: HLGTextStyles.labelMedium(color: HLGColors.white),
+                              ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    controller.dispose();
+  }
 
   @override
   void initState() {
@@ -58,11 +223,21 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
     super.dispose();
   }
 
+  Future<void> _ensureProfileRow({required String uid, String? email}) async {
+    try {
+      final currentEmail = email ?? SupabaseConfig.auth.currentUser?.email;
+      await _userRepo.upsertProfile(userId: uid, email: currentEmail);
+    } catch (e) {
+      debugPrint('Auth: ensure profile row failed: $e');
+    }
+  }
+
   Future<void> _routeAfterSignIn({required String uid}) async {
     // SIGN IN: routing is determined entirely by flow controllers.
     // NOTE: this widget still performs the data load, but it does NOT branch
     // on routes itself.
     try {
+      await _ensureProfileRow(uid: uid);
       final state = await const SupabaseUserStateRepository().load();
       final progress = UserProgress.fromUserState(state);
       final target = OnboardingFlowController.instance.resumeOnboarding(progress);
@@ -86,46 +261,6 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
       });
     } catch (e) {
       debugPrint('Auth sign-in: failed to fetch display_name for greeting: $e');
-    }
-  }
-
-  Future<void> _signInWithGoogle() async {
-    FocusScope.of(context).unfocus();
-    setState(() {
-      _error = null;
-      _isSubmitting = true;
-    });
-
-    try {
-      // google_sign_in v7 changed its public API surface; use dynamic to stay
-      // compatible with the federated implementation used by Dreamflow.
-      final dynamic googleSignIn = (gsign.GoogleSignIn as dynamic).standard(scopes: const ['email']);
-      final dynamic gUser = await googleSignIn.signIn();
-      if (gUser == null) return;
-
-      final dynamic gAuth = await gUser.authentication;
-      final String? idToken = gAuth.idToken as String?;
-      if (idToken == null) throw StateError('Google sign-in failed: missing idToken');
-
-      await SupabaseConfig.client.auth.signInWithIdToken(
-        provider: OAuthProvider.google,
-        idToken: idToken,
-        accessToken: gAuth.accessToken as String?,
-      );
-
-      final uid = SupabaseConfig.auth.currentUser?.id;
-      if (uid == null) throw StateError('Sign-in failed: no active session returned.');
-
-      await _showTransientGreetingIfPossible(uid: uid);
-      if (!mounted) return;
-      WidgetsBinding.instance.addPostFrameCallback((_) => _routeAfterSignIn(uid: uid));
-    } catch (e) {
-      debugPrint('Google sign-in failed: $e');
-      if (!mounted) return;
-      setState(() => _error = _friendlyError(e));
-    } finally {
-      if (!mounted) return;
-      setState(() => _isSubmitting = false);
     }
   }
 
@@ -202,6 +337,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
 
       // SIGN UP: always goes to Welcome (shown once-only, before L0).
       if (_mode == AuthMode.signUp) {
+        await _ensureProfileRow(uid: uid, email: email);
         context.go('/welcome');
         return;
       }
@@ -294,7 +430,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
                                 text: TextSpan(
                                   style: GoogleFonts.dmSans(
                                     fontSize: 13,
-                                    color: const Color(0xFF8A9E8D),
+                                    color: HLGColors.midSage,
                                     height: 1.6,
                                   ),
                                   children: [
@@ -303,15 +439,15 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
                                       style: TextStyle(fontStyle: FontStyle.normal),
                                     ),
                                     const TextSpan(
-                                      text: 'Not here to tell you what to do. ',
+                                      text: "HLG isn't for that. ",
                                       style: TextStyle(fontStyle: FontStyle.italic),
                                     ),
                                     const TextSpan(
-                                      text: 'Here to teach you what nobody did.',
+                                      text: '\nWe provide the clarity, tools, and language to decide for yourself.',
                                       style: TextStyle(
                                         fontStyle: FontStyle.italic,
                                         fontWeight: FontWeight.w600,
-                                        color: Color(0xFF5C7A62),
+                                        color: HLGColors.deepSage,
                                       ),
                                     ),
                                   ],
@@ -367,6 +503,15 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
                             return null;
                           },
                         ),
+                        if (isSignIn) ...[
+                          const SizedBox(height: 10),
+                          Center(
+                            child: TextButton(
+                              onPressed: _isSubmitting ? null : _openResetPasswordSheet,
+                              child: Text('Forgot password?', style: HLGTextStyles.labelMedium(color: HLGColors.textMuted)),
+                            ),
+                          )
+                        ],
                         const SizedBox(height: AppSpacing.lg),
                         FilledButton(
                           onPressed: _isSubmitting ? null : _submit,
@@ -386,7 +531,9 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
                                   ),
                           ),
                         ),
-                        const SizedBox(height: AppSpacing.md),
+                        const SizedBox(height: 14),
+                        const TermsPrivacyConsentText(),
+                        const SizedBox(height: 18),
                         AnimatedSize(
                           duration: const Duration(milliseconds: 180),
                           curve: Curves.easeOut,
@@ -407,12 +554,6 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
                         ),
                         const SizedBox(height: AppSpacing.md),
                         if (isSignIn) ...[
-                          _SocialAuthButton(
-                            onPressed: _isSubmitting ? null : _signInWithGoogle,
-                            icon: Icons.g_mobiledata,
-                            label: 'Continue with Google',
-                          ),
-                          const SizedBox(height: AppSpacing.sm),
                           if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS)
                             _SocialAuthButton(
                               onPressed: _isSubmitting ? null : _signInWithApple,
@@ -421,22 +562,6 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
                             ),
                           const SizedBox(height: AppSpacing.md),
                         ],
-                        TextButton(
-                          onPressed: _isSubmitting
-                              ? null
-                              : () {
-                                  setState(() {
-                                    _mode = isSignIn ? AuthMode.signUp : AuthMode.signIn;
-                                    _error = null;
-                                    _transientDisplayName = null;
-                                    _showTransientGreeting = false;
-                                  });
-                                },
-                          child: Text(
-                            isSignIn ? 'Create an account' : 'I already have an account',
-                            style: HLGTextStyles.labelMedium(color: HLGColors.deepSage),
-                          ),
-                        ),
                                 ],
                               ),
                             ),

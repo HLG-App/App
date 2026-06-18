@@ -13,7 +13,7 @@ class HLGTooltipTerm extends StatelessWidget {
   static const _horizonOrange = Color(0xFFD4621A);
   static const _deepSage = Color(0xFF5C7A62);
   static const _midSage = Color(0xFF8A9E8D);
-  static const _textBody = Color(0xFF2A3A2C);
+  static const _textBody = _midSage;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class HLGTooltipTerm extends StatelessWidget {
       backgroundColor: _warmCream,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
       ),
       builder: (context) {
         final hasCut = (cutTheCrap != null && cutTheCrap!.trim().isNotEmpty);

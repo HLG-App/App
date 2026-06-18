@@ -77,7 +77,7 @@ class _FinancialWellbeingDiagnosticScreenState extends State<FinancialWellbeingD
 
   @override
   Widget build(BuildContext context) {
-    final bg = HLGColors.deepForest;
+    final bg = HLGColors.deepSage;
 
     if (_showCompletion) {
       final result = FinancialWellbeingDiagnosticScoring.score(copy: _copy, responses: _responses);
@@ -497,7 +497,7 @@ class _FinancialWellbeingDiagnosticCopy {
             _FinancialWellbeingOption(id: 'calm', label: 'Calm and in control', score: 5),
             _FinancialWellbeingOption(id: 'worry', label: 'Mostly okay, but I worry sometimes', score: 4),
             _FinancialWellbeingOption(id: 'stressed', label: 'Often stressed or overwhelmed', score: 2),
-            _FinancialWellbeingOption(id: 'avoidant', label: 'Avoidant — I try not to think about it', score: 1),
+            _FinancialWellbeingOption(id: 'avoidant', label: 'Avoidant – I try not to think about it', score: 1),
             _FinancialWellbeingOption(id: 'mixed', label: 'Confident in some areas, unsure in others', score: 3),
           ],
         ),
@@ -584,7 +584,7 @@ enum FinancialWellbeingArchetype {
         return const ArchetypeInfo(
           title: 'Creating Clarity',
           description:
-              "You're beginning to build a clearer relationship with money — one grounded in awareness, self-trust and small meaningful steps forward.",
+              "You're beginning to build a clearer relationship with money – one grounded in awareness, self-trust and small meaningful steps forward.",
         );
       case FinancialWellbeingArchetype.growingConfidence:
         return const ArchetypeInfo(

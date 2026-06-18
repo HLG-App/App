@@ -134,7 +134,7 @@ class _PassedOnCard extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          '— ${insight.firstName!.trim()}',
+                          '– ${insight.firstName!.trim()}',
                           style: HLGTextStyles.labelMedium(color: HLGColors.midSage).copyWith(fontSize: 12),
                         ),
                       ),

@@ -81,9 +81,9 @@ class _CheckpointPageState extends State<CheckpointPage> {
 
   static const Map<String, String> _checkpointHerNotesPrompts = {
     'CK1': "What's the one thing you learned in Module 1 that you wish someone had told you ten years ago?",
-    'CK2': 'What did you learn in Module 2 that changed something you thought was your fault — and what do you want to do differently because of it?',
-    'CK3': "What is the one financial thing you used to avoid looking at — that you've now looked at? What did it feel like to see it clearly?",
-    'CK4': 'What is the one thing you will do differently with your money — starting this week — because of what you learned here?',
+    'CK2': 'What did you learn in Module 2 that changed something you thought was your fault – and what do you want to do differently because of it?',
+    'CK3': "What is the one financial thing you used to avoid looking at – that you've now looked at? What did it feel like to see it clearly?",
+    'CK4': 'What is the one thing you will do differently with your money – starting this week – because of what you learned here?',
   };
 
   String? get _herNotesPrompt => _checkpointHerNotesPrompts[_checkpointCode];
@@ -124,7 +124,7 @@ class _CheckpointPageState extends State<CheckpointPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Save failed — please try again', style: TextStyle(color: HLGColors.warmCream)),
+            content: Text('Save failed. Please try again.', style: TextStyle(color: HLGColors.warmCream)),
             backgroundColor: HLGColors.horizonOrange,
             behavior: SnackBarBehavior.floating,
           ),
@@ -150,10 +150,6 @@ class _CheckpointPageState extends State<CheckpointPage> {
         return;
       }
 
-      final l0Progress = await SupabaseService.selectSingle(
-        'lesson_progress',
-        filters: {'lesson_code': 'L0', 'user_id': userId},
-      );
       final checkpointProgress = await SupabaseService.selectSingle(
         'lesson_progress',
         filters: {'lesson_code': _checkpointCode, 'user_id': userId},
@@ -163,7 +159,6 @@ class _CheckpointPageState extends State<CheckpointPage> {
         filters: {'id': userId},
       );
 
-      debugPrint('[CheckpointPage] Loaded L0 progress=$l0Progress');
       debugPrint('[CheckpointPage] Loaded $_checkpointCode progress=$checkpointProgress');
       debugPrint('[CheckpointPage] Loaded user row=$userRow');
 
@@ -179,8 +174,7 @@ class _CheckpointPageState extends State<CheckpointPage> {
           _habitAwareness = jsonEncode(habitAwarenessRaw);
         }
         final userBaseline = _stringFromSupabaseValue(userRow?['emotional_baseline']);
-        final l0Baseline = _stringFromSupabaseValue(l0Progress?['s4_response']);
-        _emotionalBaseline = userBaseline ?? l0Baseline;
+        _emotionalBaseline = userBaseline;
       });
     } catch (e) {
       debugPrint('[CheckpointPage] Failed to load checkpoint data: $e');
@@ -404,7 +398,7 @@ class _CheckpointPageState extends State<CheckpointPage> {
               color: HLGColors.warmCream,
             ),
             child: Text(
-              baseline.isEmpty ? 'Complete L0 to unlock this.' : baseline,
+              baseline.isEmpty ? 'Your baseline will appear here once the diagnostic is complete.' : baseline,
               textAlign: TextAlign.center,
               style: HLGTextStyles.h3SubheadItalic(color: HLGColors.horizonOrange),
             ),
@@ -623,7 +617,7 @@ class _CheckpointPageState extends State<CheckpointPage> {
         heading: 'One gentle question.',
         children: [
           Text(
-            "What is the one thing you used to avoid looking at — that you've now looked at?",
+            "What is the one thing you used to avoid looking at – that you've now looked at?",
             style: HLGTextStyles.body(color: HLGColors.textBody),
           ),
           const SizedBox(height: 10),
@@ -654,7 +648,7 @@ class _CheckpointPageState extends State<CheckpointPage> {
         heading: 'What is different now?',
         children: [
           Text(
-            'Not what you know — what you do. What you notice. What you choose faster.',
+            'Not what you know – what you do. What you notice. What you choose faster.',
             style: HLGTextStyles.body(color: HLGColors.textBody),
           ),
           const SizedBox(height: 14),
@@ -709,7 +703,7 @@ class _CheckpointPageState extends State<CheckpointPage> {
         heading: "What you've looked at.",
         children: [
           Text(
-            "Money as a tool. The system that changed in 1971. How banks actually work. Your income as a spectrum. Each of these was a gap in your education — not your character.",
+            "Money as a tool. The system that changed in 1971. How banks actually work. Your income as a spectrum. Each of these was a gap in your education – not your character.",
             style: HLGTextStyles.body(color: HLGColors.textBody),
           ),
           const SizedBox(height: 18),
@@ -834,7 +828,7 @@ class _CheckpointPageState extends State<CheckpointPage> {
         'Checked my savings interest rate',
         'Started thinking about my money story',
         "Had a money conversation I'd been avoiding",
-        "Nothing yet — I'll start in Module 2",
+        "Nothing yet – I'll start in Module 2",
       ];
     } else if (widget.checkpointNumber == 2) {
       heading = 'Module 3 is next.';
@@ -844,17 +838,17 @@ class _CheckpointPageState extends State<CheckpointPage> {
         'Reviewed my pay or benefits situation',
         'Tracked one spending pattern for a week',
         'Set one protection lever (rate, debt, or budget)',
-        'Nothing yet — I will start in Module 3',
+        'Nothing yet – I will start in Module 3',
       ];
     } else if (widget.checkpointNumber == 3) {
       heading = 'Module 4 is next.';
       intro =
-          'Next is integration: your portrait, your long-game goals, and the system you will actually live inside. Small. Specific. Repeatable.';
+          'Next is integration: your long-game goals, and the system you will actually live inside. Small. Specific. Repeatable.';
       options = const [
         'Chose one weekly goal and wrote it down',
         'Noticed one pattern without shaming myself',
         'Used a tool to model a decision',
-        'Nothing yet — I will start in Module 4',
+        'Nothing yet – I will start in Module 4',
       ];
     } else if (widget.checkpointNumber == 4) {
       heading = 'Choose what you want to feel now.';

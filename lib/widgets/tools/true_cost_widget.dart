@@ -15,16 +15,16 @@ class TrueCostWidget extends StatefulWidget {
 }
 
 class _TrueCostWidgetState extends State<TrueCostWidget> {
-  static const Color deepSage = Color(0xFF5C7A62);
-  static const Color sagePale = Color(0xFFD4E0D6);
-  static const Color crownGold = Color(0xFFB8923A);
-  static const Color warmCream = Color(0xFFF7F5F0);
-  static const Color night = Color(0xFF161E17);
-  static const Color horizonOrange = Color(0xFFD4621A);
-  static const Color midSage = Color(0xFF8A9E8D);
+  static const Color deepSage = HLGColors.deepSage;
+  static Color get sagePale => HLGColors.sagePale;
+  static const Color crownGold = HLGColors.crownGold;
+  static const Color warmCream = HLGColors.warmCream;
+  static const Color night = HLGColors.night;
+  static const Color horizonOrange = HLGColors.horizonOrange;
+  static const Color midSage = HLGColors.midSage;
   static const Color wine = HLGColors.antiqueRose;
-  static const Color wineLight = Color(0xFFF5E8EA);
-  static const Color textBody = Color(0xFF2A3A2C);
+  static Color get wineLight => HLGColors.antiqueRose.withValues(alpha: 0.12);
+  static const Color textBody = HLGColors.textBody;
 
   String _selectedItem = 'A dinner out';
   double _purchaseAmount = 120;

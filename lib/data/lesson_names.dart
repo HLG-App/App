@@ -1,4 +1,5 @@
 const Map<String, String> lessonDisplayNames = {
+  'L0': 'Welcome to the Long Game',
   'L0b': 'Your Long Game Toolkit',
   'LA': 'The Story You Inherited',
   'L1': 'The Tool Nobody Explained',
@@ -26,6 +27,7 @@ const Map<String, String> lessonDisplayNames = {
 };
 
 const Map<String, String> lessonMicroLabels = {
+  'L0': 'Welcome',
   'L0b': 'The Toolkit',
   'LA': 'Your Money Story',
   'L1': 'Money as a Tool',

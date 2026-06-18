@@ -45,7 +45,7 @@ class ReferralPage extends StatelessWidget {
                   Text('Invite a friend', style: HLGTextStyles.lessonHeading(color: HLGColors.night)),
                   const SizedBox(height: 8),
                   Text(
-                    'Share your code — we’ll use it later to credit referrals.',
+                    'Share your code. We’ll use it later to credit referrals.',
                     style: HLGTextStyles.body(color: HLGColors.midSage),
                   ),
                   const SizedBox(height: 14),
@@ -77,7 +77,7 @@ class ReferralPage extends StatelessWidget {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text('Copied to clipboard', style: HLGTextStyles.body(color: HLGColors.warmCream)),
-                                        backgroundColor: HLGColors.night,
+                                        backgroundColor: HLGColors.deepSage,
                                       ),
                                     );
                                   } catch (e) {

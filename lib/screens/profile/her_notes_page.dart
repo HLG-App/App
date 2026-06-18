@@ -45,6 +45,8 @@ class _HerNotesPageState extends State<HerNotesPage> {
           .eq('user_id', uid)
           // Takeaways saved from “Carry this” live in Her System (Bookmarks), not Her Notes.
           .neq('prompt', 'TAKEAWAY')
+          // Goal summaries are rendered in Her Direction.
+          .neq('prompt', 'GOAL_SUMMARY')
           .order('created_at', ascending: false);
 
       setState(() => _notes = (rows as List).cast<Map<String, dynamic>>());

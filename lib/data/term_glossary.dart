@@ -14,7 +14,7 @@ const Map<String, GlossaryTerm> termGlossary = {
   'ETF': GlossaryTerm(
     plainEnglish: 'A basket of investments you buy like a single share.',
     cutTheCrap:
-        'Same idea as an index fund — just bought on the stock exchange. Lower fees than almost anything else out there.',
+        'Same idea as an index fund – just bought on the stock exchange. Lower fees than almost anything else out there.',
   ),
   'index': GlossaryTerm(
     plainEnglish: 'A list of companies used to measure how a market is performing.',
@@ -39,12 +39,12 @@ const Map<String, GlossaryTerm> termGlossary = {
     cutTheCrap: '\$100 in 1971 had more purchasing power than \$100 today. The number is the same. The reality behind it isn\'t.',
   ),
   'interest rate': GlossaryTerm(
-    plainEnglish: 'The price of borrowing money — or the reward for lending it.',
+    plainEnglish: 'The price of borrowing money – or the reward for lending it.',
     cutTheCrap:
         'When the bank lends you money you pay interest. When you lend the bank your savings they pay you interest. The bank always tries to make the first number bigger and the second number smaller. Now you know.',
   ),
   'superannuation': GlossaryTerm(
-    plainEnglish: 'Your future self\'s savings account — that your employer fills, and you can\'t touch until you\'re 60.',
+    plainEnglish: 'Your future self\'s savings account – that your employer fills, and you can\'t touch until you\'re 60.',
     cutTheCrap: 'It\'s yours. It\'s just in a vault with a very long lock timer. Most women have no idea what\'s in it. That\'s exactly what this lesson is about.',
   ),
   'share': GlossaryTerm(
@@ -57,7 +57,7 @@ const Map<String, GlossaryTerm> termGlossary = {
   ),
   'asset': GlossaryTerm(
     plainEnglish: 'Anything you own that holds or grows in value.',
-    cutTheCrap: 'Your super, your property, your shares, your gold. Not your car — that one shrinks the moment you drive it off the lot.',
+    cutTheCrap: 'Your super, your property, your shares, your gold. Not your car – that one shrinks the moment you drive it off the lot.',
   ),
   'liability': GlossaryTerm(
     plainEnglish: 'Anything you owe.',
@@ -72,7 +72,7 @@ const Map<String, GlossaryTerm> termGlossary = {
     cutTheCrap: 'The bank lends you the money to buy the house. If you stop paying, they get the house. So you keep paying. The interest is the cost of using their money to build your asset.',
   ),
   'equity': GlossaryTerm(
-    plainEnglish: 'The portion of an asset you actually own — after subtracting what you owe on it.',
+    plainEnglish: 'The portion of an asset you actually own – after subtracting what you owe on it.',
     cutTheCrap: 'Home worth \$800,000. Mortgage \$500,000. Your equity is \$300,000. That\'s the part that\'s actually yours.',
   ),
   'capital gains': GlossaryTerm(
@@ -101,10 +101,10 @@ const Map<String, GlossaryTerm> termGlossary = {
   ),
   'franking credits': GlossaryTerm(
     plainEnglish: 'A tax credit that stops you being taxed twice on the same company profit.',
-    cutTheCrap: 'The company paid tax before passing profits to you. The franking credit proves it — so the ATO doesn\'t tax you again. Uniquely Australian. Genuinely useful.',
+    cutTheCrap: 'The company paid tax before passing profits to you. The franking credit proves it – so the ATO doesn\'t tax you again. Uniquely Australian. Genuinely useful.',
   ),
   'offset account': GlossaryTerm(
-    plainEnglish: 'A savings account linked to your mortgage — every dollar in it reduces the interest you pay.',
+    plainEnglish: 'A savings account linked to your mortgage – every dollar in it reduces the interest you pay.',
     cutTheCrap: '\$300,000 mortgage. \$50,000 in your offset. You only pay interest on \$250,000. No investment risk. Just interest you quietly don\'t pay.',
   ),
   'income protection': GlossaryTerm(
@@ -117,18 +117,18 @@ const Map<String, GlossaryTerm> termGlossary = {
   ),
   'beneficiary': GlossaryTerm(
     plainEnglish: 'The person nominated to receive your super or insurance payout if you die.',
-    cutTheCrap: 'The most important form most people have never updated since their first job. If you nominated an ex-partner — fix it this week.',
+    cutTheCrap: 'The most important form most people have never updated since their first job. If you nominated an ex-partner – fix it this week.',
   ),
   'fiat currency': GlossaryTerm(
-    plainEnglish: 'Money that\'s valuable because everyone agrees it is — not because it\'s backed by anything physical.',
+    plainEnglish: 'Money that\'s valuable because everyone agrees it is – not because it\'s backed by anything physical.',
     cutTheCrap: 'Since 1971 your money has been backed by nothing except the government\'s promise. Governments have a habit of printing more of it.',
   ),
   'stock to flow': GlossaryTerm(
-    plainEnglish: 'A measure of scarcity — how much of something exists versus how much is being produced.',
-    cutTheCrap: 'Gold has a high ratio because it\'s hard to mine more of it. Bitcoin\'s is even higher — and unlike gold, it\'s fixed by code.',
+    plainEnglish: 'A measure of scarcity – how much of something exists versus how much is being produced.',
+    cutTheCrap: 'Gold has a high ratio because it\'s hard to mine more of it. Bitcoin\'s is even higher – and unlike gold, it\'s fixed by code.',
   ),
   'CPI': GlossaryTerm(
-    plainEnglish: 'The official measure of inflation — tracks how much a standard basket of goods costs over time.',
+    plainEnglish: 'The official measure of inflation – tracks how much a standard basket of goods costs over time.',
     cutTheCrap: 'If that basket cost \$100 last year and \$103 this year, CPI is 3%. That\'s the Inflation Thief\'s official job title.',
   ),
   'monetary policy': GlossaryTerm(
@@ -141,7 +141,7 @@ const Map<String, GlossaryTerm> termGlossary = {
   ),
   'store of value': GlossaryTerm(
     plainEnglish: 'An asset that holds its worth over time without deteriorating.',
-    cutTheCrap: 'Gold holds its value. Cash in a drawer loses purchasing power every year. The difference is whether the thing you\'re holding keeps up with — or beats — inflation.',
+    cutTheCrap: 'Gold holds its value. Cash in a drawer loses purchasing power every year. The difference is whether the thing you\'re holding keeps up with – or beats – inflation.',
   ),
   'medium of exchange': GlossaryTerm(
     plainEnglish: 'Something widely accepted as payment for goods and services.',

@@ -17,7 +17,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
   int _index = 0;
   bool _isSubmitting = false;
 
-  static const Color _warmDarkSage = Color(0xFF1E2E20);
+  static const Color _warmDarkSage = HLGColors.deepSage;
 
   late final AnimationController _pulseController;
   late final Animation<double> _pulse;
@@ -60,7 +60,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Couldn\'t continue. Please try again.', style: HLGTextStyles.body(color: HLGColors.warmCream)),
-          backgroundColor: HLGColors.night,
+          backgroundColor: HLGColors.deepSage,
         ),
       );
     } finally {
@@ -265,7 +265,8 @@ class _IsNotPage extends StatelessWidget {
           titleColor: HLGColors.horizonOrange,
           bodyLines: [
             'If we thought you needed another degree, on top of your career, your relationships, your life, we wouldn\'t be here.',
-            'We are cutting through the noise.',
+            'We\'re stripping back to what matters.',
+            'The app is based on ten specific principles we see as timeless.',
             'The right foundations, in the right order, at a pace that fits in your real life.',
           ],
         ),
@@ -356,7 +357,7 @@ class _InfoPage extends StatelessWidget {
                                       _InfoLine(
                                         text: item.bodyLines[i],
                                         style: item.accentLineIndexes.contains(i)
-                                            ? bodyStyle.copyWith(color: const Color(0xFFB8923A), fontStyle: FontStyle.italic)
+                                            ? bodyStyle.copyWith(color: HLGColors.crownGold, fontStyle: FontStyle.italic)
                                             : bodyStyle,
                                         signatureStyle: signatureStyle,
                                         signatureAccentStyle: signatureAccentStyle,
@@ -417,7 +418,7 @@ class _InfoLine extends StatelessWidget {
           style: style,
           children: [
             TextSpan(text: parts[0]),
-            TextSpan(text: tools, style: signatureStyle),
+            TextSpan(text: tools, style: signatureAccentStyle),
             TextSpan(text: parts.length > 1 ? parts[1] : ''),
           ],
         ),

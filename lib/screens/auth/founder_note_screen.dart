@@ -43,7 +43,7 @@ class _FounderNoteScreenState extends State<FounderNoteScreen> {
         SnackBar(
           content: Text('Couldn\'t continue. Please try again.',
               style: HLGTextStyles.body(color: HLGColors.warmCream)),
-          backgroundColor: HLGColors.night,
+          backgroundColor: HLGColors.deepSage,
         ),
       );
     } finally {
@@ -111,35 +111,44 @@ class FounderNoteContent extends StatelessWidget {
             child:
                 Image.asset('assets/images/Her_Long_Game-02.png', width: 200)),
         Text(
-          'A note from the founder.',
+          'A note from the founder',
           style: HLGTextStyles.h3SubheadItalic(color: primaryText),
         ),
         const SizedBox(height: 16),
         const _FounderNoteCallout(
           tone: _FounderNoteCalloutTone.emphasis,
-          title: 'Quick clarity',
+          title: 'Quick clarity.',
           body:
-              'I am not a financial advisor. I am not a guru. I am definitely not here to tell you to manifest wealth.',
+              'I am not a financial advisor.\n\nI am not a guru.\n\nI am definitely not here to tell you to manifest wealth while journalling beside a beige candle.',
         ),
         const SizedBox(height: 20),
+        Text(
+          'I built Her Long Game because I worked out pretty early that enjoying life requires options.\n\nAnd options require money.\n\nThat is all money is, really.\n\nA tool that stores your time and energy so you can use it later.',
+          style: HLGTextStyles.body(color: bodyColor).copyWith(height: 1.8),
+        ),
         const SizedBox(height: 20),
         Text(
-          'I\'m an average woman who figured out early that enjoying life requires options — and options require money. That\'s all money is. A tool that stores your time and energy so you can use it later.\n\nI\'m not perfect with it either. Once, after a few too many wines, I bought a large inflatable projector screen off eBay. Sold it on Facebook Marketplace three years later for \$50 less than I paid. Poor guy on the other end didn\'t have the tools I\'m about to give you — the ones that show you the true cost of the thing you don\'t need.',
+          'I am not perfect with it either. Once, after a few too many wines, I bought a large inflatable projector screen off eBay.\n\nA large one.\n\nFor what cinema empire, I cannot say.\n\nI sold it on Facebook Marketplace three years later for \$50 less than I paid.',
           style: HLGTextStyles.body(color: bodyColor).copyWith(height: 1.8),
         ),
         const SizedBox(height: 20),
         const _FounderNotePullQuote(
           text:
-              'So although I am not perfect, I would say I am money smart — in a street smart kind of way. But this does not happen overnight.',
+              'Honestly, not my worst investment. But still, the poor woman at checkout did not have the tools I am about to give you. The ones that help you see the true cost of the thing you absolutely do not need, but suddenly believe will transform your life after two glasses of shiraz.',
         ),
         const SizedBox(height: 20),
         Text(
-          'Yet still, what breaks my heart is the shame, stress and silence that surrounds the topic of money. Especially when most people were never properly taught how any of it works.',
+          'So no, I am not perfect.\n\nBut I am money smart in a street-smart kind of way.\n\nAnd that did not happen overnight.',
           style: HLGTextStyles.body(color: bodyColor).copyWith(height: 1.8),
         ),
         const SizedBox(height: 20),
         Text(
-          'I have never once used Pythagoras\' theorem in adult life. But compound interest? Inflation? Not putting a coffee on a credit card and turning a \$5 latte into a \$15 one? Apparently that was all supposed to sort itself out. It won\'t. But you can.',
+          'What still breaks my heart is the shame, stress and silence around money. Especially when most people were never properly taught how any of it works.',
+          style: HLGTextStyles.body(color: bodyColor).copyWith(height: 1.8),
+        ),
+        const SizedBox(height: 20),
+        Text(
+          'I have never once used Pythagoras’ theorem in adult life.\n\nBut compound interest?\n\nInflation?\n\nCredit card interest?\n\nThe small matter of not turning a \$5 coffee into a \$15 coffee because future-you got mugged by past-you?\n\nApparently that was all supposed to sort itself out.\n\nIt won’t.\n\nBut you can.',
           style: HLGTextStyles.body(color: bodyColor).copyWith(height: 1.8),
         ),
         const SizedBox(height: 24),
@@ -147,16 +156,16 @@ class FounderNoteContent extends StatelessWidget {
           tone: _FounderNoteCalloutTone.insight,
           title: 'The real context',
           body:
-              'The data is confronting. Women are navigating a financial system built around unpaid labour, lower lifetime earnings and less financial education. In every country studied — every single one — women score lower on financial literacy measures. Not a personal failing. A structural one.',
+              'Women are navigating a financial system that was not built around their lives.\n\nLower lifetime earnings.\nCareer breaks.\nUnpaid labour.\nLonger life expectancy.\nLess access to financial education.\n\nAnd then somehow, women are expected to make calm, confident, informed decisions inside that system.\n\nIn every country studied, women score lower on financial literacy measures.\n\nThat is not a personal failing.\n\nThat is a structural one.',
         ),
         const SizedBox(height: 20),
         Text(
-          'My initial idea was to build a practical course to go into schools and teach people the things they actually need to know about money. Then I realised — schools don\'t raise kids or set the environment for what they do. Women do.',
+          'My first idea was to build a practical course for schools and teach people the money lessons they actually need.\n\nThen I realised something.\n\nBy the time the lesson is needed, the woman in the household is often already carrying the consequence.',
           style: HLGTextStyles.quoteItalic(color: primaryText),
         ),
         const SizedBox(height: 20),
         Text(
-          'The people shaping the next generation most closely are often women. Many of those same women are working full time, carrying the majority of unpaid domestic labour, holding households together — and wondering why their financial position doesn\'t reflect how hard they work.',
+          'Women are shaping the next generation. Holding households together. Working. Caring. Planning. Absorbing. Stretching. Remembering the school note, the dentist appointment, the grocery budget and the invisible labour nobody seems to invoice for.\n\nAnd many are still wondering why their financial position does not reflect how hard they work.\n\nThat is the gap Her Long Game exists to close.',
           style: HLGTextStyles.body(color: bodyColor).copyWith(height: 1.8),
         ),
         const SizedBox(height: 20),
@@ -164,44 +173,33 @@ class FounderNoteContent extends StatelessWidget {
           tone: _FounderNoteCalloutTone.statement,
           title: 'What this is',
           body:
-              'This app is not about creating dependency. It\'s about ending one.',
+              'This app is not here to create dependency.\n\nIt is here to end one.',
         ),
         const SizedBox(height: 20),
         Text(
-          'I have never once used Pythagoras\' theorem in adult life, sooo wait… why don\'t they teach this in school?',
-          style: HLGTextStyles.quoteItalic(color: secondaryText),
-        ),
-        const SizedBox(height: 20),
-        Text(
-          'You still live your life like everyone else. This is simply access to the lessons you were expected to use every day — but were never properly taught.',
+          'It is access to the lessons you were expected to use every day, but were never properly taught.\n\nHow money works.\nHow the system works.\nWhy inflation matters.\nWhy assets matter.\nWhy time matters.\nWhy debt is a tool, not a character flaw.\nWhy your income is not fixed.\nAnd why financial education does not stop with you.',
           style: HLGTextStyles.body(color: bodyColor).copyWith(height: 1.8),
+        ),
+        const SizedBox(height: 20),
+        const _FounderNotePullQuote(
+          text:
+              'It is not your fault you were not taught this. But it is your responsibility now.',
+        ),
+        const SizedBox(height: 20),
+        Text(
+          'Not in a shamey way.\n\nIn a “you are allowed to understand the tool” way.',
+          style: HLGTextStyles.quoteItalic(color: secondaryText),
         ),
         const SizedBox(height: 28),
         Container(
             height: 1, color: HLGColors.crownGold.withValues(alpha: 0.55)),
         const SizedBox(height: 28),
-        Center(
-          child: Text(
-            'It is not your fault you don\'t know this stuff.',
-            textAlign: TextAlign.center,
-            style: HLGTextStyles.quoteItalic(color: primaryText),
-          ),
-        ),
-        const SizedBox(height: 12),
-        Center(
-          child: Text(
-            'But it is your responsibility.',
-            textAlign: TextAlign.center,
-            style: HLGTextStyles.quoteItalic(color: secondaryText),
-          ),
-        ),
-        const SizedBox(height: 32),
         Align(
-          alignment: Alignment.centerRight,
+          alignment: Alignment.centerLeft,
           child: Text(
-            '— Tamara, Founder',
-            style: HLGTextStyles.homeMeta13(color: secondaryText),
-            textAlign: TextAlign.right,
+            'Start your long game.\n\nTamara\nFounder, Her Long Game',
+            style: HLGTextStyles.homeMeta13(color: secondaryText).copyWith(height: 1.8),
+            textAlign: TextAlign.left,
           ),
         ),
         if (showPrimaryButton) ...[
@@ -219,7 +217,7 @@ class FounderNoteContent extends StatelessWidget {
                 ),
               ),
               child: Text(
-                isSubmitting ? 'Just a second…' : 'Start my long game →',
+                isSubmitting ? 'Just a second…' : 'Start your long game →',
                 style: HLGTextStyles.homeCta15(
                   color: HLGColors.warmCream,
                 ).copyWith(fontSize: 16),

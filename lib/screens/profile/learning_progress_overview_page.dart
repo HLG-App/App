@@ -137,7 +137,7 @@ class _LearningProgressOverviewPageState extends State<LearningProgressOverviewP
                   else if (_error != null)
                     Text(_error!, style: HLGTextStyles.body(color: HLGColors.horizonOrange))
                   else
-                    Text('Completed $_completed of $_total', style: HLGTextStyles.body(color: HLGColors.textBody)),
+                    Text('Completed $_completed/$_total', style: HLGTextStyles.body(color: HLGColors.textBody), maxLines: 1, overflow: TextOverflow.ellipsis),
                   const SizedBox(height: 12),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(999),
@@ -162,8 +162,10 @@ class _LearningProgressOverviewPageState extends State<LearningProgressOverviewP
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
-                            nextLabel == null ? 'No next step found.' : 'Up next: $nextLabel',
+                            nextLabel == null ? 'Up next: —' : 'Up next — $nextLabel',
                             style: HLGTextStyles.body(color: HLGColors.textBody),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],

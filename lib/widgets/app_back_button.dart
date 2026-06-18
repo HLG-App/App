@@ -39,7 +39,7 @@ class AppBackButton extends StatelessWidget {
     this.fallbackRoute,
   });
 
-  /// Optional color override. If null, uses HLGColors.night (default).
+  /// Optional color override. If null, uses the app's ink (default).
   final Color? color;
 
   /// Optional custom onPressed handler. If null, uses default navigation logic.
@@ -82,7 +82,7 @@ class AppBackButton extends StatelessWidget {
       icon: Icon(
         Icons.arrow_back_ios_new,
         size: 20,
-        color: color ?? HLGColors.night,
+        color: color ?? HLGColors.textBody,
       ),
       tooltip: 'Back',
       // Ensure minimum touch target size (44x44)

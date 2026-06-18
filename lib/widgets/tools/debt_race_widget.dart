@@ -20,11 +20,11 @@ class _DebtRaceWidgetState extends State<DebtRaceWidget> {
   static const Color sagePale = Color(0xFFD4E0D6);
   static const Color crownGold = Color(0xFFB8923A);
   static const Color warmCream = Color(0xFFF7F5F0);
-  static const Color night = Color(0xFF161E17);
+  static const Color night = deepSage;
   static const Color horizonOrange = Color(0xFFD4621A);
   static const Color midSage = Color(0xFF8A9E8D);
-  static const Color petal = Color(0xFFEDE0D4);
-  static const Color textBody = Color(0xFF2A3A2C);
+  static const Color petal = Color(0xFFF2EFE8);
+  static const Color textBody = midSage;
 
   final List<_DebtEntry> _debts = [
     _DebtEntry(name: 'Credit card', balance: 4800, rate: 20.99, minPayment: 120),
@@ -280,9 +280,9 @@ class _DebtRaceWidgetState extends State<DebtRaceWidget> {
         const SizedBox(height: 10),
         Row(
           children: [
-            Expanded(child: _strategyChip('avalanche', 'Avalanche — save the most money', horizonOrange)),
+            Expanded(child: _strategyChip('avalanche', 'Avalanche – save the most money', horizonOrange)),
             const SizedBox(width: 8),
-            Expanded(child: _strategyChip('snowball', 'Snowball — early wins', deepSage)),
+            Expanded(child: _strategyChip('snowball', 'Snowball – early wins', deepSage)),
           ],
         ),
       ],
@@ -324,7 +324,7 @@ class _DebtRaceWidgetState extends State<DebtRaceWidget> {
           width: double.infinity,
           height: 48,
           child: OutlinedButton(
-            onPressed: () => widget.onAddGoal('Debt free by ${_monthsToDate(chosen.months)} — ${_selectedStrategy} strategy'),
+            onPressed: () => widget.onAddGoal('Debt free by ${_monthsToDate(chosen.months)} – ${_selectedStrategy} strategy'),
             style: OutlinedButton.styleFrom(foregroundColor: deepSage, side: const BorderSide(color: deepSage, width: 1.5), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999))),
             child: Text('Add to my goals', style: GoogleFonts.dmSans(fontSize: 14)),
           ),

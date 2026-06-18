@@ -15,15 +15,15 @@ class TheCurveWidget extends StatefulWidget {
 }
 
 class _TheCurveWidgetState extends State<TheCurveWidget> with SingleTickerProviderStateMixin {
-  static const Color deepSage = Color(0xFF5C7A62);
-  static const Color sagePale = Color(0xFFD4E0D6);
-  static const Color crownGold = Color(0xFFB8923A);
-  static const Color warmCream = Color(0xFFF7F5F0);
-  static const Color night = Color(0xFF161E17);
-  static const Color horizonOrange = Color(0xFFD4621A);
-  static const Color midSage = Color(0xFF8A9E8D);
-  static const Color petal = Color(0xFFEDE0D4);
-  static const Color pond = Color(0xFF1A4A6B);
+  static const Color deepSage = HLGColors.deepSage;
+  static Color get sagePale => HLGColors.sagePale;
+  static const Color crownGold = HLGColors.crownGold;
+  static const Color warmCream = HLGColors.warmCream;
+  static const Color night = HLGColors.night;
+  static const Color horizonOrange = HLGColors.horizonOrange;
+  static const Color midSage = HLGColors.midSage;
+  static Color get petal => HLGColors.petal;
+  static const Color pond = HLGColors.sage;
 
   double _monthlyAmount = 50;
   int _startAge = 30;
@@ -271,7 +271,7 @@ class _TheCurveWidgetState extends State<TheCurveWidget> with SingleTickerProvid
           width: double.infinity,
           height: 48,
           child: OutlinedButton(
-            onPressed: () => widget.onAddGoal('Stay invested — my Day 46 is ${_formatDate(_doublingDate)}'),
+            onPressed: () => widget.onAddGoal('Stay invested – my Day 46 is ${_formatDate(_doublingDate)}'),
             style: OutlinedButton.styleFrom(
               foregroundColor: deepSage,
               side: const BorderSide(color: deepSage, width: 1.5),

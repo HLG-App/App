@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:her_long_game/supabase/supabase_config.dart';
 import 'package:her_long_game/data/repositories/lesson_repository.dart';
@@ -19,7 +18,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final LessonRepository _lessonRepo = LessonRepository();
 
   bool _isLoading = true;
-  bool _isSigningOut = false;
 
   int _lessonsCompleted = 0;
   int _lessonsTotal = 0;
@@ -77,34 +75,12 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Future<void> _performLogout() async {
-    if (_isSigningOut) return;
-    setState(() => _isSigningOut = true);
-    try {
-      await SupabaseConfig.auth.signOut();
-      AppRuntimeState.clear();
-      if (!mounted) return;
-      context.go('/auth');
-    } catch (e) {
-      debugPrint('[ProfilePage] Sign out failed: $e');
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Could not log out. Please try again.', style: HLGTextStyles.body(color: HLGColors.warmCream)),
-          backgroundColor: HLGColors.night,
-        ),
-      );
-    } finally {
-      if (mounted) setState(() => _isSigningOut = false);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final progress = (_lessonsTotal <= 0) ? 0.0 : (_lessonsCompleted / _lessonsTotal).clamp(0.0, 1.0);
     return Scaffold(
       backgroundColor: HLGColors.warmCream,
-      appBar: HerAppBar(title: Text('Profile', style: HLGTextStyles.labelMedium(color: HLGColors.textBody))),
+      appBar: HerAppBar(title: Text('Profile', style: HLGTextStyles.labelMedium(color: HLGColors.textBody)), actions: const [HerLogoutIconButton()]),
       body: SafeArea(
         child: ListView(
           padding: AppSpacing.paddingLg,
@@ -135,7 +111,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ? 'Loading…'
                   : _hasStartedLearning
                       ? 'Completed $_lessonsCompleted of $_lessonsTotal'
-                      : 'Not started yet — begin with THE PAST',
+                      : 'Not started yet – begin with THE PAST',
               trailing: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -179,18 +155,6 @@ class _ProfilePageState extends State<ProfilePage> {
               onTap: () => context.push('/profile/referral'),
             ),
 
-            const SizedBox(height: 28),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: TextButton(
-                onPressed: _isSigningOut ? null : _performLogout,
-                style: TextButton.styleFrom(padding: EdgeInsets.zero, overlayColor: Colors.transparent),
-                child: Text(
-                  'Log out',
-                  style: GoogleFonts.dmSans(fontSize: 14, color: HLGColors.midSage),
-                ),
-              ),
-            ),
           ],
         ),
       ),

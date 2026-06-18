@@ -128,15 +128,15 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
       }
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Saved.', style: HLGTextStyles.body(color: HLGColors.warmCream)), backgroundColor: HLGColors.night),
+        const SnackBar(content: Text('Saved.')),
       );
     } catch (e) {
       debugPrint('[AccountSettingsPage] Save display name failed: $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Could not save. Please try again.', style: HLGTextStyles.body(color: HLGColors.warmCream)),
-          backgroundColor: HLGColors.night,
+          content: const Text('Could not save. Please try again.'),
+          backgroundColor: HLGColors.deepSage,
         ),
       );
     } finally {
@@ -153,8 +153,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
     if (next.isEmpty || !next.contains('@')) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Please enter a valid email.', style: HLGTextStyles.body(color: HLGColors.warmCream)),
-          backgroundColor: HLGColors.night,
+          content: const Text('Please enter a valid email.'),
+          backgroundColor: HLGColors.deepSage,
         ),
       );
       return;
@@ -168,8 +168,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
       setState(() => _email = next);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Email update requested. Check your inbox to confirm.', style: HLGTextStyles.body(color: HLGColors.warmCream)),
-          backgroundColor: HLGColors.night,
+          content: const Text('Email update requested. Check your inbox to confirm.'),
+          backgroundColor: HLGColors.deepSage,
         ),
       );
     } catch (e) {
@@ -177,8 +177,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Could not update email.', style: HLGTextStyles.body(color: HLGColors.warmCream)),
-          backgroundColor: HLGColors.night,
+          content: const Text('Could not update email.'),
+          backgroundColor: HLGColors.deepSage,
         ),
       );
     } finally {
@@ -196,8 +196,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
     if (pw.trim().length < 8) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Password must be at least 8 characters.', style: HLGTextStyles.body(color: HLGColors.warmCream)),
-          backgroundColor: HLGColors.night,
+          content: const Text('Password must be at least 8 characters.'),
+          backgroundColor: HLGColors.deepSage,
         ),
       );
       return;
@@ -205,8 +205,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
     if (pw != confirm) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Passwords do not match.', style: HLGTextStyles.body(color: HLGColors.warmCream)),
-          backgroundColor: HLGColors.night,
+          content: const Text('Passwords do not match.'),
+          backgroundColor: HLGColors.deepSage,
         ),
       );
       return;
@@ -219,15 +219,15 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
       _passwordCtrl.clear();
       _passwordConfirmCtrl.clear();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Password updated.', style: HLGTextStyles.body(color: HLGColors.warmCream)), backgroundColor: HLGColors.night),
+        const SnackBar(content: Text('Password updated.')),
       );
     } catch (e) {
       debugPrint('[AccountSettingsPage] Save password failed: $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Could not update password.', style: HLGTextStyles.body(color: HLGColors.warmCream)),
-          backgroundColor: HLGColors.night,
+          content: const Text('Could not update password.'),
+          backgroundColor: HLGColors.deepSage,
         ),
       );
     } finally {
@@ -246,8 +246,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Password reset email sent.', style: HLGTextStyles.body(color: HLGColors.warmCream)),
-          backgroundColor: HLGColors.night,
+          content: const Text('Password reset email sent.'),
+          backgroundColor: HLGColors.deepSage,
         ),
       );
     } catch (e) {
@@ -255,8 +255,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Could not send reset email.', style: HLGTextStyles.body(color: HLGColors.warmCream)),
-          backgroundColor: HLGColors.night,
+          content: const Text('Could not send reset email.'),
+          backgroundColor: HLGColors.deepSage,
         ),
       );
     } finally {
@@ -287,7 +287,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
               _SettingCard(
                 icon: Icons.alternate_email,
                 title: 'Email',
-                subtitle: _email ?? '—',
+                subtitle: _email ?? '-',
               ),
               const SizedBox(height: 12),
               _EditableSettingCard(
