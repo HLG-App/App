@@ -87,7 +87,12 @@ class LessonRepository {
           // Example message:
           // "column lesson_progress.s7_response does not exist"
           final m = RegExp(r'column\s+lesson_progress\.(\w+)\s+does\s+not\s+exist', caseSensitive: false).firstMatch(e.message);
-          final missingCol = m?.group(1);
+          String? missingCol = m?.group(1);
+
+          // Supabase can also return a schema-cache variant:
+          // "Could not find the 's7_response' column of 'lesson_progress' in the schema cache"
+          missingCol ??= RegExp(r"could not find the '(\w+)' column of 'lesson_progress'", caseSensitive: false).firstMatch(e.message)?.group(1);
+
           if (missingCol != null && attempt.containsKey(missingCol)) {
             debugPrint('[LessonRepository] saveProgress retrying without $missingCol (column missing)');
             attempt = {...attempt}..remove(missingCol);

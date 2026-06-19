@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:her_long_game/theme.dart';
 import 'package:her_long_game/utils/lesson_flow.dart';
+import 'package:her_long_game/widgets/her_app_bar.dart';
 import 'package:her_long_game/widgets/passed_on_widget.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -25,6 +26,7 @@ class _LessonClosePageState extends State<LessonClosePage> {
   bool _nameToggle = false;
   String? _firstName;
   String? _randomPrompt;
+  int? _lastScreenIndex;
 
   static const String _takeawayPrompt = 'TAKEAWAY';
   final Set<String> _savedTakeaways = <String>{};
@@ -50,6 +52,21 @@ class _LessonClosePageState extends State<LessonClosePage> {
       final userId = Supabase.instance.client.auth.currentUser?.id;
       if (userId == null) return;
 
+      // Capture the last known screen index so the user can go back if they
+      // want to re-check something.
+      try {
+        final progress = await Supabase.instance.client
+            .from('lesson_progress')
+            .select('current_screen')
+            .eq('user_id', userId)
+            .eq('lesson_code', widget.lessonCode)
+            .maybeSingle();
+        final v = progress?['current_screen'];
+        _lastScreenIndex = v is int ? v : int.tryParse('$v');
+      } catch (e) {
+        debugPrint('[LessonClosePage] Failed to load last screen index: $e');
+      }
+
       // V4: takeaway columns hold the "Three Things to Carry" content.
       final screen = await Supabase.instance.client
           .from('lesson_screens')
@@ -73,6 +90,11 @@ class _LessonClosePageState extends State<LessonClosePage> {
       debugPrint('[LessonClosePage] load error: $e');
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  void _onBackToLesson() {
+    final idx = (_lastScreenIndex ?? 0).clamp(0, 1 << 30);
+    context.go('/lesson/${widget.lessonCode}/screen?start=$idx');
   }
 
   Future<void> _loadSavedTakeaways({required String userId}) async {
@@ -178,6 +200,12 @@ class _LessonClosePageState extends State<LessonClosePage> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F5F0),
+      appBar: HerAppBar(
+        showBack: true,
+        fallbackRoute: '/learn',
+        onBackPressed: _onBackToLesson,
+        title: Text('Carry this', style: HLGTextStyles.labelMedium(color: HLGColors.textBody)),
+      ),
       body: SafeArea(
         child: Stack(
           children: [

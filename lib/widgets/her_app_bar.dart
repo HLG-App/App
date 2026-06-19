@@ -20,6 +20,7 @@ class HerAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.actions,
     this.showBack = false,
     this.fallbackRoute,
+    this.onBackPressed,
     this.backButtonColor,
     this.backgroundColor,
     this.surfaceTintColor,
@@ -36,6 +37,10 @@ class HerAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   /// Used by [AppBackButton] when there is no back stack.
   final String? fallbackRoute;
+
+  /// Optional override for back button behaviour. When provided, this is called
+  /// instead of the default go_router pop behaviour.
+  final VoidCallback? onBackPressed;
 
   /// Optional back button color override (useful on dark backgrounds).
   final Color? backButtonColor;
@@ -65,7 +70,7 @@ class HerAppBar extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: centerTitle,
       toolbarHeight: toolbarHeight,
       leadingWidth: showBack ? 132 : 72,
-      leading: showBack ? _BackAndLogo(fallbackRoute: fallbackRoute, backButtonColor: backButtonColor) : const _CornerLogo(),
+      leading: showBack ? _BackAndLogo(fallbackRoute: fallbackRoute, backButtonColor: backButtonColor, onPressed: onBackPressed) : const _CornerLogo(),
       title: DefaultTextStyle(style: Theme.of(context).textTheme.titleMedium?.copyWith(color: titleColor) ?? TextStyle(color: titleColor), child: titleWidget),
       actions: actions,
     );
@@ -180,10 +185,11 @@ class _CornerLogo extends StatelessWidget {
 }
 
 class _BackAndLogo extends StatelessWidget {
-  const _BackAndLogo({this.fallbackRoute, this.backButtonColor});
+  const _BackAndLogo({this.fallbackRoute, this.backButtonColor, this.onPressed});
 
   final String? fallbackRoute;
   final Color? backButtonColor;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -192,7 +198,7 @@ class _BackAndLogo extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          AppBackButton(color: backButtonColor ?? HLGColors.night, fallbackRoute: fallbackRoute),
+          AppBackButton(color: backButtonColor ?? HLGColors.night, fallbackRoute: fallbackRoute, onPressed: onPressed),
           const SizedBox(width: 6),
           Image.asset(_CornerLogo._logoAsset, height: 20, fit: BoxFit.contain),
         ],

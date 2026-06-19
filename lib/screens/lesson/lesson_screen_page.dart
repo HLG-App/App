@@ -206,15 +206,37 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
   bool get _requiresSelection {
     final s = _screen;
     if (s == null) return false;
-    // Only require a selection when there are actually options to pick from.
-    if (s.options.isEmpty) return false;
-    return s.screenType == 'feeling' || s.screenType == 'action';
+    // If the CMS authored options for this screen, treat it as a required choice.
+    // We intentionally *do not* gate this by screen_type, because content authors
+    // may use types like "responsibility", "interaction", "your_turn", etc.
+    // and we still need choices to render + be required.
+    return s.options.isNotEmpty;
   }
 
   bool get _canContinue {
     if (_isLoading || _isSaving) return false;
     if (!_requiresSelection) return true;
     return (_selectedOption ?? '').trim().isNotEmpty;
+  }
+
+  Future<void> _onBack() async {
+    // Allow stepping back through prior screens within the same lesson.
+    if (_currentScreenIndex > 0) {
+      setState(() {
+        _currentScreenIndex -= 1;
+        _selectedOption = null;
+        _error = null;
+      });
+      await _loadScreen();
+      return;
+    }
+    // On the first screen — leave the lesson.
+    if (!mounted) return;
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go('/learn');
+    }
   }
 
   Future<void> _onContinue() async {
@@ -284,6 +306,19 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Ensure Android back / browser back behaves like the in-lesson back button:
+    // step back through lesson screens, and only exit the lesson at screen 0.
+    return PopScope(
+      canPop: _currentScreenIndex == 0,
+      onPopInvoked: (didPop) {
+        if (didPop) return;
+        _onBack();
+      },
+      child: _buildScaffold(context),
+    );
+  }
+
+  Widget _buildScaffold(BuildContext context) {
     if (_comingSoon) {
       final title = lessonDisplayNames[widget.lessonCode] ?? widget.lessonCode;
       return Scaffold(
@@ -337,6 +372,7 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
       appBar: HerAppBar(
         showBack: true,
         fallbackRoute: '/learn',
+        onBackPressed: _onBack,
         title: Text(lessonDisplayNames[widget.lessonCode] ?? 'Lesson', style: HLGTextStyles.labelMedium(color: HLGColors.textBody)),
         actions: [
           TextButton(
@@ -411,7 +447,21 @@ class _LessonScreen {
     final optionsRaw = json['options'];
     List<String> options = const [];
     if (optionsRaw is List) {
-      options = optionsRaw.map((e) => e.toString()).where((e) => e.trim().isNotEmpty).toList();
+      // Supabase jsonb can come back as:
+      // - List<String>
+      // - List<dynamic>
+      // - List<Map> (e.g. {label: "...", value: "..."})
+      final parsed = <String>[];
+      for (final e in optionsRaw) {
+        if (e is Map) {
+          final label = (e['label'] ?? e['text'] ?? e['value'] ?? '').toString().trim();
+          if (label.isNotEmpty) parsed.add(label);
+        } else {
+          final v = e.toString().trim();
+          if (v.isNotEmpty) parsed.add(v);
+        }
+      }
+      options = parsed;
     } else if (optionsRaw is String) {
       // Fallback in case options is stored as a comma-separated string.
       options = optionsRaw.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
@@ -570,7 +620,8 @@ class _LessonScreenScaffold extends StatelessWidget {
       );
     }
 
-    final showChoices = (screenType == 'feeling' || screenType == 'action') && options.isNotEmpty;
+    // If options were authored for this screen, render them.
+    final showChoices = options.isNotEmpty;
     final eyebrow = _screenTypeLabels[screenType] ?? screenType.toUpperCase();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
