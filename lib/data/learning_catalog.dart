@@ -8,7 +8,7 @@ import 'package:her_long_game/theme.dart';
 ///
 /// RULE: All curriculum lookups must go through this file.
 /// RULE: Only V4 lesson codes exist here — O1–O5, P1–P6, N1–N13, F1–F8, CK1–CK4.
-///       V1 codes (L0, LA, L1, LB, L2 … L10) are permanently retired.
+///       V1 codes (L0, LA, L1, LB, L2, L3 … L10) are permanently retired.
 @immutable
 class LearningCatalog {
   LearningCatalog({required this.phases, required this.modules});
@@ -32,7 +32,13 @@ class LearningCatalog {
         index: 0,
         label: 'Welcome',
         title: 'Before We Begin',
-        items: const [Lesson(code: 'O1'), Lesson(code: 'O2'), Lesson(code: 'O3'), Lesson(code: 'O4'), Lesson(code: 'O5')],
+        items: const [
+          Lesson(code: 'O1'),
+          Lesson(code: 'O2'),
+          Lesson(code: 'O3'),
+          Lesson(code: 'O4'),
+          Lesson(code: 'O5'),
+        ],
         unlockRule: unlockAlways,
       ),
 
@@ -42,7 +48,15 @@ class LearningCatalog {
         index: 1,
         label: 'Module 1',
         title: 'The Past',
-        items: const [Lesson(code: 'P1'), Lesson(code: 'P2'), Lesson(code: 'P3'), Lesson(code: 'P4'), Lesson(code: 'P5'), Lesson(code: 'P6'), Lesson(code: 'CK1', isCheckpoint: true)],
+        items: const [
+          Lesson(code: 'P1'),
+          Lesson(code: 'P2'),
+          Lesson(code: 'P3'),
+          Lesson(code: 'P4'),
+          Lesson(code: 'P5'),
+          Lesson(code: 'P6'),
+          Lesson(code: 'CK1', isCheckpoint: true),
+        ],
         unlockRule: (m) => unlockIfComplete('O5', m),
       ),
 
@@ -52,7 +66,13 @@ class LearningCatalog {
         index: 2,
         label: 'Module 2',
         title: 'The Present',
-        items: const [Lesson(code: 'N1'), Lesson(code: 'N2'), Lesson(code: 'N3'), Lesson(code: 'N4'), Lesson(code: 'CK2', isCheckpoint: true)],
+        items: const [
+          Lesson(code: 'N1'),
+          Lesson(code: 'N2'),
+          Lesson(code: 'N3'),
+          Lesson(code: 'N4'),
+          Lesson(code: 'CK2', isCheckpoint: true),
+        ],
         unlockRule: (m) => unlockIfComplete('CK1', m),
       ),
 
@@ -105,10 +125,13 @@ class LearningCatalog {
         subtitle: 'Context & Curiosity',
         emotionalGoal: 'Turn confusion into context – and shame into curiosity.',
         focus:
-            'Module 1\n• Money\'s origin story\n• Women\'s role in history\n• System mechanics (1971)',
+            'Module 1\n• Permission & Identity\n• Money\'s origin story\n• Women\'s role in history\n• System mechanics (1971)',
         learnerFeels: 'Seen. Curious. Not alone.',
         fromIdentity: 'I feel behind – like I missed something everyone else learned.',
         toIdentity: 'The system has a history – and I can understand it.',
+        // Welcome module (id: '0') is NOT included here.
+        // It renders as a standalone card above the phase list in LearnPage,
+        // visible only until O5 is complete. See LearnPage build() welcome section.
         moduleIds: const ['1'],
         accentColor: HLGColors.horizonOrange,
       ),
@@ -120,7 +143,7 @@ class LearningCatalog {
         focus:
             'Modules 2 + 3\n• Inflation, pay gap, tax, credit\n• Budget, debt, super, insurance\n• HerTools activated',
         learnerFeels: 'Informed. Capable. In control.',
-        fromIdentity: 'I\'m overwhelmed – and I don\'t know what matters first.',
+        fromIdentity: 'I'm overwhelmed – and I don\'t know what matters first.',
         toIdentity: 'I can make decisions with clarity and confidence.',
         moduleIds: const ['2', '3'],
         accentColor: HLGColors.deepSage,
@@ -133,8 +156,8 @@ class LearningCatalog {
         focus:
             'Module 4 + Ongoing\n• Compound growth, ETFs, long-game goals\n• HerPath & HerWisdom',
         learnerFeels: 'Empowered. Intentional. Legacy‑minded.',
-        fromIdentity: 'I\'m trying to keep up.',
-        toIdentity: 'I\'m building a long game that outlives the moment.',
+        fromIdentity: 'I'm trying to keep up.',
+        toIdentity: 'I'm building a long game that outlives the moment.',
         moduleIds: const ['4'],
         accentColor: HLGColors.deepForest,
       ),
@@ -146,9 +169,11 @@ class LearningCatalog {
   Module getModule(String moduleId) => modules.firstWhere((m) => m.id == moduleId);
 
   Module? maybeGetModule(String moduleId) {
+    // Support both string ID ('0'..'4') and integer index as string.
     for (final m in modules) {
       if (m.id == moduleId) return m;
     }
+    // Fallback: treat moduleId as an integer index.
     final idx = int.tryParse(moduleId);
     if (idx != null && idx >= 0 && idx < modules.length) return modules[idx];
     return null;
@@ -216,7 +241,14 @@ class Phase {
 
 @immutable
 class Module {
-  const Module({required this.id, required this.index, required this.label, required this.title, required this.items, required this.unlockRule});
+  const Module({
+    required this.id,
+    required this.index,
+    required this.label,
+    required this.title,
+    required this.items,
+    required this.unlockRule,
+  });
 
   final String id;
   final int index;
