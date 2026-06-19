@@ -28,6 +28,8 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
   final LessonRepository _lessonRepo = LessonRepository();
   final UserRepository _userRepo = UserRepository();
 
+  final TextEditingController _reflectionController = TextEditingController();
+
   int _currentScreenIndex = 0;
   bool _isLoading = true;
   bool _isSaving = false;
@@ -36,12 +38,24 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
 
   _LessonScreen? _screen;
   String? _selectedOption;
+  String _reflectionText = '';
 
   @override
   void initState() {
     super.initState();
     _currentScreenIndex = widget.initialScreenIndex;
+    _reflectionController.addListener(() {
+      final v = _reflectionController.text;
+      if (v == _reflectionText) return;
+      setState(() => _reflectionText = v);
+    });
     _loadScreen();
+  }
+
+  @override
+  void dispose() {
+    _reflectionController.dispose();
+    super.dispose();
   }
 
   @override
@@ -185,7 +199,35 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
       setState(() {
         _screen = _LessonScreen.fromJson(row!);
         _selectedOption = null;
+        _reflectionController.text = '';
+        _reflectionText = '';
       });
+
+      // Avoid a duplicated close experience.
+      // Some lesson sets include a CMS-authored `complete` screen that already
+      // reads like a "lesson complete" / "carry this" screen. Our product spec
+      // is that the structured Carry This experience lives in [LessonClosePage]
+      // (3 takeaways + notes). So we treat `complete` as an end-marker only:
+      // auto-complete the lesson and route directly to the close page without
+      // rendering the CMS complete screen.
+      final parsed = _screen;
+      if (parsed != null && parsed.screenType == 'complete') {
+        try {
+          final userId = SupabaseConfig.auth.currentUser?.id;
+          if (userId != null) {
+            await _lessonRepo.completeLesson(
+              userId: userId,
+              lessonCode: widget.lessonCode,
+              finalScreenIndex: _currentScreenIndex,
+            );
+          }
+        } catch (e) {
+          debugPrint('[LessonScreenPage] Failed to complete ${widget.lessonCode} at complete marker: $e');
+        }
+        if (!mounted) return;
+        context.pushReplacement(LessonFlow.nextRouteAfterLesson(widget.lessonCode));
+        return;
+      }
     } catch (e) {
       debugPrint(
         '[LessonScreenPage] ERROR: exception while querying lesson_screens. lessonCode=${widget.lessonCode}, currentScreenIndex=$_currentScreenIndex, error=$e',
@@ -210,13 +252,20 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
     // We intentionally *do not* gate this by screen_type, because content authors
     // may use types like "responsibility", "interaction", "your_turn", etc.
     // and we still need choices to render + be required.
-    return s.options.isNotEmpty;
+    if (s.options.isNotEmpty) return true;
+    // For free-text reflection screens, require a response.
+    if (s.screenType == 'interaction') return true;
+    return false;
   }
 
   bool get _canContinue {
     if (_isLoading || _isSaving) return false;
     if (!_requiresSelection) return true;
-    return (_selectedOption ?? '').trim().isNotEmpty;
+    final s = _screen;
+    if (s == null) return false;
+    if (s.options.isNotEmpty) return (_selectedOption ?? '').trim().isNotEmpty;
+    if (s.screenType == 'interaction') return _reflectionText.trim().isNotEmpty;
+    return true;
   }
 
   Future<void> _onBack() async {
@@ -225,6 +274,8 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
       setState(() {
         _currentScreenIndex -= 1;
         _selectedOption = null;
+        _reflectionController.text = '';
+        _reflectionText = '';
         _error = null;
       });
       await _loadScreen();
@@ -250,7 +301,10 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
       return;
     }
 
-    if (_requiresSelection && (_selectedOption == null || _selectedOption!.trim().isEmpty)) return;
+    if (_requiresSelection) {
+      if (screen.options.isNotEmpty && (_selectedOption == null || _selectedOption!.trim().isEmpty)) return;
+      if (screen.screenType == 'interaction' && _reflectionText.trim().isEmpty) return;
+    }
 
     setState(() {
       _isSaving = true;
@@ -267,6 +321,10 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
         await _userRepo.updateEmotionalBaseline(userId: userId, baseline: _selectedOption);
       } else if (screen.screenType == 'action') {
         extra['s7_response'] = _selectedOption;
+      } else if (screen.screenType == 'interaction') {
+        // Free-text reflections. If the DB schema doesn't have this column yet,
+        // LessonRepository will auto-retry by removing missing keys.
+        extra['reflection_response'] = _reflectionText.trim();
       }
 
       final isComplete = screen.screenType == 'complete';
@@ -395,12 +453,14 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
                       heading: screen.heading,
                       bodyText: screen.bodyText,
                       screenType: screen.screenType,
-                        imageUrl: screen.imageUrl,
-                        lessonCode: widget.lessonCode,
-                        toolCode: screen.toolCode,
+                      imageUrl: screen.imageUrl,
+                      lessonCode: widget.lessonCode,
+                      toolCode: screen.toolCode,
                       error: _error,
                       options: screen.options,
                       selectedOption: _selectedOption,
+                      reflectionController: _reflectionController,
+                      reflectionText: _reflectionText,
                       onSelectOption: (v) => setState(() => _selectedOption = v),
                       continueEnabled: _canContinue,
                       continueLoading: _isSaving,
@@ -489,6 +549,8 @@ class _LessonScreenScaffold extends StatelessWidget {
     required this.error,
     required this.options,
     required this.selectedOption,
+    required this.reflectionController,
+    required this.reflectionText,
     required this.onSelectOption,
     required this.continueEnabled,
     required this.continueLoading,
@@ -504,6 +566,8 @@ class _LessonScreenScaffold extends StatelessWidget {
   final String? error;
   final List<String> options;
   final String? selectedOption;
+  final TextEditingController reflectionController;
+  final String reflectionText;
   final ValueChanged<String> onSelectOption;
   final bool continueEnabled;
   final bool continueLoading;
@@ -609,7 +673,7 @@ class _LessonScreenScaffold extends StatelessWidget {
                           ),
                         )
                       : Text(
-                          'I hear that →',
+                          'Ok, Challenge me',
                           style: HLGTextStyles.body(color: HLGColors.textBody).copyWith(fontSize: 15, fontWeight: FontWeight.w600),
                         ),
                 ),
@@ -622,6 +686,7 @@ class _LessonScreenScaffold extends StatelessWidget {
 
     // If options were authored for this screen, render them.
     final showChoices = options.isNotEmpty;
+    final showFreeTextReflection = !showChoices && screenType == 'interaction';
     final eyebrow = _screenTypeLabels[screenType] ?? screenType.toUpperCase();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -730,6 +795,8 @@ class _LessonScreenScaffold extends StatelessWidget {
                 ],
                 if (showChoices) ...[
                   const SizedBox(height: AppSpacing.lg),
+                  Text('Pick one:', style: HLGTextStyles.labelMedium(color: HLGColors.textMuted)),
+                  const SizedBox(height: AppSpacing.sm),
                   // Show ALL options; do not truncate.
                   _LessonChoiceChips(
                     options: options,
@@ -737,11 +804,28 @@ class _LessonScreenScaffold extends StatelessWidget {
                     onSelected: onSelectOption,
                   ),
                 ],
+
+                if (showFreeTextReflection) ...[
+                  const SizedBox(height: AppSpacing.lg),
+                  Text('Write it down:', style: HLGTextStyles.labelMedium(color: HLGColors.textMuted)),
+                  const SizedBox(height: AppSpacing.sm),
+                  TextField(
+                    controller: reflectionController,
+                    maxLines: null,
+                    minLines: 4,
+                    textInputAction: TextInputAction.newline,
+                    style: HLGTextStyles.body(color: HLGColors.textBody),
+                    decoration: const InputDecoration(
+                      hintText: 'Type your answer…',
+                    ),
+                  ),
+                ],
                 if ((error ?? '').trim().isNotEmpty) ...[
                   const SizedBox(height: AppSpacing.lg),
                   _InlineError(text: error!),
                 ],
-                const SizedBox(height: 80),
+                // Ensure the last option/text field is never hidden behind the bottom CTA.
+                SizedBox(height: showChoices || showFreeTextReflection ? 160 : 110),
               ],
             ),
           ),
@@ -756,6 +840,15 @@ class _LessonScreenScaffold extends StatelessWidget {
               if (showChoices && (selectedOption ?? '').trim().isNotEmpty) ...[
                 Text(
                   'Selected: ${selectedOption!.trim()}',
+                  style: HLGTextStyles.labelMedium(color: HLGColors.textMuted),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 10),
+              ],
+              if (showFreeTextReflection && reflectionText.trim().isNotEmpty) ...[
+                Text(
+                  'Saved draft: ${reflectionText.trim()}',
                   style: HLGTextStyles.labelMedium(color: HLGColors.textMuted),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,

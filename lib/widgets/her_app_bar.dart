@@ -170,7 +170,7 @@ class HerLogoutIconButton extends StatelessWidget {
 class _CornerLogo extends StatelessWidget {
   const _CornerLogo();
 
-  static const String _logoAsset = 'assets/images/Her_Long_Game-01.png';
+  static const String _logoAsset = 'assets/images/Her_Long_Game-01_2.png';
 
   @override
   Widget build(BuildContext context) {
@@ -178,7 +178,7 @@ class _CornerLogo extends StatelessWidget {
       padding: const EdgeInsets.only(left: 14),
       child: Align(
         alignment: Alignment.centerLeft,
-        child: Image.asset(_logoAsset, height: 22, fit: BoxFit.contain),
+        child: Image.asset(_logoAsset, height: 24, fit: BoxFit.contain),
       ),
     );
   }

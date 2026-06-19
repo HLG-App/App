@@ -22,12 +22,23 @@ class LessonBodyRenderer extends StatelessWidget {
 
   const LessonBodyRenderer({super.key, required this.bodyText, this.screenType});
 
+  static String _normalizeSpoilerLineBreaks(String input) {
+    // If lesson content contains an inline "Spoiler" clause, force it to start on a
+    // new paragraph line for readability.
+    // Example: "... journey. Spoiler: ..." -> "... journey.\n\nSpoiler: ..."
+    return input.replaceAllMapped(
+      RegExp(r'([^\n])\s+(Spoiler\b)', caseSensitive: false),
+      (m) => '${m.group(1)}\n\n${m.group(2)}',
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    final lastSentence = bodyText.split('. ').last.trim();
+    final normalized = _normalizeSpoilerLineBreaks(bodyText);
+    final lastSentence = normalized.split('. ').last.trim();
     final emphasizeLastSentence = (screenType ?? '').toLowerCase() == 'mirror' && lastSentence.isNotEmpty;
-    final blocks = _parseBlocks(bodyText);
+    final blocks = _parseBlocks(normalized);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 80),
@@ -184,7 +195,8 @@ class IntroLessonBodyRenderer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final blocks = bodyText.split(RegExp(r'\n\n+')).map((e) => e.trim()).where((e) => e.isNotEmpty).toList(growable: false);
+    final normalized = LessonBodyRenderer._normalizeSpoilerLineBreaks(bodyText);
+    final blocks = normalized.split(RegExp(r'\n\n+')).map((e) => e.trim()).where((e) => e.isNotEmpty).toList(growable: false);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -264,11 +276,27 @@ class _BodyBlockWidget extends StatelessWidget {
   final String lastSentence;
   const _BodyBlockWidget({required this.block, required this.emphasizeLastSentence, required this.lastSentence});
 
+  static const String _finalLandingQuote =
+      'It is a technology that was invented designed and its controlled by people.';
+
+  static const Set<String> _finalLandingLines = {
+    'The tools existed.',
+    'Women were locked out of owning them.',
+  };
+
+  static String _normalizeWhitespace(String s) => s.replaceAll(RegExp(r'\s+'), ' ').trim();
+
   static final RegExp _termRegex = RegExp(r'\*\*([^*]+)\*\*');
   static final RegExp _refRegex = RegExp(r'\{\{([^}]+)\}\}');
 
   @override
   Widget build(BuildContext context) {
+    final normalizedBlock = _normalizeWhitespace(block.text);
+
+    if (normalizedBlock == _normalizeWhitespace(_finalLandingQuote) ||
+        _finalLandingLines.any((l) => normalizedBlock == _normalizeWhitespace(l))) {
+      return FinalLandingQuoteCallout(text: block.text);
+    }
     if (block.kind == _BodyBlockKind.definitionOrList) {
       return _DefinitionOrListBlock(text: block.text, isDefinition: block.isDefinition);
     }
@@ -392,6 +420,50 @@ class _BodyBlockWidget extends StatelessWidget {
     }
     if (cursor < text.length) out.add(TextSpan(text: text.substring(cursor), style: plainStyle));
     return out;
+  }
+}
+
+/// A "final landing" callout used when a lesson ends on a key reframing line.
+///
+/// This is intentionally editorial (Playfair italic) and centered, so the point
+/// lands as a standalone thought.
+class FinalLandingQuoteCallout extends StatelessWidget {
+  const FinalLandingQuoteCallout({super.key, required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8, bottom: 8),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+        decoration: BoxDecoration(
+          color: HLGColors.warmCream,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: HLGColors.sageTint),
+          boxShadow: [
+            BoxShadow(
+              color: HLGColors.deepSage.withValues(alpha: 0.06),
+              blurRadius: 18,
+              offset: const Offset(0, 6),
+            )
+          ],
+        ),
+        child: Text(
+          text.trim(),
+          textAlign: TextAlign.center,
+          style: GoogleFonts.playfairDisplay(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            fontStyle: FontStyle.italic,
+            height: 1.35,
+            color: HLGColors.textBody,
+          ),
+        ),
+      ),
+    );
   }
 }
 

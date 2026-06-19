@@ -435,12 +435,8 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
                                   ),
                                   children: [
                                     const TextSpan(
-                                      text: 'The money lessons women were never taught.',
-                                      style: TextStyle(
-                                        fontStyle: FontStyle.italic,
-                                        fontWeight: FontWeight.w600,
-                                        color: HLGColors.deepSage,
-                                      ),
+                                      text: 'The money lessons women were never taught. But are expected to use everyday.',
+                                      style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.w600, color: HLGColors.deepSage),
                                     ),
                                   ],
                                 ),

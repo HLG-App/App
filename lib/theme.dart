@@ -31,7 +31,7 @@ extension TextStyleExtensions on TextStyle {
 
 /// Her Long Game brand colors.
 ///
-/// Source of truth: `DESIGN.md` (v5.0, 2026-06-17).
+/// Source of truth: `design.md` (v5.1, 2026-06-19).
 class HLGColors {
   // Primary
   static const Color deepSage = Color(0xFF5C7A62); // Primary · CTAs · Key UI
@@ -70,7 +70,7 @@ class HLGColors {
 
 /// Her Long Game typography.
 ///
-/// Source of truth: `DESIGN.md` (Typography v5.0).
+/// Source of truth: `design.md` (Typography v5.1).
 class HLGTextStyles {
   // Playfair Display — emotion
   static TextStyle h1Display({Color? color}) => GoogleFonts.playfairDisplay(
@@ -322,7 +322,9 @@ class AppTheme {
         filled: true,
         fillColor: HLGColors.creamWarm,
         hintStyle: HLGTextStyles.body(color: HLGColors.textMuted),
-        labelStyle: HLGTextStyles.labelMedium(color: HLGColors.textMuted),
+        // Spec: Sage Mid fails AA on cream; labels must remain readable.
+        // Keep Sage Mid for placeholders only.
+        labelStyle: HLGTextStyles.labelMedium(color: HLGColors.textBody),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.sm), borderSide: BorderSide(color: HLGColors.deepSage.withValues(alpha: 0.35), width: 1.5)),
         enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.sm), borderSide: BorderSide(color: HLGColors.deepSage.withValues(alpha: 0.35), width: 1.5)),
         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.sm), borderSide: const BorderSide(color: HLGColors.deepSage, width: 1.5)),

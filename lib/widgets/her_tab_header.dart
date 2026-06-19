@@ -41,6 +41,35 @@ class HerTabHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (tabLabel != null && tabLabel!.trim().isNotEmpty) ...[
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Her',
+                  style: GoogleFonts.playfairDisplay(
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w600,
+                    color: HLGColors.textBody,
+                    height: 1.0,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  tabLabel!.toUpperCase(),
+                  style: GoogleFonts.dmSans(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 2.2,
+                    color: HLGColors.crownGold,
+                    height: 1.0,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+          ],
           Text(
             title,
             style: GoogleFonts.playfairDisplay(
