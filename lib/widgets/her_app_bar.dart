@@ -55,7 +55,17 @@ class HerAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final titleWidget = title ?? (titleText == null ? const SizedBox.shrink() : Text(titleText!));
+    final defaultTitleStyle = Theme.of(context).textTheme.titleMedium;
+    final titleWidget = title ??
+        (titleText == null
+            ? const SizedBox.shrink()
+            : Text(
+                titleText!,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                softWrap: false,
+                style: defaultTitleStyle,
+              ));
 
     // The app uses Cream as the dominant surface. Only a small number of
     // screens should ever place AppBar text on a dark panel.
@@ -67,9 +77,11 @@ class HerAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: backgroundColor,
       surfaceTintColor: surfaceTintColor ?? Colors.transparent,
       automaticallyImplyLeading: false,
-      centerTitle: centerTitle,
+      centerTitle: centerTitle ?? false,
+      titleSpacing: 0,
       toolbarHeight: toolbarHeight,
-      leadingWidth: showBack ? 132 : 72,
+      // Leave enough room for the back button + horizontal wordmark.
+      leadingWidth: showBack ? 168 : 92,
       leading: showBack ? _BackAndLogo(fallbackRoute: fallbackRoute, backButtonColor: backButtonColor, onPressed: onBackPressed) : const _CornerLogo(),
       title: DefaultTextStyle(style: Theme.of(context).textTheme.titleMedium?.copyWith(color: titleColor) ?? TextStyle(color: titleColor), child: titleWidget),
       actions: actions,
@@ -171,6 +183,8 @@ class _CornerLogo extends StatelessWidget {
   const _CornerLogo();
 
   static const String _logoAsset = 'assets/images/Her_Long_Game-01_2.png';
+  static const double _logoHeight = 24;
+  static const double _logoWidth = 70;
 
   @override
   Widget build(BuildContext context) {
@@ -178,7 +192,12 @@ class _CornerLogo extends StatelessWidget {
       padding: const EdgeInsets.only(left: 14),
       child: Align(
         alignment: Alignment.centerLeft,
-        child: Image.asset(_logoAsset, height: 24, fit: BoxFit.contain),
+        // Give the wordmark a stable width so it can’t be rendered as a thin
+        // clipped strip when constraints get tight (seen on some lesson screens).
+        child: SizedBox(
+          width: _logoWidth,
+          child: Image.asset(_logoAsset, height: _logoHeight, fit: BoxFit.contain),
+        ),
       ),
     );
   }
@@ -199,8 +218,11 @@ class _BackAndLogo extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           AppBackButton(color: backButtonColor ?? HLGColors.textBody, fallbackRoute: fallbackRoute, onPressed: onPressed),
-          const SizedBox(width: 6),
-          Image.asset(_CornerLogo._logoAsset, height: 20, fit: BoxFit.contain),
+          const SizedBox(width: 8),
+          SizedBox(
+            width: _CornerLogo._logoWidth,
+            child: Image.asset(_CornerLogo._logoAsset, height: 20, fit: BoxFit.contain),
+          ),
         ],
       ),
     );

@@ -21,6 +21,7 @@ class _LessonClosePageState extends State<LessonClosePage> {
   bool _loading = true;
   String? _bullet1, _bullet2, _bullet3, _quote;
   String? _herNotesPrompt;
+  bool _hasCloseContent = false;
   String _noteText = '';
   String _passItOnText = '';
   bool _nameToggle = false;
@@ -75,6 +76,8 @@ class _LessonClosePageState extends State<LessonClosePage> {
           .eq('screen_type', 'complete')
           .maybeSingle();
 
+      debugPrint('[LessonClosePage] complete screen row for ${widget.lessonCode}: $screen');
+
       if (!mounted) return;
       setState(() {
         _bullet1 = screen?['takeaway_bullet_1'];
@@ -82,6 +85,10 @@ class _LessonClosePageState extends State<LessonClosePage> {
         _bullet3 = screen?['takeaway_bullet_3'];
         _quote = screen?['takeaway_quote'];
         _herNotesPrompt = screen?['her_notes_prompt'];
+        final bullets = [_bullet1, _bullet2, _bullet3].whereType<String>().map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+        final hasNotesPrompt = (_herNotesPrompt ?? '').trim().isNotEmpty;
+        // Consider "content" present if we have any authored takeaways or a notes prompt.
+        _hasCloseContent = bullets.isNotEmpty || hasNotesPrompt;
         _loading = false;
       });
 
@@ -198,6 +205,14 @@ class _LessonClosePageState extends State<LessonClosePage> {
       );
     }
 
+    if (!_hasCloseContent) {
+      debugPrint(
+        '[LessonClosePage] Missing close content for lesson=${widget.lessonCode}. '
+        'bullets=(${_bullet1?.trim().isNotEmpty == true}, ${_bullet2?.trim().isNotEmpty == true}, ${_bullet3?.trim().isNotEmpty == true}), '
+        'prompt="${(_herNotesPrompt ?? '').trim()}"',
+      );
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFFF7F5F0),
       appBar: HerAppBar(
@@ -213,12 +228,18 @@ class _LessonClosePageState extends State<LessonClosePage> {
               padding: const EdgeInsets.fromLTRB(24, 32, 24, 100),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildThreeThingsToCarry(),
-                  _buildPassedOnWidget(),
-                  _buildHerNotes(),
-                  _buildPassItOn(),
-                ],
+                children: _hasCloseContent
+                    ? [
+                        _buildThreeThingsToCarry(),
+                        _buildPassedOnWidget(),
+                        _buildHerNotes(),
+                        _buildPassItOn(),
+                      ]
+                    : [
+                        _MissingCloseContentCard(lessonCode: widget.lessonCode, onBackToLesson: _onBackToLesson),
+                        const SizedBox(height: 16),
+                        _buildPassedOnWidget(),
+                      ],
               ),
             ),
             Positioned(bottom: 0, left: 0, right: 0, child: _buildContinueButton()),
@@ -531,5 +552,61 @@ class _LessonClosePageState extends State<LessonClosePage> {
   @override
   void dispose() {
     super.dispose();
+  }
+}
+
+class _MissingCloseContentCard extends StatelessWidget {
+  const _MissingCloseContentCard({required this.lessonCode, required this.onBackToLesson});
+
+  final String lessonCode;
+  final VoidCallback onBackToLesson;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEDE0D4),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFF5C7A62).withValues(alpha: 0.18)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.auto_awesome_rounded, color: Color(0xFF5C7A62), size: 18),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'We’re polishing this close screen',
+                  style: GoogleFonts.playfairDisplay(fontSize: 18, fontStyle: FontStyle.italic, color: const Color(0xFF161E17)),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'You’ve completed $lessonCode, but the “Three things to carry” content isn’t available yet. You can hop back to review the lesson, or continue to what’s next.',
+            style: GoogleFonts.dmSans(fontSize: 14, color: const Color(0xFF2A3A2C), height: 1.6),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            height: 44,
+            child: OutlinedButton.icon(
+              onPressed: onBackToLesson,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(0xFF5C7A62),
+                side: BorderSide(color: const Color(0xFF5C7A62).withValues(alpha: 0.35)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+              ),
+              icon: const Icon(Icons.arrow_back_rounded, color: Color(0xFF5C7A62), size: 18),
+              label: Text('Back to the lesson', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.w600)),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

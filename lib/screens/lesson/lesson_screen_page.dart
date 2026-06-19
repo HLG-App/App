@@ -297,6 +297,10 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
     final screen = _screen;
     if (screen == null) return;
 
+    debugPrint(
+      '[LessonScreenPage] Continue tapped lesson=${widget.lessonCode} index=$_currentScreenIndex type=${screen.screenType} options=${screen.options.length} selected=${_selectedOption != null} reflectionLen=${_reflectionText.trim().length}',
+    );
+
     final userId = SupabaseConfig.auth.currentUser?.id;
     if (userId == null) {
       if (!mounted) return;
@@ -305,8 +309,18 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
     }
 
     if (_requiresSelection) {
-      if (screen.options.isNotEmpty && (_selectedOption == null || _selectedOption!.trim().isEmpty)) return;
-      if (screen.screenType == 'interaction' && _reflectionText.trim().isEmpty) return;
+      if (screen.options.isNotEmpty && (_selectedOption == null || _selectedOption!.trim().isEmpty)) {
+        debugPrint('[LessonScreenPage] Blocked: option required but none selected');
+        if (mounted) setState(() => _error = 'Please choose one option to continue.');
+        return;
+      }
+      // Some interaction screens are multiple-choice (options) and should not
+      // be blocked by an empty free-text field.
+      if (screen.screenType == 'interaction' && screen.options.isEmpty && _reflectionText.trim().isEmpty) {
+        debugPrint('[LessonScreenPage] Blocked: reflection text required but empty');
+        if (mounted) setState(() => _error = 'Please add a short response to continue.');
+        return;
+      }
     }
 
     setState(() {
@@ -325,9 +339,13 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
       } else if (screen.screenType == 'action') {
         extra['s7_response'] = _selectedOption;
       } else if (screen.screenType == 'interaction') {
-        // Free-text reflections. If the DB schema doesn't have this column yet,
-        // LessonRepository will auto-retry by removing missing keys.
-        extra['reflection_response'] = _reflectionText.trim();
+        // Interaction can be either free-text OR multiple-choice.
+        // Only persist free-text when this screen actually uses it.
+        if (screen.options.isEmpty) {
+          // If the DB schema doesn't have this column yet,
+          // LessonRepository will auto-retry by removing missing keys.
+          extra['reflection_response'] = _reflectionText.trim();
+        }
       }
 
       final isComplete = screen.screenType == 'complete';
@@ -358,7 +376,7 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
       });
       await _loadScreen();
     } catch (e) {
-      debugPrint('Failed to continue lesson screen: $e');
+      debugPrint('[LessonScreenPage] Failed to continue lesson screen: $e');
       setState(() => _error = 'Something went wrong. Please try again.');
     } finally {
       if (mounted) setState(() => _isSaving = false);

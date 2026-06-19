@@ -134,7 +134,7 @@ class FounderNoteContent extends StatelessWidget {
         const SizedBox(height: 20),
         const _FounderNotePullQuote(
           text:
-              'Honestly, not my worst investment. But still, the poor woman at checkout did not have the tools I am about to give you. The ones that help you see the true cost of the thing you absolutely do not need, but suddenly believe will transform your life after two glasses of shiraz.',
+              'Honestly, not my worst investment. But still, the poor guy on Facebook Marketplace did not have the tools I am about to give you. The ones that help you see the true cost of the thing you absolutely do not need, but suddenly believe will transform your life after two glasses of shiraz.',
         ),
         const SizedBox(height: 20),
         Text(
