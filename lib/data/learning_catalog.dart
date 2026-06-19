@@ -143,7 +143,7 @@ class LearningCatalog {
         focus:
             'Modules 2 + 3\n• Inflation, pay gap, tax, credit\n• Budget, debt, super, insurance\n• HerTools activated',
         learnerFeels: 'Informed. Capable. In control.',
-        fromIdentity: 'I'm overwhelmed – and I don\'t know what matters first.',
+        fromIdentity: 'I\'m overwhelmed – and I don\'t know what matters first.',
         toIdentity: 'I can make decisions with clarity and confidence.',
         moduleIds: const ['2', '3'],
         accentColor: HLGColors.deepSage,
@@ -156,8 +156,8 @@ class LearningCatalog {
         focus:
             'Module 4 + Ongoing\n• Compound growth, ETFs, long-game goals\n• HerPath & HerWisdom',
         learnerFeels: 'Empowered. Intentional. Legacy‑minded.',
-        fromIdentity: 'I'm trying to keep up.',
-        toIdentity: 'I'm building a long game that outlives the moment.',
+        fromIdentity: 'I\'m trying to keep up.',
+        toIdentity: 'I\'m building a long game that outlives the moment.',
         moduleIds: const ['4'],
         accentColor: HLGColors.deepForest,
       ),
