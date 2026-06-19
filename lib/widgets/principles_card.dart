@@ -4,7 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:her_long_game/theme.dart';
 
 class PrinciplesCard extends StatelessWidget {
-  const PrinciplesCard({super.key});
+  const PrinciplesCard({super.key, this.compact = false});
+
+  /// When true, renders a slim display-only teaser (no full 10-item list).
+  /// Tapping still navigates to the full `/principles` page.
+  final bool compact;
 
   static const List<String> _principles = [
     'The system was not built for you.',
@@ -24,6 +28,68 @@ class PrinciplesCard extends StatelessWidget {
     final Color warmCream = HLGColors.warmCream;
     final Color crownGold = HLGColors.crownGold;
     final Color midSage = HLGColors.midSage;
+
+    if (compact) {
+      return GestureDetector(
+        onTap: () => context.push('/principles'),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+          decoration: BoxDecoration(
+            color: warmCream,
+            borderRadius: BorderRadius.circular(14),
+            border: Border(left: BorderSide(color: crownGold, width: 3)),
+            boxShadow: [
+              BoxShadow(
+                color: HLGColors.midSage.withValues(alpha: 0.08),
+                blurRadius: 12,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'THE TEN PRINCIPLES',
+                      style: GoogleFonts.dmSans(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w600,
+                        color: crownGold,
+                        letterSpacing: 2.0,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'The foundations Her Long Game is built on.',
+                      style: GoogleFonts.playfairDisplay(
+                        fontSize: 15,
+                        fontStyle: FontStyle.italic,
+                        color: HLGColors.night,
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Tap to read · 3 min',
+                      style: GoogleFonts.dmSans(
+                        fontSize: 12,
+                        color: midSage,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Icon(Icons.chevron_right, color: crownGold, size: 22),
+            ],
+          ),
+        ),
+      );
+    }
 
     return GestureDetector(
       onTap: () => context.push('/principles'),

@@ -44,8 +44,8 @@ class LessonFlowController {
   /// (starting with 'L') is returned.
   String firstLessonInModule(String moduleId) {
     final module = LearningCatalog.instance.maybeGetModule(moduleId);
-    if (module == null) return 'LA';
-    return module.items.isNotEmpty ? module.items.first.code : 'LA';
+    if (module == null) return 'O1';
+    return module.items.isNotEmpty ? module.items.first.code : 'O1';
   }
 
   /// Determine the next route after a lesson completes.

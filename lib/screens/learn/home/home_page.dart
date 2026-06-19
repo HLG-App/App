@@ -11,7 +11,10 @@ import 'package:her_long_game/utils/lesson_flow.dart';
 import 'package:her_long_game/supabase/supabase_config.dart';
 import 'package:her_long_game/theme.dart';
 import 'package:her_long_game/widgets/her_app_bar.dart';
+import 'package:her_long_game/widgets/founder_note_card.dart';
+import 'package:her_long_game/widgets/her_tab_header.dart';
 import 'package:her_long_game/widgets/principles_card.dart';
+import 'package:her_long_game/widgets/welcome_module_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -71,6 +74,8 @@ class _HomePageState extends State<HomePage> {
   String? _error;
   _NextLesson? _next;
   bool _hasStartedLongGame = false;
+  int _welcomeCompleted = 0;
+  static const List<String> _welcomeCodes = ['O1', 'O2', 'O3', 'O4', 'O5'];
   final Map<String, String> _displayNameByCode = {};
 
   List<Map<String, dynamic>> _goalsSnapshot = const [];
@@ -143,6 +148,7 @@ class _HomePageState extends State<HomePage> {
 
       // "Started" = any lesson has been marked in_progress or complete.
       final hasStarted = progressByCode.values.any((s) => s == 'in_progress' || s == 'complete');
+      final welcomeDone = _welcomeCodes.where((c) => progressByCode[c] == 'complete').length;
 
       _NextLesson? next;
       next = _computeNextFromProgress(progressByCode);
@@ -167,6 +173,7 @@ class _HomePageState extends State<HomePage> {
         _isLoading = false;
         _next = next;
         _hasStartedLongGame = hasStarted;
+        _welcomeCompleted = welcomeDone;
       });
     } catch (e) {
       debugPrint('[HomePage] Failed to load next lesson: $e');
@@ -201,7 +208,23 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(height: 10),
+                  const HerTabHeader(
+                    tabLabel: 'HOME',
+                    title: 'Welcome back',
+                    subtitle: 'Pick up where you left off — small steps, long game.',
+                  ),
+                  const SizedBox(height: 6),
+                  if (!_isLoading && _welcomeCompleted < _welcomeCodes.length) ...[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: WelcomeModuleCard(
+                        completed: _welcomeCompleted,
+                        total: _welcomeCodes.length,
+                        dense: true,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
                   _NextLessonSection(
                     isLoading: _isLoading,
                     error: _error,
@@ -215,9 +238,13 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 8),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: PrinciplesCard(),
+                    child: PrinciplesCard(compact: true),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: FounderNoteCard(),
+                  ),
                   const SizedBox(height: 24),
                 ],
               ),

@@ -6,6 +6,8 @@ import 'package:her_long_game/theme.dart';
 import 'package:her_long_game/supabase/supabase_config.dart';
 import 'package:her_long_game/data/repositories/lesson_repository.dart';
 import 'package:her_long_game/widgets/her_app_bar.dart';
+import 'package:her_long_game/widgets/her_tab_header.dart';
+import 'package:her_long_game/widgets/welcome_module_card.dart';
 
 class LearnPage extends StatefulWidget {
   const LearnPage({super.key});
@@ -142,29 +144,50 @@ class _LearnPageState extends State<LearnPage> {
 
   bool _isComplete(String lessonCode) => _statusByLessonCode[lessonCode] == 'complete';
 
+  static const List<String> _welcomeCodes = ['O1', 'O2', 'O3', 'O4', 'O5'];
+
   @override
   Widget build(BuildContext context) {
     final phases = LearningCatalog.instance.phases;
+    final welcomeCompleted = _welcomeCodes.where(_isComplete).length;
+    final welcomeDone = welcomeCompleted >= _welcomeCodes.length;
 
     return Scaffold(
+      backgroundColor: HLGColors.warmCream,
       appBar: HerAppBar(
-        title: Text('Learn', style: HLGTextStyles.labelMedium(color: HLGColors.textBody)),
-          actions: [
-            IconButton(onPressed: _isLoading ? null : _loadProgress, icon: const Icon(Icons.refresh, color: HLGColors.textBody), tooltip: 'Refresh'),
-            const HerLogoutIconButton(),
-          ],
+        actions: [
+          IconButton(onPressed: _isLoading ? null : _loadProgress, icon: const Icon(Icons.refresh, color: HLGColors.textBody), tooltip: 'Refresh'),
+          const HerLogoutIconButton(),
+        ],
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 18, 24, 24),
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _error != null
-              ? _LearnErrorState(message: _error!, onRetry: _loadProgress)
-              : ListView.separated(
-                  itemCount: phases.length,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const HerTabHeader(
+              tabLabel: 'LEARN',
+              title: 'Your path',
+              subtitle: 'Past, Present, Future — one lesson at a time.',
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 14, 24, 24),
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : _error != null
+                    ? _LearnErrorState(message: _error!, onRetry: _loadProgress)
+                    : ListView.separated(
+                  itemCount: phases.length + (welcomeDone ? 0 : 1),
                   separatorBuilder: (_, __) => const SizedBox(height: 14),
-                  itemBuilder: (context, index) {
+                  itemBuilder: (context, rawIndex) {
+                    final hasWelcome = !welcomeDone;
+                    if (hasWelcome && rawIndex == 0) {
+                      return WelcomeModuleCard(
+                        completed: welcomeCompleted,
+                        total: _welcomeCodes.length,
+                      );
+                    }
+                    final index = hasWelcome ? rawIndex - 1 : rawIndex;
                     final phase = phases[index];
                     final modules = [
                       for (final id in phase.moduleIds)
@@ -192,6 +215,9 @@ class _LearnPageState extends State<LearnPage> {
                     );
                   },
                 ),
+              ),
+            ),
+          ],
         ),
       ),
     );

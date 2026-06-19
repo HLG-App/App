@@ -6,6 +6,7 @@ import 'package:her_long_game/data/repositories/lesson_repository.dart';
 import 'package:her_long_game/theme.dart';
 import 'package:her_long_game/utils/lesson_flow.dart';
 import 'package:her_long_game/widgets/her_app_bar.dart';
+import 'package:her_long_game/widgets/her_tab_header.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -80,11 +81,21 @@ class _ProfilePageState extends State<ProfilePage> {
     final progress = (_lessonsTotal <= 0) ? 0.0 : (_lessonsCompleted / _lessonsTotal).clamp(0.0, 1.0);
     return Scaffold(
       backgroundColor: HLGColors.warmCream,
-      appBar: HerAppBar(title: Text('Profile', style: HLGTextStyles.labelMedium(color: HLGColors.textBody)), actions: const [HerLogoutIconButton()]),
+      appBar: const HerAppBar(actions: [HerLogoutIconButton()]),
       body: SafeArea(
         child: ListView(
-          padding: AppSpacing.paddingLg,
+          padding: EdgeInsets.zero,
           children: [
+            const HerTabHeader(
+              tabLabel: 'PROFILE',
+              title: 'Your account',
+              subtitle: 'Settings, learning progress, and what you\'ve saved.',
+            ),
+            Padding(
+              padding: AppSpacing.paddingLg,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
             Text('Account', style: HLGTextStyles.lessonHeading(color: HLGColors.night)),
             const SizedBox(height: 10),
             _ProfileMenuCard(
@@ -154,7 +165,9 @@ class _ProfilePageState extends State<ProfilePage> {
               subtitle: 'Invite a friend and share your code.',
               onTap: () => context.push('/profile/referral'),
             ),
-
+                ],
+              ),
+            ),
           ],
         ),
       ),

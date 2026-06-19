@@ -435,15 +435,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
                                   ),
                                   children: [
                                     const TextSpan(
-                                      text: 'Looking for financial advice? ',
-                                      style: TextStyle(fontStyle: FontStyle.normal),
-                                    ),
-                                    const TextSpan(
-                                      text: "HLG isn't for that. ",
-                                      style: TextStyle(fontStyle: FontStyle.italic),
-                                    ),
-                                    const TextSpan(
-                                      text: '\nWe provide the clarity, tools, and language to decide for yourself.',
+                                      text: 'The money lessons women were never taught.',
                                       style: TextStyle(
                                         fontStyle: FontStyle.italic,
                                         fontWeight: FontWeight.w600,

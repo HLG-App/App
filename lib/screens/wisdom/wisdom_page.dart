@@ -7,6 +7,7 @@ import 'package:her_long_game/supabase/supabase_config.dart';
 import 'package:her_long_game/theme.dart';
 import 'package:her_long_game/widgets/founder_note_card.dart';
 import 'package:her_long_game/widgets/her_app_bar.dart';
+import 'package:her_long_game/widgets/her_tab_header.dart';
 import 'package:her_long_game/widgets/principles_card.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -129,50 +130,17 @@ class _WisdomPageState extends State<WisdomPage> {
 
     return Scaffold(
       backgroundColor: HLGColors.warmCream,
-      appBar: HerAppBar(title: Text('Wisdom', style: HLGTextStyles.labelMedium(color: HLGColors.textBody)), actions: const [HerLogoutIconButton()]),
+      appBar: const HerAppBar(actions: [HerLogoutIconButton()]),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.only(bottom: 80),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // HEADER
-              const SizedBox(height: 12),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      textBaseline: TextBaseline.alphabetic,
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      children: [
-                        Text(
-                          'Her ',
-                          style: GoogleFonts.playfairDisplay(fontSize: 22, fontStyle: FontStyle.italic, color: HLGColors.horizonOrange),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 1),
-                          child: Text(
-                            'Long Game',
-                            style: GoogleFonts.dmSans(fontSize: 11, color: HLGColors.night, letterSpacing: 6.0),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Wisdom',
-                      style: GoogleFonts.playfairDisplay(fontSize: 32, fontStyle: FontStyle.italic, color: HLGColors.night),
-                    ),
-                    Container(
-                      height: 4,
-                      width: double.infinity,
-                      margin: const EdgeInsets.symmetric(vertical: 20),
-                      color: HLGColors.crownGold,
-                    ),
-                  ],
-                ),
+              const HerTabHeader(
+                tabLabel: 'WISDOM',
+                title: 'Truths worth carrying',
+                subtitle: 'Founder notes, principles, and voices from women on the same path.',
               ),
 
               if (_isLoading)

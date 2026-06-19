@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:her_long_game/flow/lesson_entry_repository.dart';
+import 'package:her_long_game/nav.dart';
 
 /// Centralizes the logic for entering a lesson.
 ///
@@ -18,6 +19,15 @@ class LessonEntryController {
     try {
       final hasScreens = await _repo.lessonHasAnyScreens(lessonCode: lessonCode);
       if (!hasScreens) {
+        // Onboarding lesson codes (O1–O5) are treated as part of the in-app
+        // onboarding flow. If Supabase content isn't authored yet, we should
+        // route the user into the dedicated onboarding screens rather than
+        // presenting a “Coming soon” lesson that feels like a dead end.
+        if (lessonCode.startsWith('O')) {
+          debugPrint('[LessonEntryController] No screens for onboarding $lessonCode; routing to welcome onboarding.');
+          return AppRoutes.welcome;
+        }
+
         // IMPORTANT:
         // Skipping forward creates a “dead end” UX when the curriculum expects
         // a lesson to exist (e.g., L0) but the DB isn’t populated yet.
