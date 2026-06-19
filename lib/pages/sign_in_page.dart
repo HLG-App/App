@@ -79,6 +79,11 @@ class _SignInPageState extends State<SignInPage> {
                       Text('Welcome back', style: context.textStyles.titleLarge?.copyWith(color: cs.onSurface).semiBold),
                       const SizedBox(height: AppSpacing.sm),
                       Text('Sign in to continue.', style: context.textStyles.bodyMedium?.copyWith(color: cs.onSurfaceVariant)),
+                      const SizedBox(height: AppSpacing.sm),
+                      Text(
+                        'The money lessons women were never taught. But are expected to use everyday.',
+                        style: context.textStyles.bodyMedium?.copyWith(color: cs.onSurfaceVariant, fontStyle: FontStyle.italic, height: 1.5),
+                      ),
                       const SizedBox(height: AppSpacing.xl),
                       TextField(
                         controller: _emailController,

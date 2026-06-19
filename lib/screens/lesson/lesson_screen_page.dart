@@ -196,27 +196,23 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
         return;
       }
 
-      setState(() {
-        _screen = _LessonScreen.fromJson(row!);
-        _selectedOption = null;
-        _reflectionController.text = '';
-        _reflectionText = '';
-      });
-
       // Avoid a duplicated close experience.
-      // Some lesson sets include a CMS-authored `complete` screen that already
-      // reads like a "lesson complete" / "carry this" screen. Our product spec
-      // is that the structured Carry This experience lives in [LessonClosePage]
-      // (3 takeaways + notes). So we treat `complete` as an end-marker only:
-      // auto-complete the lesson and route directly to the close page without
-      // rendering the CMS complete screen.
-      final parsed = _screen;
-      if (parsed != null && parsed.screenType == 'complete') {
+      // Some lesson sets include a CMS-authored `complete` screen that ONLY
+      // contains placeholder text like "Lesson complete." with a Continue
+      // button. Our product spec is that the structured Carry This experience
+      // lives in [LessonClosePage] (3 takeaways + notes). So we treat
+      // `complete` as an end-marker only: auto-complete the lesson and route
+      // directly to the close page WITHOUT ever setting `_screen` (which
+      // would otherwise cause the CMS complete screen to render for a frame
+      // and let the user tap its Continue button — creating the duplicate
+      // "Carry this / Lesson complete." screen reported in QA).
+      final parsedType = (row['screen_type'] ?? '').toString().trim().toLowerCase();
+      if (parsedType == 'complete') {
         try {
-          final userId = SupabaseConfig.auth.currentUser?.id;
-          if (userId != null) {
+          final completeUserId = SupabaseConfig.auth.currentUser?.id;
+          if (completeUserId != null) {
             await _lessonRepo.completeLesson(
-              userId: userId,
+              userId: completeUserId,
               lessonCode: widget.lessonCode,
               finalScreenIndex: _currentScreenIndex,
             );
@@ -228,6 +224,13 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
         context.pushReplacement(LessonFlow.nextRouteAfterLesson(widget.lessonCode));
         return;
       }
+
+      setState(() {
+        _screen = _LessonScreen.fromJson(row!);
+        _selectedOption = null;
+        _reflectionController.text = '';
+        _reflectionText = '';
+      });
     } catch (e) {
       debugPrint(
         '[LessonScreenPage] ERROR: exception while querying lesson_screens. lessonCode=${widget.lessonCode}, currentScreenIndex=$_currentScreenIndex, error=$e',
