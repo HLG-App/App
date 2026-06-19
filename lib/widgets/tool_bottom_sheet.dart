@@ -15,6 +15,7 @@ import 'tools/fortress_widget.dart';
 import 'tools/super_warp_widget.dart';
 import 'tools/inflation_thief_widget.dart';
 import 'tools/bubble_index_widget.dart';
+import 'tools/portrait_builder_widget.dart';
 
 /// Central routing bottom sheet for all "What If" tools.
 ///
@@ -52,6 +53,7 @@ class ToolBottomSheet extends StatelessWidget {
       'T5': 'Emergency Fund Fortress',
       'T6': 'Super Time Warp',
       'T7': 'Invisible Invoice',
+      'T8': 'Your Portrait',
     };
     return names[toolCode] ?? toolCode;
   }
@@ -145,7 +147,7 @@ class ToolBottomSheet extends StatelessWidget {
         linkedTool: toolCode,
       );
 
-      // 2) Create a supportive, practical “Her Direction” summary item.
+      // 2) Create a supportive, practical "Her Direction" summary item.
       // We store it in `her_notes` with a dedicated prompt so it can be rendered
       // as an actionable feed inside the Her pillar (and hidden from Her Notes).
       final summary = _buildHerGoalSummary(toolCode: toolCode, goalLabel: goalLabel);
@@ -313,6 +315,14 @@ class ToolBottomSheet extends StatelessWidget {
           onSave: (outputs) => _saveToolState(context, <String, dynamic>{}, outputs),
           onAddGoal: (label) => _addGoal(context, label),
         );
+      // T8: Portrait Builder — requires the `generate_portrait` Supabase Edge Function.
+      // Deploy supabase/functions/generate_portrait/ before activating this tool
+      // in lesson_screens (set tool_code = 'T8' on F8 action screen).
+      case 'T8':
+        return PortraitBuilderWidget(
+          onSave: (outputs) => _saveToolState(context, <String, dynamic>{}, outputs),
+          onAddGoal: (label) => _addGoal(context, label),
+        );
       default:
         return Center(
           child: Padding(
@@ -335,56 +345,56 @@ class ToolBottomSheet extends StatelessWidget {
   }
 
   _HerGoalSummary _buildHerGoalSummary({required String toolCode, required String goalLabel}) {
-    // Simple, clarity-first heuristics. The goal is “supportive and practical”,
+    // Simple, clarity-first heuristics. The goal is "supportive and practical",
     // not clever.
     switch (toolCode) {
       case 'T5':
         return const _HerGoalSummary(
-          meaning: 'You’re building stability: a buffer that turns surprises into admin – not emergencies.',
+          meaning: 'You\u2019re building stability: a buffer that turns surprises into admin \u2013 not emergencies.',
           nextStep: 'Pick a target (1 month to start) and schedule one automatic transfer today.',
           longGameLink: 'This is the foundation that makes every other long game move feel safer.',
         );
       case 'T4':
         return const _HerGoalSummary(
-          meaning: 'You’re choosing time back: paying down debt reduces pressure and restores options.',
+          meaning: 'You\u2019re choosing time back: paying down debt reduces pressure and restores options.',
           nextStep: 'Choose one payoff method (snowball or avalanche) and set a weekly payment you can repeat.',
           longGameLink: 'Less debt = more bandwidth to invest, negotiate, and plan longer.',
         );
       case 'T2':
         return const _HerGoalSummary(
-          meaning: 'You’re increasing earning power – the lever that accelerates everything else.',
+          meaning: 'You\u2019re increasing earning power \u2013 the lever that accelerates everything else.',
           nextStep: 'Book one action: prepare your case, update your market benchmarks, or schedule the conversation.',
           longGameLink: 'Higher income widens your choices: saving, investing, and freedom timelines.',
         );
       case 'T6':
         return const _HerGoalSummary(
-          meaning: 'You’re prioritising starting over perfection – momentum beats waiting for certainty.',
-          nextStep: 'Set the smallest “I will do this monthly” amount and automate it now.',
+          meaning: 'You\u2019re prioritising starting over perfection \u2013 momentum beats waiting for certainty.',
+          nextStep: 'Set the smallest "I will do this monthly" amount and automate it now.',
           longGameLink: 'Compounding rewards consistency. The point is to start and stay in the game.',
         );
       case 'T3':
       case 'T3b':
         return const _HerGoalSummary(
-          meaning: 'You’re turning a habit into a long-term win – redirecting small choices into future outcomes.',
+          meaning: 'You\u2019re turning a habit into a long-term win \u2013 redirecting small choices into future outcomes.',
           nextStep: 'Pick one habit to redirect and set a simple rule you can follow this week.',
           longGameLink: 'This is how the long game is built: repeated, small, honest choices.',
         );
       case 'T7':
         return const _HerGoalSummary(
-          meaning: 'You’re surfacing hidden costs – the money that leaks quietly is the easiest to reclaim.',
-          nextStep: 'Find one subscription or “default spend” to pause or renegotiate in the next 48 hours.',
+          meaning: 'You\u2019re surfacing hidden costs \u2013 the money that leaks quietly is the easiest to reclaim.',
+          nextStep: 'Find one subscription or "default spend" to pause or renegotiate in the next 48 hours.',
           longGameLink: 'Less leakage = more room for savings, investing, and calm.',
         );
       case 'T1':
       case 'T0':
         return const _HerGoalSummary(
-          meaning: 'You’re making your plan realistic – protecting buying power and keeping progress honest.',
+          meaning: 'You\u2019re making your plan realistic \u2013 protecting buying power and keeping progress honest.',
           nextStep: 'Choose one number to track monthly (expenses, savings rate, or investing contribution).',
           longGameLink: 'Reality-based planning prevents quiet drift and keeps you moving forward.',
         );
       default:
         return _HerGoalSummary(
-          meaning: 'This goal is a decision to pay attention – and build momentum from where you are.',
+          meaning: 'This goal is a decision to pay attention \u2013 and build momentum from where you are.',
           nextStep: 'Define the next smallest action you can take in the next 7 days.',
           longGameLink: 'The long game is built through repeatable actions, not perfect plans.',
         );

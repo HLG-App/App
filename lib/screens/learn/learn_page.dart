@@ -6,8 +6,6 @@ import 'package:her_long_game/theme.dart';
 import 'package:her_long_game/supabase/supabase_config.dart';
 import 'package:her_long_game/data/repositories/lesson_repository.dart';
 import 'package:her_long_game/widgets/her_app_bar.dart';
-import 'package:her_long_game/widgets/her_tab_header.dart';
-import 'package:her_long_game/widgets/welcome_module_card.dart';
 
 class LearnPage extends StatefulWidget {
   const LearnPage({super.key});
@@ -59,8 +57,8 @@ class _LearnPageState extends State<LearnPage> {
         final code = (r['lesson_code'] ?? '').toString();
         if (code.isEmpty) continue;
         counts[code] = (counts[code] ?? 0) + 1;
-            }
-    
+      }
+
       debugPrint('');
       debugPrint('========== Curriculum Completeness (Supabase lesson_screens) ==========');
       int missingTotal = 0;
@@ -73,7 +71,7 @@ class _LearnPageState extends State<LearnPage> {
           final c = counts[code] ?? 0;
           final missing = c == 0;
           if (missing) missingTotal++;
-          debugPrint('  • $code: ${missing ? 'MISSING' : '$c screen row(s)'}');
+          debugPrint('  \u2022 $code: ${missing ? 'MISSING' : '$c screen row(s)'}');
         }
       }
 
@@ -112,8 +110,8 @@ class _LearnPageState extends State<LearnPage> {
         for (final r in phaseRows) {
           final id = int.tryParse((r['phase_id'] ?? '').toString());
           if (id != null) seen.add(id);
-                }
-            } catch (e) {
+        }
+      } catch (e) {
         debugPrint('[LearnPage] phase_progress not available yet: $e');
       }
 
@@ -144,80 +142,70 @@ class _LearnPageState extends State<LearnPage> {
 
   bool _isComplete(String lessonCode) => _statusByLessonCode[lessonCode] == 'complete';
 
-  static const List<String> _welcomeCodes = ['O1', 'O2', 'O3', 'O4', 'O5'];
+  Widget _buildPhaseCard(BuildContext context, Phase phase) {
+    final modules = [
+      for (final id in phase.moduleIds)
+        ...[LearningCatalog.instance.maybeGetModule(id)].whereType<Module>(),
+    ];
+    final lessonCodes = [for (final m in modules) for (final item in m.items) item.code];
+    final completed = lessonCodes.where(_isComplete).length;
+    final total = lessonCodes.length;
+    final percent = total == 0 ? 0.0 : completed / total;
+    final unlocked = modules.isEmpty ? false : modules.first.unlockRule(_statusByLessonCode);
+    final started = completed > 0;
+    final seen = _seenPhaseIds.contains(phase.id);
+
+    return PhaseCard(
+      phase: phase,
+      completed: completed,
+      total: total,
+      progress: percent,
+      unlocked: unlocked,
+      started: started,
+      seen: seen,
+      // Use an absolute push for reliability under ShellRoute.
+      onTap: unlocked ? () => context.push('/learn/phase/${phase.id}') : null,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final phases = LearningCatalog.instance.phases;
-    final welcomeCompleted = _welcomeCodes.where(_isComplete).length;
-    final welcomeDone = welcomeCompleted >= _welcomeCodes.length;
 
     return Scaffold(
-      backgroundColor: HLGColors.warmCream,
       appBar: HerAppBar(
+        title: Text('Learn', style: HLGTextStyles.labelMedium(color: HLGColors.textBody)),
         actions: [
           IconButton(onPressed: _isLoading ? null : _loadProgress, icon: const Icon(Icons.refresh, color: HLGColors.textBody), tooltip: 'Refresh'),
           const HerLogoutIconButton(),
         ],
       ),
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const HerTabHeader(
-              tabLabel: 'LEARN',
-              title: 'Your path',
-              subtitle: 'Past, Present, Future — one lesson at a time.',
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 14, 24, 24),
-                child: _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : _error != null
-                    ? _LearnErrorState(message: _error!, onRetry: _loadProgress)
-                    : ListView.separated(
-                  itemCount: phases.length + (welcomeDone ? 0 : 1),
-                  separatorBuilder: (_, __) => const SizedBox(height: 14),
-                  itemBuilder: (context, rawIndex) {
-                    final hasWelcome = !welcomeDone;
-                    if (hasWelcome && rawIndex == 0) {
-                      return WelcomeModuleCard(
-                        completed: welcomeCompleted,
-                        total: _welcomeCodes.length,
-                      );
-                    }
-                    final index = hasWelcome ? rawIndex - 1 : rawIndex;
-                    final phase = phases[index];
-                    final modules = [
-                      for (final id in phase.moduleIds)
-                        ...[LearningCatalog.instance.maybeGetModule(id)].whereType<Module>(),
-                    ];
-                    final lessonCodes = [for (final m in modules) for (final item in m.items) item.code];
-                    final completed = lessonCodes.where(_isComplete).length;
-                    final total = lessonCodes.length;
-                    final percent = total == 0 ? 0.0 : completed / total;
-
-                    final unlocked = modules.isEmpty ? false : modules.first.unlockRule(_statusByLessonCode);
-                    final started = completed > 0;
-                    final seen = _seenPhaseIds.contains(phase.id);
-
-                    return PhaseCard(
-                      phase: phase,
-                      completed: completed,
-                      total: total,
-                      progress: percent,
-                      unlocked: unlocked,
-                      started: started,
-                      seen: seen,
-                      // Use an absolute push for reliability under ShellRoute.
-                      onTap: unlocked ? () => context.push('/learn/phase/${phase.id}') : null,
-                    );
-                  },
-                ),
-              ),
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 18, 24, 24),
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _error != null
+                  ? _LearnErrorState(message: _error!, onRetry: _loadProgress)
+                  : ListView(
+                      children: [
+                        // Welcome module (O1\u2013O5) sits above phases until O5 is complete.
+                        // Once O5 is done it disappears \u2014 user is inside the real modules.
+                        if (!(_statusByLessonCode['O5'] == 'complete') &&
+                            LearningCatalog.instance.maybeGetModule('0') != null) ...[
+                          _WelcomeCard(
+                            module: LearningCatalog.instance.maybeGetModule('0')!,
+                            statusByLessonCode: _statusByLessonCode,
+                            onTap: () => context.push('/learn/module/0'),
+                          ),
+                          const SizedBox(height: 14),
+                        ],
+                        for (var i = 0; i < phases.length; i++) ...[
+                          _buildPhaseCard(context, phases[i]),
+                          if (i < phases.length - 1) const SizedBox(height: 14),
+                        ],
+                      ],
+                    ),
         ),
       ),
     );
@@ -297,6 +285,86 @@ class PhaseCard extends StatelessWidget {
     );
 
     return unlocked ? card : Opacity(opacity: 0.55, child: card);
+  }
+}
+
+/// Standalone card shown above the phase list in LearnPage until O5 is complete.
+///
+/// The Welcome module (O1\u2013O5) is NOT part of any phase. It is onboarding \u2014
+/// always unlocked, always first, disappears once the user finishes it.
+class _WelcomeCard extends StatelessWidget {
+  const _WelcomeCard({
+    required this.module,
+    required this.statusByLessonCode,
+    required this.onTap,
+  });
+
+  final Module module;
+  final Map<String, String> statusByLessonCode;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final lessonCodes = [for (final item in module.items) item.code];
+    final completed = lessonCodes.where((c) => statusByLessonCode[c] == 'complete').length;
+    final total = lessonCodes.length;
+    final progress = total == 0 ? 0.0 : completed / total;
+    final started = completed > 0;
+
+    final baseChild = Padding(
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text('BEFORE WE BEGIN', style: HLGTextStyles.eyebrowAllCaps(color: HLGColors.horizonOrange)),
+              ),
+              if (started && completed < total)
+                const Icon(Icons.fiber_new_rounded, color: HLGColors.horizonOrange, size: 18),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text('Start here', style: HLGTextStyles.moduleTitle(color: HLGColors.textBody)),
+          const SizedBox(height: 10),
+          Text(
+            'Five short lessons to set the scene before your long game begins.',
+            style: HLGTextStyles.labelMedium(color: HLGColors.textBody),
+          ),
+          const SizedBox(height: 12),
+          Text('$completed of $total', style: HLGTextStyles.labelMedium(color: HLGColors.textMuted)),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 8,
+              backgroundColor: HLGColors.creamWarm,
+              valueColor: const AlwaysStoppedAnimation<Color>(HLGColors.horizonOrange),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: Material(
+        color: started ? HLGColors.petal : HLGColors.warmCream,
+        child: InkWell(
+          onTap: onTap,
+          overlayColor: WidgetStatePropertyAll(HLGColors.horizonOrange.withValues(alpha: 0.08)),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              border: Border.all(color: HLGColors.horizonOrange.withValues(alpha: 0.55), width: 1.2),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: baseChild,
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -397,5 +465,3 @@ class ModuleCard extends StatelessWidget {
     return unlocked ? card : Opacity(opacity: 0.55, child: card);
   }
 }
-
-

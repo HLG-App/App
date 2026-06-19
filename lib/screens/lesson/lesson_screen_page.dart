@@ -203,7 +203,13 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
     context.go(next);
   }
 
-  bool get _requiresSelection => _screen?.screenType == 'feeling' || _screen?.screenType == 'action';
+  bool get _requiresSelection {
+    final s = _screen;
+    if (s == null) return false;
+    // Only require a selection when there are actually options to pick from.
+    if (s.options.isEmpty) return false;
+    return s.screenType == 'feeling' || s.screenType == 'action';
+  }
 
   bool get _canContinue {
     if (_isLoading || _isSaving) return false;
@@ -564,7 +570,7 @@ class _LessonScreenScaffold extends StatelessWidget {
       );
     }
 
-    final showChoices = screenType == 'feeling' || screenType == 'action';
+    final showChoices = (screenType == 'feeling' || screenType == 'action') && options.isNotEmpty;
     final eyebrow = _screenTypeLabels[screenType] ?? screenType.toUpperCase();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -733,18 +739,22 @@ class _LessonChoiceChips extends StatelessWidget {
   Widget build(BuildContext context) {
     // Use full-width “pill” rows (instead of wrap chips) so long options like
     // “Frustrated …” never truncate.
+    if (options.isEmpty) return const SizedBox.shrink();
+    final children = <Widget>[];
+    for (var i = 0; i < options.length; i++) {
+      final opt = options[i];
+      children.add(_LessonOptionPill(
+        label: opt,
+        selected: selected == opt,
+        onTap: () => onSelected(opt),
+      ));
+      if (i < options.length - 1) {
+        children.add(const SizedBox(height: AppSpacing.sm));
+      }
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        for (final opt in options) ...[
-          _LessonOptionPill(
-            label: opt,
-            selected: selected == opt,
-            onTap: () => onSelected(opt),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-        ],
-      ]..removeLast(),
+      children: children,
     );
   }
 }

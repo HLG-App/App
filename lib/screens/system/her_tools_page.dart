@@ -18,7 +18,7 @@ class HerToolsPage extends StatelessWidget {
       code: 'T0',
       functionalTitle: 'Inflation Reality Check Tool',
       brandedName: 'The Bubble O\' Bill Index',
-      bringsToAttention: 'Whether your gains are real – or just keeping up with rising prices.',
+      bringsToAttention: 'Whether your gains are real \u2013 or just keeping up with rising prices.',
       category: _ToolCategory.growth,
       icon: Icons.trending_up_rounded,
     ),
@@ -42,7 +42,7 @@ class HerToolsPage extends StatelessWidget {
       code: 'T3',
       functionalTitle: 'Habit Compounding Tool',
       brandedName: 'Coffee Shop Time Machine',
-      bringsToAttention: 'How small habits compound over time – and what they become instead.',
+      bringsToAttention: 'How small habits compound over time \u2013 and what they become instead.',
       category: _ToolCategory.spending,
       icon: Icons.timelapse_rounded,
     ),
@@ -50,7 +50,7 @@ class HerToolsPage extends StatelessWidget {
       code: 'T3b',
       functionalTitle: 'Compounding Curve Tool',
       brandedName: 'The Curve',
-      bringsToAttention: 'Momentum – when you\'re flat, and when you\'re finally compounding.',
+      bringsToAttention: 'Momentum \u2013 when you\'re flat, and when you\'re finally compounding.',
       category: _ToolCategory.growth,
       icon: Icons.show_chart_rounded,
     ),
@@ -58,7 +58,7 @@ class HerToolsPage extends StatelessWidget {
       code: 'T4',
       functionalTitle: 'Debt Payoff Strategy Tool',
       brandedName: 'Debt Race',
-      bringsToAttention: 'Which payoff strategy wins – and how much time/interest you save.',
+      bringsToAttention: 'Which payoff strategy wins \u2013 and how much time/interest you save.',
       category: _ToolCategory.debt,
       icon: Icons.flag_rounded,
     ),
@@ -74,7 +74,7 @@ class HerToolsPage extends StatelessWidget {
       code: 'T5',
       functionalTitle: 'Emergency Fund Sizing Tool',
       brandedName: 'Emergency Fund Fortress',
-      bringsToAttention: 'Your runway – how safe you are if income dips, and what covers you.',
+      bringsToAttention: 'Your runway \u2013 how safe you are if income dips, and what covers you.',
       category: _ToolCategory.security,
       icon: Icons.shield_rounded,
     ),
@@ -82,7 +82,7 @@ class HerToolsPage extends StatelessWidget {
       code: 'T6',
       functionalTitle: 'Start Now vs Wait Tool',
       brandedName: 'Super Time Warp',
-      bringsToAttention: 'The cost of waiting – and the difference a small start makes.',
+      bringsToAttention: 'The cost of waiting \u2013 and the difference a small start makes.',
       category: _ToolCategory.security,
       icon: Icons.hourglass_bottom_rounded,
     ),
@@ -93,6 +93,15 @@ class HerToolsPage extends StatelessWidget {
       bringsToAttention: 'The hidden costs you\'re already paying (without noticing).',
       category: _ToolCategory.clarity,
       icon: Icons.visibility_off_rounded,
+    ),
+    // T8 requires the `generate_portrait` Edge Function \u2014 activate after deployment.
+    _ToolEntry(
+      code: 'T8',
+      functionalTitle: 'Financial Life Portrait Tool',
+      brandedName: 'Your Portrait',
+      bringsToAttention: 'What your financial life needs to look like \u2014 built entirely around yours.',
+      category: _ToolCategory.growth,
+      icon: Icons.person_outline_rounded,
     ),
   ];
 
@@ -109,7 +118,7 @@ class HerToolsPage extends StatelessWidget {
     ),
     _ToolsSection(
       title: 'Stability & protection',
-      subtitle: 'Build buffers so one surprise doesn’t undo momentum.',
+      subtitle: 'Build buffers so one surprise doesn\u2019t undo momentum.',
       categoryOrder: [_ToolCategory.security],
     ),
     _ToolsSection(
@@ -192,7 +201,7 @@ class _ToolsIntroCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Tools – in one place', style: HLGTextStyles.moduleTitle(color: HLGColors.night)),
+                Text('Tools \u2013 in one place', style: HLGTextStyles.moduleTitle(color: HLGColors.night)),
                 const SizedBox(height: 4),
                 Text('These are the same tools you see inside lessons, surfaced here for quick access.', style: HLGTextStyles.homeBody14(color: HLGColors.textMuted)),
               ],
