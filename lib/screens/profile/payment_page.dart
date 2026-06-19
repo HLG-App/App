@@ -24,16 +24,16 @@ class PaymentPage extends StatelessWidget {
             decoration: BoxDecoration(
               color: HLGColors.petal,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.5)),
+              border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.5)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Billing & plan', style: HLGTextStyles.lessonHeading(color: HLGColors.night)),
+                Text('Billing & plan', style: HLGTextStyles.lessonHeading(color: HLGColors.textBody)),
                 const SizedBox(height: 8),
                 Text(
                   'This area is where you’ll manage your subscription, billing, and payment method.',
-                  style: HLGTextStyles.body(color: HLGColors.midSage),
+                  style: HLGTextStyles.body(color: HLGColors.sageMid),
                 ),
                 const SizedBox(height: 14),
                 Container(
@@ -41,7 +41,7 @@ class PaymentPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: HLGColors.warmCream,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.35)),
+                    border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.35)),
                   ),
                   child: Row(
                     children: [

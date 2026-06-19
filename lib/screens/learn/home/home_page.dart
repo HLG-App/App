@@ -318,7 +318,7 @@ class _NextLessonSection extends StatelessWidget {
       if (error != null) {
         return Padding(
           padding: const EdgeInsets.all(20),
-          child: Text(error!, style: HLGTextStyles.body(color: HLGColors.midSage)),
+          child: Text(error!, style: HLGTextStyles.body(color: HLGColors.sageMid)),
         );
       }
 
@@ -361,7 +361,7 @@ class _NextLessonSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('UP NEXT', style: HLGTextStyles.eyebrowAllCaps(color: HLGColors.midSage)),
+            Text('UP NEXT', style: HLGTextStyles.eyebrowAllCaps(color: HLGColors.sageMid)),
             const SizedBox(height: 12),
              if (microLabel != null && microLabel.trim().isNotEmpty) ...[
                Container(
@@ -381,12 +381,12 @@ class _NextLessonSection extends StatelessWidget {
              ],
             Text(
               isCheckpoint ? 'Checkpoint ${next!.code.substring(2)}' : titleFor(next!.code),
-              style: HLGTextStyles.moduleTitle(color: HLGColors.night),
+              style: HLGTextStyles.moduleTitle(color: HLGColors.textBody),
             ),
             const SizedBox(height: 8),
             Text(
               isCheckpoint ? 'Quick reset' : (minutes == null ? '' : '$minutes min'),
-              style: HLGTextStyles.homeMeta13(color: HLGColors.midSage),
+              style: HLGTextStyles.homeMeta13(color: HLGColors.sageMid),
             ),
             const SizedBox(height: 16),
             SizedBox(
@@ -444,7 +444,7 @@ class _GoalsSnapshotSection extends StatelessWidget {
               Expanded(child: Text('THIS WEEK', style: HLGTextStyles.eyebrowAllCaps(color: HLGColors.horizonOrange))),
               GestureDetector(
                 onTap: () => context.push(AppRoutes.direction),
-                child: Text('See all →', style: GoogleFonts.dmSans(fontSize: 12, color: HLGColors.midSage)),
+                child: Text('See all →', style: GoogleFonts.dmSans(fontSize: 12, color: HLGColors.sageMid)),
               ),
             ],
           ),
@@ -459,7 +459,7 @@ class _GoalsSnapshotSection extends StatelessWidget {
                     height: 20,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: HLGColors.midSage, width: 1.5),
+                      border: Border.all(color: HLGColors.sageMid, width: 1.5),
                     ),
                   ),
                   const SizedBox(width: 10),

@@ -159,7 +159,7 @@ class LearningCatalog {
         fromIdentity: 'I\'m trying to keep up.',
         toIdentity: 'I\'m building a long game that outlives the moment.',
         moduleIds: const ['4'],
-        accentColor: HLGColors.deepForest,
+        accentColor: HLGColors.deepSage,
       ),
     ];
 

@@ -47,7 +47,7 @@ class HerTabHeader extends StatelessWidget {
               fontSize: 30,
               fontStyle: FontStyle.italic,
               fontWeight: FontWeight.w600,
-              color: HLGColors.night,
+              color: HLGColors.textBody,
               height: 1.15,
             ),
           ),

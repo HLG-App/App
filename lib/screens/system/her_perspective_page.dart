@@ -132,14 +132,14 @@ class _PerspectiveIntro extends StatelessWidget {
       decoration: BoxDecoration(
         color: HLGColors.sagePale,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.35)),
+        border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.35)),
       ),
       child: Row(
         children: [
           Container(
             height: 44,
             width: 44,
-            decoration: BoxDecoration(color: HLGColors.warmCream, borderRadius: BorderRadius.circular(14), border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.25))),
+            decoration: BoxDecoration(color: HLGColors.warmCream, borderRadius: BorderRadius.circular(14), border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.25))),
             child: const Icon(Icons.people_outline_rounded, color: HLGColors.deepSage),
           ),
           const SizedBox(width: 12),
@@ -147,7 +147,7 @@ class _PerspectiveIntro extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Notes women chose to pass on', style: HLGTextStyles.moduleTitle(color: HLGColors.night)),
+                Text('Notes women chose to pass on', style: HLGTextStyles.moduleTitle(color: HLGColors.textBody)),
                 const SizedBox(height: 4),
                 Text('Shared reflections, lessons, and lived experience – in their own words.', style: HLGTextStyles.homeBody14(color: HLGColors.textMuted)),
               ],
@@ -174,7 +174,7 @@ class _PerspectiveCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: tint,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.45)),
+        border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.45)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,7 +194,7 @@ class _PerspectiveCard extends StatelessWidget {
             const SizedBox(height: 10),
             Align(
               alignment: Alignment.centerRight,
-              child: Text('– ${firstName!.trim()}', style: HLGTextStyles.labelMedium(color: HLGColors.midSage)),
+              child: Text('– ${firstName!.trim()}', style: HLGTextStyles.labelMedium(color: HLGColors.sageMid)),
             ),
           ],
         ],
@@ -213,7 +213,7 @@ class _PerspectiveEmpty extends StatelessWidget {
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-        decoration: BoxDecoration(color: HLGColors.petal, borderRadius: BorderRadius.circular(AppRadius.lg), border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.35))),
+        decoration: BoxDecoration(color: HLGColors.petal, borderRadius: BorderRadius.circular(AppRadius.lg), border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.35))),
         child: Row(
           children: [
             Container(height: 40, width: 40, decoration: BoxDecoration(color: HLGColors.sagePale, borderRadius: BorderRadius.circular(14)), child: const Icon(Icons.forum_outlined, color: HLGColors.deepSage)),

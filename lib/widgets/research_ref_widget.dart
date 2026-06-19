@@ -15,7 +15,7 @@ class ResearchRefWidget extends StatelessWidget {
   static const Color _crownGold = HLGColors.crownGold;
   static const Color _warmCream = HLGColors.warmCream;
   static const Color _night = HLGColors.textBody;
-  static const Color _midSage = HLGColors.midSage;
+  static const Color _midSage = HLGColors.sageMid;
   static const Color _textBody = HLGColors.textBody;
 
   void _showSheet(BuildContext context) {

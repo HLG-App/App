@@ -41,12 +41,12 @@ class FounderNoteCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 'I am definitely not here to tell you to manifest wealth while journalling beside a beige candle.',
-                style: GoogleFonts.playfairDisplay(fontSize: 18, fontStyle: FontStyle.italic, color: HLGColors.night, height: 1.5),
+                style: GoogleFonts.playfairDisplay(fontSize: 18, fontStyle: FontStyle.italic, color: HLGColors.textBody, height: 1.5),
               ),
               const SizedBox(height: 12),
               Text(
                 'Tamara, Founder · Her Long Game',
-                style: GoogleFonts.dmSans(fontSize: 12, color: HLGColors.midSage),
+                style: GoogleFonts.dmSans(fontSize: 12, color: HLGColors.sageMid),
               ),
               const SizedBox(height: 16),
               Row(
@@ -77,7 +77,7 @@ class FounderNoteBottomSheet extends StatelessWidget {
     return Container(
       height: h * 0.92,
       decoration: const BoxDecoration(
-        color: HLGColors.night,
+        color: HLGColors.textBody,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
@@ -87,7 +87,7 @@ class FounderNoteBottomSheet extends StatelessWidget {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: HLGColors.midSage.withValues(alpha: 0.4),
+              color: HLGColors.sageMid.withValues(alpha: 0.4),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -103,7 +103,7 @@ class FounderNoteBottomSheet extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () => context.pop(),
-                  icon: const Icon(Icons.close_rounded, color: HLGColors.midSage),
+                  icon: const Icon(Icons.close_rounded, color: HLGColors.sageMid),
                   iconSize: 20,
                 ),
               ],

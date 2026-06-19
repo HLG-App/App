@@ -377,7 +377,7 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
         actions: [
           TextButton(
             onPressed: () => context.go('/home'),
-            style: TextButton.styleFrom(foregroundColor: HLGColors.midSage, textStyle: HLGTextStyles.labelMedium(color: HLGColors.midSage), padding: const EdgeInsets.symmetric(horizontal: 12)),
+            style: TextButton.styleFrom(foregroundColor: HLGColors.sageMid, textStyle: HLGTextStyles.labelMedium(color: HLGColors.sageMid), padding: const EdgeInsets.symmetric(horizontal: 12)),
             child: const Text('Exit'),
           ),
           const SizedBox(width: 4),
@@ -550,7 +550,7 @@ class _LessonScreenScaffold extends StatelessWidget {
     if (screenType == 'intro') {
       return Container(
         // Premium dark intro surface; keep ink reserved for text.
-        color: HLGColors.deepForest,
+        color: HLGColors.deepSage,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -595,8 +595,8 @@ class _LessonScreenScaffold extends StatelessWidget {
                   style: FilledButton.styleFrom(
                     backgroundColor: HLGColors.crownGold,
                     disabledBackgroundColor: HLGColors.crownGold.withValues(alpha: 0.35),
-                    foregroundColor: HLGColors.night,
-                    disabledForegroundColor: HLGColors.night.withValues(alpha: 0.6),
+                    foregroundColor: HLGColors.textBody,
+                    disabledForegroundColor: HLGColors.textBody.withValues(alpha: 0.6),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
                   ),
                   child: continueLoading
@@ -605,12 +605,12 @@ class _LessonScreenScaffold extends StatelessWidget {
                           width: 18,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(HLGColors.night.withValues(alpha: 0.8)),
+                            valueColor: AlwaysStoppedAnimation<Color>(HLGColors.textBody.withValues(alpha: 0.8)),
                           ),
                         )
                       : Text(
                           'I hear that →',
-                          style: HLGTextStyles.body(color: HLGColors.night).copyWith(fontSize: 15, fontWeight: FontWeight.w600),
+                          style: HLGTextStyles.body(color: HLGColors.textBody).copyWith(fontSize: 15, fontWeight: FontWeight.w600),
                         ),
                 ),
               ),
@@ -664,7 +664,7 @@ class _LessonScreenScaffold extends StatelessWidget {
                                   color: HLGColors.sagePale,
                                   alignment: Alignment.center,
                                   padding: const EdgeInsets.all(12),
-                                  child: Icon(Icons.image_not_supported_outlined, color: HLGColors.midSage.withValues(alpha: 0.7)),
+                                   child: Icon(Icons.image_not_supported_outlined, color: HLGColors.sageMid.withValues(alpha: 0.7)),
                                 );
                               },
                             );
@@ -680,7 +680,7 @@ class _LessonScreenScaffold extends StatelessWidget {
                                 color: HLGColors.sagePale,
                                 alignment: Alignment.center,
                                 padding: const EdgeInsets.all(12),
-                                child: Icon(Icons.image_not_supported_outlined, color: HLGColors.midSage.withValues(alpha: 0.7)),
+                                 child: Icon(Icons.image_not_supported_outlined, color: HLGColors.sageMid.withValues(alpha: 0.7)),
                               );
                             },
                           );
@@ -692,45 +692,47 @@ class _LessonScreenScaffold extends StatelessWidget {
                 ],
                 Text(
                   heading,
-                  style: HLGTextStyles.h3SubheadItalic(color: HLGColors.night).copyWith(fontSize: 26, height: 1.3),
+                  style: HLGTextStyles.h3SubheadItalic(color: HLGColors.textBody).copyWith(fontSize: 26, height: 1.3),
                 ),
                 const SizedBox(height: 20),
                 if (showChoices)
                   Text(bodyText, style: HLGTextStyles.body(color: HLGColors.textBody).copyWith(height: 1.7))
                 else
                   LessonBodyRenderer(bodyText: bodyText),
-                if (showChoices) ...[
+                // Embedded tools: if a screen has a tool_code, always surface it.
+                // Tools are an optional helper layer and should not depend on screen_type.
+                if (toolCode != null && toolCode!.isNotEmpty) ...[
                   const SizedBox(height: AppSpacing.lg),
-                  if (screenType == 'action' && toolCode != null && toolCode!.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: 52,
-                        child: OutlinedButton.icon(
-                          onPressed: () => ToolBottomSheet.show(
-                            context,
-                            toolCode: toolCode!,
-                            lessonCode: lessonCode,
-                          ),
-                          icon: const Icon(Icons.auto_graph_rounded, color: HLGColors.horizonOrange),
-                          label: Text(
-                            'Open the tool →',
-                            style: GoogleFonts.dmSans(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: HLGColors.horizonOrange,
-                            ),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: HLGColors.horizonOrange, width: 1.5),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
-                          ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: OutlinedButton.icon(
+                      onPressed: () => ToolBottomSheet.show(
+                        context,
+                        toolCode: toolCode!,
+                        lessonCode: lessonCode,
+                      ),
+                      icon: const Icon(Icons.auto_graph_rounded, color: HLGColors.horizonOrange),
+                      label: Text(
+                        'Open the tool →',
+                        style: GoogleFonts.dmSans(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: HLGColors.horizonOrange,
                         ),
                       ),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: HLGColors.horizonOrange, width: 1.5),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+                      ),
                     ),
+                  ),
+                ],
+                if (showChoices) ...[
+                  const SizedBox(height: AppSpacing.lg),
+                  // Show ALL options; do not truncate.
                   _LessonChoiceChips(
-                    options: options.take(5).toList(),
+                    options: options,
                     selected: selectedOption,
                     onSelected: onSelectOption,
                   ),
@@ -747,31 +749,46 @@ class _LessonScreenScaffold extends StatelessWidget {
         const SizedBox(height: 12),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24).copyWith(bottom: 12),
-          child: SizedBox(
-            height: 52,
-            child: FilledButton(
-              onPressed: continueEnabled ? onContinue : null,
-              style: FilledButton.styleFrom(
-                backgroundColor: HLGColors.horizonOrange,
-                disabledBackgroundColor: HLGColors.horizonOrange.withValues(alpha: 0.35),
-                foregroundColor: HLGColors.warmCream,
-                disabledForegroundColor: HLGColors.warmCream.withValues(alpha: 0.85),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (showChoices && (selectedOption ?? '').trim().isNotEmpty) ...[
+                Text(
+                  'Selected: ${selectedOption!.trim()}',
+                  style: HLGTextStyles.labelMedium(color: HLGColors.textMuted),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 10),
+              ],
+              SizedBox(
+                height: 52,
+                child: FilledButton(
+                  onPressed: continueEnabled ? onContinue : null,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: HLGColors.horizonOrange,
+                    disabledBackgroundColor: HLGColors.horizonOrange.withValues(alpha: 0.35),
+                    foregroundColor: HLGColors.warmCream,
+                    disabledForegroundColor: HLGColors.warmCream.withValues(alpha: 0.85),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+                  ),
+                  child: continueLoading
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.4,
+                            valueColor: AlwaysStoppedAnimation<Color>(HLGColors.warmCream),
+                          ),
+                        )
+                      : Text(
+                          'Continue',
+                          style: HLGTextStyles.body(color: HLGColors.warmCream).copyWith(fontWeight: FontWeight.w500),
+                        ),
+                ),
               ),
-              child: continueLoading
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.4,
-                        valueColor: AlwaysStoppedAnimation<Color>(HLGColors.warmCream),
-                      ),
-                    )
-                  : Text(
-                      'Continue',
-                      style: HLGTextStyles.body(color: HLGColors.warmCream).copyWith(fontWeight: FontWeight.w500),
-                    ),
-            ),
+            ],
           ),
         ),
       ],
@@ -825,22 +842,22 @@ class _LessonOptionPill extends StatelessWidget {
       decoration: BoxDecoration(
         color: selected ? HLGColors.deepSage : HLGColors.petal,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: HLGColors.night.withValues(alpha: 0.08)),
+        border: Border.all(color: HLGColors.textBody.withValues(alpha: 0.08)),
       ),
       child: Material(
         type: MaterialType.transparency,
         child: InkWell(
           // No splash; just a subtle press/hover highlight.
           splashFactory: NoSplash.splashFactory,
-          highlightColor: HLGColors.night.withValues(alpha: 0.04),
-          hoverColor: HLGColors.night.withValues(alpha: 0.03),
+          highlightColor: HLGColors.textBody.withValues(alpha: 0.04),
+          hoverColor: HLGColors.textBody.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(999),
           onTap: onTap,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Text(
               label,
-              style: HLGTextStyles.body(color: selected ? HLGColors.white : HLGColors.night).copyWith(height: 1.5),
+              style: HLGTextStyles.body(color: selected ? HLGColors.white : HLGColors.textBody).copyWith(height: 1.5),
               softWrap: true,
               maxLines: null,
               overflow: TextOverflow.visible,
@@ -864,9 +881,9 @@ class _InlineError extends StatelessWidget {
       decoration: BoxDecoration(
         color: HLGColors.petal,
         borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: HLGColors.night.withValues(alpha: 0.08)),
+        border: Border.all(color: HLGColors.textBody.withValues(alpha: 0.08)),
       ),
-      child: Text(text, style: HLGTextStyles.body(color: HLGColors.night)),
+       child: Text(text, style: HLGTextStyles.body(color: HLGColors.textBody)),
     );
   }
 }
@@ -884,7 +901,7 @@ class _LessonErrorState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Couldn\'t load screen', style: HLGTextStyles.h2Section(color: HLGColors.night), textAlign: TextAlign.center),
+             Text('Couldn\'t load screen', style: HLGTextStyles.h2Section(color: HLGColors.textBody), textAlign: TextAlign.center),
             const SizedBox(height: AppSpacing.sm),
             Text(message, style: HLGTextStyles.body(color: HLGColors.textBody), textAlign: TextAlign.center),
           ],

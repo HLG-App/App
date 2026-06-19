@@ -406,7 +406,7 @@ class _CheckpointPageState extends State<CheckpointPage> {
           const SizedBox(height: 14),
           Text(
             'You have completed Module 1. The system has a history. Money is a tool. Your income is not fixed.',
-            style: HLGTextStyles.body(color: HLGColors.midSage),
+            style: HLGTextStyles.body(color: HLGColors.sageMid),
           ),
         ],
       );
@@ -419,7 +419,7 @@ class _CheckpointPageState extends State<CheckpointPage> {
         heading: 'This time, notice the pattern.',
         children: [
           if (baseline.isNotEmpty) ...[
-            Text('Your baseline:', style: HLGTextStyles.labelMedium(color: HLGColors.midSage)),
+            Text('Your baseline:', style: HLGTextStyles.labelMedium(color: HLGColors.sageMid)),
             const SizedBox(height: 10),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -444,7 +444,7 @@ class _CheckpointPageState extends State<CheckpointPage> {
             habit.isEmpty
                 ? 'If you noticed a money habit or reflex during Module 2, hold it gently. We will use it next.'
                 : 'Your current habit awareness: $habit',
-            style: HLGTextStyles.body(color: HLGColors.midSage),
+            style: HLGTextStyles.body(color: HLGColors.sageMid),
           ),
         ],
       );
@@ -456,7 +456,7 @@ class _CheckpointPageState extends State<CheckpointPage> {
         heading: 'Pause. Breathe. Look at what you did.',
         children: [
           if (baseline.isNotEmpty) ...[
-            Text('Your baseline:', style: HLGTextStyles.labelMedium(color: HLGColors.midSage)),
+            Text('Your baseline:', style: HLGTextStyles.labelMedium(color: HLGColors.sageMid)),
             const SizedBox(height: 10),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -492,7 +492,7 @@ class _CheckpointPageState extends State<CheckpointPage> {
           const SizedBox(height: 12),
           Text(
             'This checkpoint is about integration: what you will carry forward, and how you want to feel in your money from here.',
-            style: HLGTextStyles.body(color: HLGColors.midSage),
+            style: HLGTextStyles.body(color: HLGColors.sageMid),
           ),
         ],
       );
@@ -507,11 +507,11 @@ class _CheckpointPageState extends State<CheckpointPage> {
   Widget _buildScreen2() {
     InputDecoration fieldDecoration(String hint) => InputDecoration(
       hintText: hint,
-      hintStyle: HLGTextStyles.body(color: HLGColors.midSage),
+      hintStyle: HLGTextStyles.body(color: HLGColors.sageMid),
       filled: true,
       fillColor: HLGColors.petal,
       enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: HLGColors.midSage.withValues(alpha: 0.55)),
+        borderSide: BorderSide(color: HLGColors.sageMid.withValues(alpha: 0.55)),
         borderRadius: BorderRadius.circular(12),
       ),
       focusedBorder: OutlineInputBorder(
@@ -623,7 +623,7 @@ class _CheckpointPageState extends State<CheckpointPage> {
           const SizedBox(height: 10),
           Text(
             'You do not have to write anything here. Just notice the answer in your body.',
-            style: HLGTextStyles.body(color: HLGColors.midSage),
+            style: HLGTextStyles.body(color: HLGColors.sageMid),
           ),
           const SizedBox(height: 18),
           Container(
@@ -631,7 +631,7 @@ class _CheckpointPageState extends State<CheckpointPage> {
             decoration: BoxDecoration(
               color: HLGColors.petal,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.55)),
+              border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.55)),
             ),
             child: Text(
               'If you want to capture it, you can write it in Her Notes on the final screen.',
@@ -657,7 +657,7 @@ class _CheckpointPageState extends State<CheckpointPage> {
             decoration: BoxDecoration(
               color: HLGColors.petal,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.55)),
+              border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.55)),
             ),
             child: Text(
               'On the final screen, choose the feeling you want to carry forward. You can also save a note to Her Notes if you want.',
@@ -680,7 +680,7 @@ class _CheckpointPageState extends State<CheckpointPage> {
       decoration: BoxDecoration(
         color: HLGColors.petal,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.55)),
+        border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.55)),
       ),
       child: Row(
         children: [
@@ -891,13 +891,13 @@ class _CheckpointPageState extends State<CheckpointPage> {
                         });
                       },
                 labelStyle: HLGTextStyles.labelMedium(
-                  color: _forwardChip == option ? HLGColors.white : HLGColors.night,
+                  color: _forwardChip == option ? HLGColors.white : HLGColors.textBody,
                 ),
                 selectedColor: HLGColors.deepSage,
                 backgroundColor: HLGColors.petal,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
-                  side: BorderSide(color: HLGColors.midSage.withValues(alpha: 0.55)),
+                   side: BorderSide(color: HLGColors.sageMid.withValues(alpha: 0.55)),
                 ),
                 showCheckmark: false,
               ),
@@ -926,14 +926,14 @@ class _CheckpointPageState extends State<CheckpointPage> {
               fillColor: HLGColors.petal,
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(4),
-                borderSide: BorderSide(color: HLGColors.midSage.withValues(alpha: 0.55)),
+                borderSide: BorderSide(color: HLGColors.sageMid.withValues(alpha: 0.55)),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(4),
                 borderSide: const BorderSide(color: HLGColors.deepSage, width: 1.2),
               ),
               hintText: 'Write here…',
-              hintStyle: HLGTextStyles.body(color: HLGColors.midSage),
+               hintStyle: HLGTextStyles.body(color: HLGColors.sageMid),
             ),
           ),
           const SizedBox(height: 10),
@@ -1014,7 +1014,7 @@ class _CheckpointScaffold extends StatelessWidget {
                     ),
                     child: Text(
                       '${pageIndex + 1} of 4',
-                      style: HLGTextStyles.uiElement(color: HLGColors.night),
+                      style: HLGTextStyles.uiElement(color: HLGColors.textBody),
                     ),
                   ),
                   const Spacer(),
@@ -1054,9 +1054,9 @@ class _CheckpointScaffold extends StatelessWidget {
                   onPressed: isSaving ? null : onContinue,
                   style: FilledButton.styleFrom(
                     backgroundColor: isFinal ? HLGColors.petal : HLGColors.crownGold,
-                    foregroundColor: isFinal ? HLGColors.deepSage : HLGColors.night,
+                    foregroundColor: isFinal ? HLGColors.deepSage : HLGColors.textBody,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    textStyle: HLGTextStyles.homeCta15(color: isFinal ? HLGColors.deepSage : HLGColors.night),
+                    textStyle: HLGTextStyles.homeCta15(color: isFinal ? HLGColors.deepSage : HLGColors.textBody),
                   ),
                   child: isSaving
                       ? const SizedBox(
@@ -1089,7 +1089,7 @@ class _CheckpointScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(heading, style: HLGTextStyles.lessonHeading(color: HLGColors.night)),
+          Text(heading, style: HLGTextStyles.lessonHeading(color: HLGColors.textBody)),
           const SizedBox(height: 14),
           ...children,
           const SizedBox(height: 90),
@@ -1136,10 +1136,10 @@ class _CheckpointErrorState extends StatelessWidget {
             onPressed: onRetry,
             style: FilledButton.styleFrom(
               backgroundColor: HLGColors.crownGold,
-              foregroundColor: HLGColors.night,
+              foregroundColor: HLGColors.textBody,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
-            child: Text('Try again', style: HLGTextStyles.labelMedium(color: HLGColors.night)),
+            child: Text('Try again', style: HLGTextStyles.labelMedium(color: HLGColors.textBody)),
           ),
         ],
       ),

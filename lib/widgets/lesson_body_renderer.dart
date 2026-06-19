@@ -286,7 +286,7 @@ class _BodyBlockWidget extends StatelessWidget {
     }
 
     final baseStyle = block.isLead
-        ? GoogleFonts.dmSans(fontSize: 16, fontWeight: FontWeight.w500, color: HLGColors.night, height: 1.7)
+        ? GoogleFonts.dmSans(fontSize: 16, fontWeight: FontWeight.w500, color: HLGColors.textBody, height: 1.7)
         : GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w400, color: HLGColors.textBody, height: 1.7);
 
     return RichText(text: _buildRhythmSpan(block.text, baseStyle));
@@ -317,7 +317,7 @@ class _BodyBlockWidget extends StatelessWidget {
       final style = isHumour
           ? GoogleFonts.playfairDisplay(fontSize: 16, fontStyle: FontStyle.italic, color: HLGColors.deepSage, height: 1.7)
           : (isMirrorLastSentence
-              ? plainStyle.copyWith(fontWeight: FontWeight.w600, color: HLGColors.night)
+              ? plainStyle.copyWith(fontWeight: FontWeight.w600, color: HLGColors.textBody)
               : plainStyle);
 
       spans.add(_buildSpanWithMarkers(sentence, style));
@@ -411,8 +411,8 @@ class _DefinitionOrListBlock extends StatelessWidget {
       final left = parts.first.trim();
       final right = parts.skip(1).join(' – ').trim();
 
-      final leftStyle = GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w600, color: HLGColors.night, height: 1.7);
-      final dashStyle = GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w400, color: HLGColors.midSage, height: 1.7);
+      final leftStyle = GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w600, color: HLGColors.textBody, height: 1.7);
+      final dashStyle = GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w400, color: HLGColors.sageMid, height: 1.7);
       final rightStyle = GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w400, color: HLGColors.textBody, height: 1.7);
 
       return Container(

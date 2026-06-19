@@ -193,7 +193,7 @@ class _ToolsIntroCard extends StatelessWidget {
           Container(
             height: 44,
             width: 44,
-            decoration: BoxDecoration(color: HLGColors.petal, borderRadius: BorderRadius.circular(14), border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.25))),
+            decoration: BoxDecoration(color: HLGColors.petal, borderRadius: BorderRadius.circular(14), border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.25))),
             child: const Icon(Icons.auto_awesome_rounded, color: HLGColors.deepSage),
           ),
           const SizedBox(width: 12),
@@ -201,7 +201,7 @@ class _ToolsIntroCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Tools \u2013 in one place', style: HLGTextStyles.moduleTitle(color: HLGColors.night)),
+                Text('Tools \u2013 in one place', style: HLGTextStyles.moduleTitle(color: HLGColors.textBody)),
                 const SizedBox(height: 4),
                 Text('These are the same tools you see inside lessons, surfaced here for quick access.', style: HLGTextStyles.homeBody14(color: HLGColors.textMuted)),
               ],
@@ -237,7 +237,7 @@ class _ToolCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: HLGColors.sagePale,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.22)),
+                  border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.22)),
                 ),
                 child: Icon(entry.icon, color: HLGColors.deepSage),
               ),
@@ -246,7 +246,7 @@ class _ToolCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(entry.functionalTitle, style: HLGTextStyles.moduleTitle(color: HLGColors.night)),
+                    Text(entry.functionalTitle, style: HLGTextStyles.moduleTitle(color: HLGColors.textBody)),
                     const SizedBox(height: 4),
                     Text(
                       entry.brandedName,
@@ -258,7 +258,7 @@ class _ToolCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 10),
-              const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: HLGColors.midSage),
+              const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: HLGColors.sageMid),
             ],
           ),
         ),
@@ -280,7 +280,7 @@ class _ToolsSectionHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: HLGTextStyles.moduleTitle(color: HLGColors.night)),
+          Text(title, style: HLGTextStyles.moduleTitle(color: HLGColors.textBody)),
           const SizedBox(height: 4),
           Text(subtitle, style: HLGTextStyles.homeBody14(color: HLGColors.textMuted)),
         ],

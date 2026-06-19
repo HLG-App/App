@@ -30,7 +30,7 @@ class HerCheatSheet extends StatelessWidget {
                 width: 40,
                 height: 4,
                 margin: const EdgeInsets.only(bottom: 20),
-                decoration: BoxDecoration(color: HLGColors.midSage.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(2)),
+                decoration: BoxDecoration(color: HLGColors.sageMid.withValues(alpha: 0.4), borderRadius: BorderRadius.circular(2)),
               ),
             ),
             Text(
@@ -64,7 +64,7 @@ class HerCheatSheet extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     entry.cutTheCrap,
-                    style: GoogleFonts.dmSans(fontSize: 14, fontStyle: FontStyle.italic, color: HLGColors.midSage, height: 1.6),
+                    style: GoogleFonts.dmSans(fontSize: 14, fontStyle: FontStyle.italic, color: HLGColors.sageMid, height: 1.6),
                   ),
                 ],
               ),

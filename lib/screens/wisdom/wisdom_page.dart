@@ -175,7 +175,7 @@ class _WisdomPageState extends State<WisdomPage> {
                         const SizedBox(height: 8),
                         Text(
                           'Women who felt ${_baselineFirstWord(baseline!)} – and kept going.',
-                          style: GoogleFonts.dmSans(fontSize: 14, fontStyle: FontStyle.italic, color: HLGColors.midSage),
+                          style: GoogleFonts.dmSans(fontSize: 14, fontStyle: FontStyle.italic, color: HLGColors.sageMid),
                         ),
                         const SizedBox(height: 16),
                         for (final insight in section1) ...[
@@ -199,7 +199,7 @@ class _WisdomPageState extends State<WisdomPage> {
                     children: [
                       Text(
                         'WHAT WOMEN ARE SAYING',
-                        style: GoogleFonts.dmSans(fontSize: 9, letterSpacing: 6.0, color: HLGColors.midSage),
+                        style: GoogleFonts.dmSans(fontSize: 9, letterSpacing: 6.0, color: HLGColors.sageMid),
                       ),
                       const SizedBox(height: 8),
                       for (final entry in _moduleLessonCodes.entries) ...[
@@ -209,7 +209,7 @@ class _WisdomPageState extends State<WisdomPage> {
                           return <Widget>[
                             Text(
                               entry.key,
-                              style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w500, color: HLGColors.night),
+                              style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w500, color: HLGColors.textBody),
                             ),
                             const SizedBox(height: 8),
                             for (final insight in insights) ...[
@@ -236,7 +236,7 @@ class _WisdomPageState extends State<WisdomPage> {
                     children: [
                       Text(
                         'WORTH READING',
-                        style: GoogleFonts.dmSans(fontSize: 9, letterSpacing: 6.0, color: HLGColors.midSage),
+                        style: GoogleFonts.dmSans(fontSize: 9, letterSpacing: 6.0, color: HLGColors.sageMid),
                       ),
                       const SizedBox(height: 8),
                       _ReadingCard(
@@ -327,7 +327,7 @@ class _BaselineInsightCard extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: Text(
                 '– ${firstName!.trim()}',
-                style: GoogleFonts.dmSans(fontSize: 12, color: HLGColors.midSage),
+                style: GoogleFonts.dmSans(fontSize: 12, color: HLGColors.sageMid),
               ),
             ),
           ],
@@ -349,7 +349,7 @@ class _ModuleInsightCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: HLGColors.warmCream,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.6), width: 1),
+        border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.6), width: 1),
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -365,7 +365,7 @@ class _ModuleInsightCard extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: Text(
                 '– ${firstName!.trim()}',
-                style: GoogleFonts.dmSans(fontSize: 11, color: HLGColors.midSage),
+                style: GoogleFonts.dmSans(fontSize: 11, color: HLGColors.sageMid),
               ),
             ),
           ],
@@ -405,12 +405,12 @@ class _ReadingCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w500, color: HLGColors.night),
+                    style: GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w500, color: HLGColors.textBody),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     author,
-                    style: GoogleFonts.dmSans(fontSize: 11, color: HLGColors.midSage),
+                    style: GoogleFonts.dmSans(fontSize: 11, color: HLGColors.sageMid),
                   ),
                   const SizedBox(height: 6),
                   Text(
@@ -421,7 +421,7 @@ class _ReadingCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 10),
-            Icon(Icons.chevron_right_rounded, color: HLGColors.midSage.withValues(alpha: 0.9)),
+            Icon(Icons.chevron_right_rounded, color: HLGColors.sageMid.withValues(alpha: 0.9)),
           ],
         ),
       ),

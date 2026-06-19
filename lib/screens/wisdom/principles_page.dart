@@ -9,8 +9,8 @@ class PrinciplesPage extends StatelessWidget {
   static const Color deepSage = HLGColors.deepSage;
   static const Color crownGold = HLGColors.crownGold;
   static const Color warmCream = HLGColors.warmCream;
-  static const Color night = HLGColors.night;
-  static const Color midSage = HLGColors.midSage;
+  static const Color night = HLGColors.textBody;
+  static const Color midSage = HLGColors.sageMid;
   static const Color horizonOrange = HLGColors.horizonOrange;
   static Color get petal => HLGColors.petal;
   static Color get sagePale => HLGColors.sagePale;

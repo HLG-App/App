@@ -37,16 +37,16 @@ class ReferralPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: HLGColors.petal,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.5)),
+                border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.5)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Invite a friend', style: HLGTextStyles.lessonHeading(color: HLGColors.night)),
+                  Text('Invite a friend', style: HLGTextStyles.lessonHeading(color: HLGColors.textBody)),
                   const SizedBox(height: 8),
                   Text(
                     'Share your code. We’ll use it later to credit referrals.',
-                    style: HLGTextStyles.body(color: HLGColors.midSage),
+                    style: HLGTextStyles.body(color: HLGColors.sageMid),
                   ),
                   const SizedBox(height: 14),
                   Container(
@@ -54,7 +54,7 @@ class ReferralPage extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: HLGColors.warmCream,
                       borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.35)),
+                      border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.35)),
                     ),
                     child: Row(
                       children: [
@@ -95,7 +95,7 @@ class ReferralPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 14),
-                  Text('Tip: once sharing is live, this will also generate a link you can text.', style: HLGTextStyles.labelMedium(color: HLGColors.midSage)),
+                  Text('Tip: once sharing is live, this will also generate a link you can text.', style: HLGTextStyles.labelMedium(color: HLGColors.sageMid)),
                 ],
               ),
             ),

@@ -101,7 +101,7 @@ class PhaseEntryPage extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: HLGColors.petal,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.4), width: 1),
+                  border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.4), width: 1),
                 ),
                 padding: const EdgeInsets.all(24),
                 child: Column(
@@ -114,7 +114,7 @@ class PhaseEntryPage extends StatelessWidget {
                     const SizedBox(height: 12),
                     Text(
                       _phaseHeading(phaseId),
-                      style: HLGTextStyles.h2Section(color: HLGColors.night),
+                      style: HLGTextStyles.h2Section(color: HLGColors.textBody),
                     ),
                     const SizedBox(height: 16),
                     Container(height: 1, color: HLGColors.crownGold.withValues(alpha: 0.3)),

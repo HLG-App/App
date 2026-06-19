@@ -19,9 +19,9 @@ class _TrueCostWidgetState extends State<TrueCostWidget> {
   static Color get sagePale => HLGColors.sagePale;
   static const Color crownGold = HLGColors.crownGold;
   static const Color warmCream = HLGColors.warmCream;
-  static const Color night = HLGColors.night;
+  static const Color night = HLGColors.textBody;
   static const Color horizonOrange = HLGColors.horizonOrange;
-  static const Color midSage = HLGColors.midSage;
+  static const Color midSage = HLGColors.sageMid;
   static const Color wine = HLGColors.antiqueRose;
   static Color get wineLight => HLGColors.antiqueRose.withValues(alpha: 0.12);
   static const Color textBody = HLGColors.textBody;

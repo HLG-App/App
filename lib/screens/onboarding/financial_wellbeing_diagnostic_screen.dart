@@ -276,7 +276,7 @@ class _SelectionCard extends StatelessWidget {
                   ),
                   color: selected ? HLGColors.crownGold : Colors.transparent,
                 ),
-                child: selected ? const Icon(Icons.check, size: 14, color: HLGColors.deepForest) : null,
+                child: selected ? const Icon(Icons.check, size: 14, color: HLGColors.deepSage) : null,
               ),
             ],
           ),
@@ -313,10 +313,10 @@ class _BottomContinueBar extends StatelessWidget {
                 enabled ? HLGColors.crownGold : HLGColors.warmCream.withValues(alpha: 0.10),
               ),
               foregroundColor: WidgetStatePropertyAll(
-                enabled ? HLGColors.deepForest : HLGColors.warmCream.withValues(alpha: 0.45),
+                enabled ? HLGColors.deepSage : HLGColors.warmCream.withValues(alpha: 0.45),
               ),
               iconColor: WidgetStatePropertyAll(
-                enabled ? HLGColors.deepForest : HLGColors.warmCream.withValues(alpha: 0.45),
+                enabled ? HLGColors.deepSage : HLGColors.warmCream.withValues(alpha: 0.45),
               ),
               shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(999))),
               overlayColor: WidgetStatePropertyAll(HLGColors.warmCream.withValues(alpha: 0.12)),
@@ -324,7 +324,7 @@ class _BottomContinueBar extends StatelessWidget {
             child: Text(
               label,
               style: HLGTextStyles.homeCta15(
-                color: enabled ? HLGColors.deepForest : HLGColors.warmCream.withValues(alpha: 0.45),
+                color: enabled ? HLGColors.deepSage : HLGColors.warmCream.withValues(alpha: 0.45),
               ).copyWith(fontWeight: FontWeight.w600),
             ),
           ),
@@ -374,12 +374,12 @@ class _CompletionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final info = archetype.info;
     return Scaffold(
-      backgroundColor: HLGColors.deepForest,
+      backgroundColor: HLGColors.deepSage,
       appBar: const HerAppBar(
         showBack: true,
         fallbackRoute: '/welcome',
         backButtonColor: HLGColors.warmCream,
-        backgroundColor: HLGColors.deepForest,
+        backgroundColor: HLGColors.deepSage,
         surfaceTintColor: Colors.transparent,
       ),
       body: SafeArea(
@@ -421,8 +421,8 @@ class _CompletionScreen extends StatelessWidget {
                 child: FilledButton(
                   style: ButtonStyle(
                     backgroundColor: const WidgetStatePropertyAll(HLGColors.crownGold),
-                    foregroundColor: const WidgetStatePropertyAll(HLGColors.deepForest),
-                    iconColor: const WidgetStatePropertyAll(HLGColors.deepForest),
+                    foregroundColor: const WidgetStatePropertyAll(HLGColors.deepSage),
+                    iconColor: const WidgetStatePropertyAll(HLGColors.deepSage),
                     shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(999))),
                     overlayColor: WidgetStatePropertyAll(HLGColors.warmCream.withValues(alpha: 0.12)),
                   ),
@@ -431,7 +431,7 @@ class _CompletionScreen extends StatelessWidget {
                   },
                   child: Text(
                     'Go to Home',
-                    style: HLGTextStyles.homeCta15(color: HLGColors.deepForest).copyWith(fontWeight: FontWeight.w600),
+                    style: HLGTextStyles.homeCta15(color: HLGColors.deepSage).copyWith(fontWeight: FontWeight.w600),
                   ),
                 ),
               ),

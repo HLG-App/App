@@ -141,7 +141,7 @@ class _TakeawayCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: HLGColors.petal,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.55)),
+        border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.55)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,7 +184,7 @@ class _BookmarksEmptyState extends StatelessWidget {
         decoration: BoxDecoration(
           color: HLGColors.petal,
           borderRadius: BorderRadius.circular(AppRadius.lg),
-          border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.35)),
+          border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.35)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

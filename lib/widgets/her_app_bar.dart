@@ -60,7 +60,7 @@ class HerAppBar extends StatelessWidget implements PreferredSizeWidget {
     // The app uses Cream as the dominant surface. Only a small number of
     // screens should ever place AppBar text on a dark panel.
     final resolvedBg = backgroundColor ?? Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).colorScheme.surface;
-    final isDarkBrandPanel = resolvedBg == HLGColors.deepSage || resolvedBg == HLGColors.night;
+    final isDarkBrandPanel = resolvedBg == HLGColors.deepSage;
     final titleColor = isDarkBrandPanel ? HLGColors.warmCream : HLGColors.textBody;
 
     return AppBar(
@@ -198,7 +198,7 @@ class _BackAndLogo extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          AppBackButton(color: backButtonColor ?? HLGColors.night, fallbackRoute: fallbackRoute, onPressed: onPressed),
+          AppBackButton(color: backButtonColor ?? HLGColors.textBody, fallbackRoute: fallbackRoute, onPressed: onPressed),
           const SizedBox(width: 6),
           Image.asset(_CornerLogo._logoAsset, height: 20, fit: BoxFit.contain),
         ],

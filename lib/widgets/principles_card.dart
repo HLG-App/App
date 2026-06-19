@@ -27,7 +27,7 @@ class PrinciplesCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color warmCream = HLGColors.warmCream;
     final Color crownGold = HLGColors.crownGold;
-    final Color midSage = HLGColors.midSage;
+    final Color midSage = HLGColors.sageMid;
 
     if (compact) {
       return GestureDetector(
@@ -40,7 +40,7 @@ class PrinciplesCard extends StatelessWidget {
             border: Border(left: BorderSide(color: crownGold, width: 3)),
             boxShadow: [
               BoxShadow(
-                color: HLGColors.midSage.withValues(alpha: 0.08),
+                color: HLGColors.sageMid.withValues(alpha: 0.08),
                 blurRadius: 12,
                 offset: const Offset(0, 6),
               ),
@@ -68,7 +68,7 @@ class PrinciplesCard extends StatelessWidget {
                       style: GoogleFonts.playfairDisplay(
                         fontSize: 15,
                         fontStyle: FontStyle.italic,
-                        color: HLGColors.night,
+                        color: HLGColors.textBody,
                         height: 1.4,
                       ),
                     ),
@@ -100,7 +100,7 @@ class PrinciplesCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           border: Border(top: BorderSide(color: crownGold, width: 4)),
           boxShadow: [
-            BoxShadow(color: HLGColors.midSage.withValues(alpha: 0.12), blurRadius: 18, offset: const Offset(0, 10)),
+            BoxShadow(color: HLGColors.sageMid.withValues(alpha: 0.12), blurRadius: 18, offset: const Offset(0, 10)),
           ],
         ),
         child: Column(
@@ -121,7 +121,7 @@ class PrinciplesCard extends StatelessWidget {
               style: GoogleFonts.playfairDisplay(
                 fontSize: 18,
                 fontStyle: FontStyle.italic,
-                color: HLGColors.night,
+                color: HLGColors.textBody,
                 height: 1.5,
               ),
             ),

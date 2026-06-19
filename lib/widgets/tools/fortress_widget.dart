@@ -91,7 +91,7 @@ class _FortressWidgetState extends State<FortressWidget> {
               inactiveTrackColor: HLGColors.sagePale,
               thumbColor: HLGColors.horizonOrange,
               overlayColor: HLGColors.horizonOrange.withValues(alpha: 0.12),
-              valueIndicatorColor: HLGColors.night,
+              valueIndicatorColor: HLGColors.textBody,
               valueIndicatorTextStyle: HLGTextStyles.labelMedium(color: HLGColors.warmCream),
             ),
             child: Slider(
@@ -146,7 +146,7 @@ class _FortressWidgetState extends State<FortressWidget> {
           const SizedBox(height: AppSpacing.md),
           Text(
             'Illustrative only. Adjust target size and contribution to fit your real cashflow.',
-            style: HLGTextStyles.uiElement(color: HLGColors.midSage),
+            style: HLGTextStyles.uiElement(color: HLGColors.sageMid),
           ),
         ],
       ),

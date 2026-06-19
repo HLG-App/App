@@ -175,7 +175,7 @@ class _HerNoteCardState extends State<HerNoteCard> {
       decoration: BoxDecoration(
         color: HLGColors.petal,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.55)),
+        border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.55)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,7 +221,7 @@ class _HerNoteCardState extends State<HerNoteCard> {
                 fillColor: HLGColors.warmCream,
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: HLGColors.midSage.withValues(alpha: 0.55)),
+                  borderSide: BorderSide(color: HLGColors.sageMid.withValues(alpha: 0.55)),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -238,7 +238,7 @@ class _HerNoteCardState extends State<HerNoteCard> {
               child: Text(
                 (response == null || response.isEmpty) ? 'Not written yet' : response,
                 style: (response == null || response.isEmpty)
-                    ? HLGTextStyles.body(color: HLGColors.midSage).copyWith(fontStyle: FontStyle.italic)
+                    ? HLGTextStyles.body(color: HLGColors.sageMid).copyWith(fontStyle: FontStyle.italic)
                     : HLGTextStyles.body(color: HLGColors.textBody),
               ),
             ),

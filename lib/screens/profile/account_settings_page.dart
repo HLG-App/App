@@ -280,7 +280,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
           padding: AppSpacing.paddingLg,
           children: [
             if (_isLoading)
-              Text('Loading…', style: HLGTextStyles.body(color: HLGColors.midSage))
+              Text('Loading…', style: HLGTextStyles.body(color: HLGColors.sageMid))
             else if (_error != null)
               Text(_error!, style: HLGTextStyles.body(color: HLGColors.horizonOrange))
             else ...[
@@ -327,7 +327,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                 decoration: BoxDecoration(
                   color: HLGColors.petal,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.5)),
+                  border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.5)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -346,13 +346,13 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                       style: HLGTextStyles.body(color: HLGColors.textBody),
                       decoration: InputDecoration(
                         hintText: 'New password (min 8 characters)',
-                        hintStyle: HLGTextStyles.body(color: HLGColors.midSage),
+                        hintStyle: HLGTextStyles.body(color: HLGColors.sageMid),
                         isDense: true,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                         filled: true,
                         fillColor: HLGColors.warmCream,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: HLGColors.midSage.withValues(alpha: 0.35))),
-                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: HLGColors.midSage.withValues(alpha: 0.35))),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: HLGColors.sageMid.withValues(alpha: 0.35))),
+                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: HLGColors.sageMid.withValues(alpha: 0.35))),
                         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: HLGColors.deepSage)),
                       ),
                     ),
@@ -363,13 +363,13 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                       style: HLGTextStyles.body(color: HLGColors.textBody),
                       decoration: InputDecoration(
                         hintText: 'Confirm new password',
-                        hintStyle: HLGTextStyles.body(color: HLGColors.midSage),
+                        hintStyle: HLGTextStyles.body(color: HLGColors.sageMid),
                         isDense: true,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                         filled: true,
                         fillColor: HLGColors.warmCream,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: HLGColors.midSage.withValues(alpha: 0.35))),
-                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: HLGColors.midSage.withValues(alpha: 0.35))),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: HLGColors.sageMid.withValues(alpha: 0.35))),
+                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: HLGColors.sageMid.withValues(alpha: 0.35))),
                         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: HLGColors.deepSage)),
                       ),
                     ),
@@ -395,7 +395,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                         OutlinedButton(
                           onPressed: _isSendingReset ? null : _sendPasswordReset,
                           style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: HLGColors.midSage.withValues(alpha: 0.55)),
+                            side: BorderSide(color: HLGColors.sageMid.withValues(alpha: 0.55)),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
                             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
                           ),
@@ -406,7 +406,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                     const SizedBox(height: 8),
                     Text(
                       'Tip: some email/password changes require confirmation in your inbox.',
-                      style: HLGTextStyles.homeMeta13(color: HLGColors.midSage),
+                      style: HLGTextStyles.homeMeta13(color: HLGColors.sageMid),
                     ),
                   ],
                 ),
@@ -415,7 +415,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
               OutlinedButton.icon(
                 onPressed: () => context.pop(),
                 style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: HLGColors.midSage.withValues(alpha: 0.5)),
+                  side: BorderSide(color: HLGColors.sageMid.withValues(alpha: 0.5)),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
@@ -444,7 +444,7 @@ class _SettingCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: HLGColors.petal,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.5)),
+        border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.5)),
       ),
       child: Row(
         children: [
@@ -456,7 +456,7 @@ class _SettingCard extends StatelessWidget {
               children: [
                 Text(title, style: HLGTextStyles.labelMedium(color: HLGColors.textBody)),
                 const SizedBox(height: 4),
-                Text(subtitle, style: HLGTextStyles.body(color: HLGColors.midSage)),
+                Text(subtitle, style: HLGTextStyles.body(color: HLGColors.sageMid)),
               ],
             ),
           ),
@@ -488,7 +488,7 @@ class _EditableSettingCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: HLGColors.petal,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.5)),
+        border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.5)),
       ),
       child: Row(
         children: [
@@ -505,13 +505,13 @@ class _EditableSettingCard extends StatelessWidget {
                   style: HLGTextStyles.body(color: HLGColors.textBody),
                   decoration: InputDecoration(
                     hintText: hintText,
-                    hintStyle: HLGTextStyles.body(color: HLGColors.midSage),
+                    hintStyle: HLGTextStyles.body(color: HLGColors.sageMid),
                     isDense: true,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                     filled: true,
                     fillColor: HLGColors.warmCream,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: HLGColors.midSage.withValues(alpha: 0.35))),
-                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: HLGColors.midSage.withValues(alpha: 0.35))),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: HLGColors.sageMid.withValues(alpha: 0.35))),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: HLGColors.sageMid.withValues(alpha: 0.35))),
                     focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: HLGColors.deepSage)),
                   ),
                 ),

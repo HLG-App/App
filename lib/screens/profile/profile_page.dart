@@ -96,7 +96,7 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-            Text('Account', style: HLGTextStyles.lessonHeading(color: HLGColors.night)),
+            Text('Account', style: HLGTextStyles.lessonHeading(color: HLGColors.textBody)),
             const SizedBox(height: 10),
             _ProfileMenuCard(
               icon: Icons.person_outline,
@@ -113,7 +113,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 22),
 
-            Text('Learning', style: HLGTextStyles.lessonHeading(color: HLGColors.night)),
+            Text('Learning', style: HLGTextStyles.lessonHeading(color: HLGColors.textBody)),
             const SizedBox(height: 10),
             _ProfileMenuCard(
               icon: Icons.insights,
@@ -126,7 +126,7 @@ class _ProfilePageState extends State<ProfilePage> {
               trailing: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text('${(progress * 100).round()}%', style: HLGTextStyles.labelMedium(color: HLGColors.midSage)),
+                  Text('${(progress * 100).round()}%', style: HLGTextStyles.labelMedium(color: HLGColors.sageMid)),
                   const SizedBox(height: 6),
                   SizedBox(
                     width: 86,
@@ -200,7 +200,7 @@ class _ProfileMenuCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: HLGColors.petal,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.55)),
+          border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.55)),
         ),
         child: Row(
           children: [
@@ -216,13 +216,13 @@ class _ProfileMenuCard extends StatelessWidget {
                     subtitle,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: HLGTextStyles.body(color: HLGColors.midSage),
+                    style: HLGTextStyles.body(color: HLGColors.sageMid),
                   ),
                 ],
               ),
             ),
             if (trailing != null) ...[trailing!, const SizedBox(width: 8)],
-            const Icon(Icons.chevron_right, color: HLGColors.midSage),
+            const Icon(Icons.chevron_right, color: HLGColors.sageMid),
           ],
         ),
       ),

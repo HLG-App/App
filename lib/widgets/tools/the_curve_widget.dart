@@ -19,9 +19,9 @@ class _TheCurveWidgetState extends State<TheCurveWidget> with SingleTickerProvid
   static Color get sagePale => HLGColors.sagePale;
   static const Color crownGold = HLGColors.crownGold;
   static const Color warmCream = HLGColors.warmCream;
-  static const Color night = HLGColors.night;
+  static const Color night = HLGColors.textBody;
   static const Color horizonOrange = HLGColors.horizonOrange;
-  static const Color midSage = HLGColors.midSage;
+  static const Color midSage = HLGColors.sageMid;
   static Color get petal => HLGColors.petal;
   static const Color pond = HLGColors.sage;
 

@@ -122,7 +122,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
                                   'Check your email for a password reset link.',
                                   style: HLGTextStyles.body(color: HLGColors.white),
                                 ),
-                                backgroundColor: HLGColors.deepForest,
+                                backgroundColor: HLGColors.deepSage,
                               ),
                             );
                           } catch (e) {
@@ -134,7 +134,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
                                   'Couldn\'t send reset email. Please try again.',
                                   style: HLGTextStyles.body(color: HLGColors.white),
                                 ),
-                                backgroundColor: HLGColors.deepForest,
+                                backgroundColor: HLGColors.deepSage,
                               ),
                             );
                           } finally {
@@ -161,7 +161,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
                                       'Check your email for a password reset link.',
                                       style: HLGTextStyles.body(color: HLGColors.white),
                                     ),
-                                    backgroundColor: HLGColors.deepForest,
+                                     backgroundColor: HLGColors.deepSage,
                                   ),
                                 );
                               } catch (e) {
@@ -173,7 +173,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
                                       'Couldn\'t send reset email. Please try again.',
                                       style: HLGTextStyles.body(color: HLGColors.white),
                                     ),
-                                    backgroundColor: HLGColors.deepForest,
+                                     backgroundColor: HLGColors.deepSage,
                                   ),
                                 );
                               } finally {
@@ -412,7 +412,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
                                           decoration: BoxDecoration(
                                             color: HLGColors.petal,
                                             borderRadius: BorderRadius.circular(999),
-                                            border: Border.all(color: HLGColors.night.withValues(alpha: 0.08)),
+                                            border: Border.all(color: HLGColors.textBody.withValues(alpha: 0.08)),
                                           ),
                                           child: Text(
                                             'Welcome back, ${_transientDisplayName!}',
@@ -430,7 +430,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
                                 text: TextSpan(
                                   style: GoogleFonts.dmSans(
                                     fontSize: 13,
-                                    color: HLGColors.midSage,
+                                     color: HLGColors.sageMid,
                                     height: 1.6,
                                   ),
                                   children: [
@@ -536,7 +536,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
                                   decoration: BoxDecoration(
                                     color: HLGColors.petal,
                                     borderRadius: BorderRadius.circular(AppRadius.md),
-                                    border: Border.all(color: HLGColors.night.withValues(alpha: 0.08)),
+                                    border: Border.all(color: HLGColors.textBody.withValues(alpha: 0.08)),
                                   ),
                                   child: Text(
                                     _error!,
@@ -585,7 +585,7 @@ class _ModeToggle extends StatelessWidget {
       decoration: BoxDecoration(
         color: HLGColors.white,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: HLGColors.night.withValues(alpha: 0.08)),
+         border: Border.all(color: HLGColors.textBody.withValues(alpha: 0.08)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(4),
@@ -666,7 +666,7 @@ class _SocialAuthButton extends StatelessWidget {
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
           backgroundColor: HLGColors.white,
-          side: BorderSide(color: HLGColors.midSage, width: 1),
+           side: BorderSide(color: HLGColors.sageMid, width: 1),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
           padding: const EdgeInsets.symmetric(horizontal: 16),
         ),
@@ -674,14 +674,14 @@ class _SocialAuthButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: HLGColors.night, size: 22),
+            Icon(icon, color: HLGColors.textBody, size: 22),
             const SizedBox(width: 10),
             Flexible(
               child: Text(
                 label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: HLGTextStyles.labelMedium(color: HLGColors.night).copyWith(fontSize: 15),
+                style: HLGTextStyles.labelMedium(color: HLGColors.textBody).copyWith(fontSize: 15),
               ),
             ),
           ],

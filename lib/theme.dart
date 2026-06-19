@@ -36,18 +36,12 @@ class HLGColors {
   // Primary
   static const Color deepSage = Color(0xFF5C7A62); // Primary · CTAs · Key UI
   static const Color sage = Color(0xFF7A9279); // Secondary · Hover · Gradients
-  static const Color midSage = Color(0xFF8A9E8D); // Body text · Labels
+  static const Color sageMid = Color(0xFF8A9E8D); // Placeholders + muted captions ONLY
 
   // Accent / Neutrals
   static const Color crownGold = Color(0xFFB8923A); // Gold accent
   static const Color warmCream = Color(0xFFF7F5F0); // Primary surface
   static const Color creamWarm = Color(0xFFF2EFE8); // Input fields
-
-  // Ink / Charcoal (app-first neutrals)
-  // DESIGN.md forbids near-black "night" tokens, but the app still needs a true
-  // readable ink that is not green.
-  static const Color ink = Color(0xFF2D2A26);
-  static const Color inkMuted = Color(0xFF6C6760);
 
   /// Soft surface tint derived from the core palette.
   ///
@@ -55,26 +49,22 @@ class HLGColors {
   /// cards/panels enough separation from [warmCream].
   static Color get petal => Color.lerp(warmCream, sage, 0.14)!;
 
-  // Dark & Signal
-  // `night` in legacy code means "ink". It is NOT a background surface token.
-  // Dark *surfaces* must use [deepSage] per DESIGN.md.
-  static const Color night = ink;
+  // Signal
   static const Color growth = Color(0xFF7ECFA0); // Positive indicators
   static const Color horizonOrange = Color(0xFFD4621A); // Accent only
   static const Color antiqueRose = Color(0xFFC4756A);
 
-  // Onboarding / dark surfaces — DESIGN.md restricts dark backgrounds to deepSage only.
-  static const Color deepForest = deepSage;
-  static const Color deepForestSurface = deepSage;
-
   // Derived / utility
   static Color get sagePale => Color.lerp(warmCream, sage, 0.22)!;
 
-  /// Primary “ink” color used for body text.
-  static const Color textBody = ink;
+  /// Primary readable text on cream.
+  static const Color textBody = deepSage;
 
-  /// Secondary text color (muted).
-  static const Color textMuted = inkMuted;
+  /// Muted captions and placeholder-like text only.
+  static const Color textMuted = sageMid;
+
+  /// Structural border/tint token (rgba(92,122,98,0.12)).
+  static Color get sageTint => deepSage.withValues(alpha: 0.12);
   static const Color white = Color(0xFFFFFFFF);
 }
 

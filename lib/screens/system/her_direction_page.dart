@@ -188,7 +188,7 @@ class _GoalSummaryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: HLGColors.petal,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.55)),
+        border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.55)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,11 +198,11 @@ class _GoalSummaryCard extends StatelessWidget {
               Container(
                 height: 40,
                 width: 40,
-                decoration: BoxDecoration(color: HLGColors.sagePale, borderRadius: BorderRadius.circular(14), border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.25))),
+                decoration: BoxDecoration(color: HLGColors.sagePale, borderRadius: BorderRadius.circular(14), border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.25))),
                 child: const Icon(Icons.flag_rounded, color: HLGColors.deepSage),
               ),
               const SizedBox(width: 12),
-              Expanded(child: Text(title, style: HLGTextStyles.moduleTitle(color: HLGColors.night))),
+              Expanded(child: Text(title, style: HLGTextStyles.moduleTitle(color: HLGColors.textBody))),
             ],
           ),
           const SizedBox(height: 10),
@@ -214,13 +214,13 @@ class _GoalSummaryCard extends StatelessWidget {
             ),
           if (tool.isNotEmpty) const SizedBox(height: 10),
           if ((summary?.meaning ?? '').trim().isNotEmpty) ...[
-            Text('What this means', style: HLGTextStyles.eyebrowAllCaps(color: HLGColors.midSage)),
+            Text('What this means', style: HLGTextStyles.eyebrowAllCaps(color: HLGColors.sageMid)),
             const SizedBox(height: 6),
             Text(summary!.meaning!, style: HLGTextStyles.quoteItalic(color: HLGColors.textBody).copyWith(height: 1.55)),
             const SizedBox(height: 12),
           ],
           if ((summary?.nextStep ?? '').trim().isNotEmpty) ...[
-            Text('Your next step', style: HLGTextStyles.eyebrowAllCaps(color: HLGColors.midSage)),
+            Text('Your next step', style: HLGTextStyles.eyebrowAllCaps(color: HLGColors.sageMid)),
             const SizedBox(height: 6),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -232,7 +232,7 @@ class _GoalSummaryCard extends StatelessWidget {
             const SizedBox(height: 12),
           ],
           if ((summary?.longGameLink ?? '').trim().isNotEmpty) ...[
-            Text('How this connects to your long game', style: HLGTextStyles.eyebrowAllCaps(color: HLGColors.midSage)),
+            Text('How this connects to your long game', style: HLGTextStyles.eyebrowAllCaps(color: HLGColors.sageMid)),
             const SizedBox(height: 6),
             Text(summary!.longGameLink!, style: HLGTextStyles.homeBody14(color: HLGColors.textMuted).copyWith(height: 1.55)),
           ] else
@@ -259,7 +259,7 @@ class _DirectionEmpty extends StatelessWidget {
         decoration: BoxDecoration(
           color: HLGColors.petal,
           borderRadius: BorderRadius.circular(AppRadius.lg),
-          border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.35)),
+          border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.35)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

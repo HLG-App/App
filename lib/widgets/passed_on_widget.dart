@@ -88,7 +88,7 @@ class _PassedOnWidgetState extends State<PassedOnWidget> {
       children: [
         Text(
           'WHAT OTHER WOMEN SAID AFTER THIS LESSON',
-          style: HLGTextStyles.eyebrowAllCaps(color: HLGColors.midSage).copyWith(letterSpacing: 2.0),
+          style: HLGTextStyles.eyebrowAllCaps(color: HLGColors.sageMid).copyWith(letterSpacing: 2.0),
         ),
         const SizedBox(height: AppSpacing.md),
         for (final insight in _insights) ...[
@@ -111,7 +111,7 @@ class _PassedOnCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: HLGColors.petal,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.35)),
+        border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.35)),
       ),
       child: IntrinsicHeight(
         child: Row(
@@ -135,7 +135,7 @@ class _PassedOnCard extends StatelessWidget {
                         alignment: Alignment.centerRight,
                         child: Text(
                           '– ${insight.firstName!.trim()}',
-                          style: HLGTextStyles.labelMedium(color: HLGColors.midSage).copyWith(fontSize: 12),
+                          style: HLGTextStyles.labelMedium(color: HLGColors.sageMid).copyWith(fontSize: 12),
                         ),
                       ),
                     ],

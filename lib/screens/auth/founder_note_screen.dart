@@ -92,8 +92,8 @@ class FounderNoteContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final bodyColor = isDarkSurface
         ? HLGColors.warmCream.withValues(alpha: 0.84)
-        : HLGColors.night.withValues(alpha: 0.78);
-    final primaryText = isDarkSurface ? HLGColors.warmCream : HLGColors.night;
+        : HLGColors.textBody.withValues(alpha: 0.78);
+    final primaryText = isDarkSurface ? HLGColors.warmCream : HLGColors.textBody;
     final secondaryText = isDarkSurface
         ? HLGColors.warmCream.withValues(alpha: 0.68)
         : HLGColors.deepSage;
@@ -261,7 +261,7 @@ class _FounderNotePullQuote extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
               child: Text(text,
-                  style: HLGTextStyles.quoteItalic(color: HLGColors.night))),
+                  style: HLGTextStyles.quoteItalic(color: HLGColors.textBody))),
         ],
       ),
     );
@@ -313,13 +313,13 @@ class _FounderNoteCallout extends StatelessWidget {
               Expanded(
                   child: Text(title,
                       style:
-                          HLGTextStyles.labelMedium(color: HLGColors.night))),
+                          HLGTextStyles.labelMedium(color: HLGColors.textBody))),
             ],
           ),
           const SizedBox(height: 10),
           Text(body,
               style: HLGTextStyles.body(
-                      color: HLGColors.night.withValues(alpha: 0.78))
+                      color: HLGColors.textBody.withValues(alpha: 0.78))
                   .copyWith(height: 1.75)),
         ],
       ),

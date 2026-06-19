@@ -47,7 +47,7 @@ class DashboardPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: HLGColors.petal,
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.5)),
+                    border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.5)),
                   ),
                   child: Row(
                     children: [
@@ -69,7 +69,7 @@ class DashboardPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: HLGColors.petal,
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.5)),
+                    border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.5)),
                   ),
                   child: Row(
                     children: [
@@ -96,7 +96,7 @@ class DashboardPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: HLGColors.petal,
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.45)),
+                    border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.45)),
                   ),
                   child: Row(
                     children: [
@@ -116,7 +116,7 @@ class DashboardPage extends StatelessWidget {
                           children: [
                             Text(toolCode.isEmpty ? 'Tool' : toolCode, style: HLGTextStyles.labelMedium(color: HLGColors.textBody)),
                             const SizedBox(height: 4),
-                            Text(summary, style: HLGTextStyles.body(color: HLGColors.midSage), maxLines: 2, overflow: TextOverflow.ellipsis),
+                            Text(summary, style: HLGTextStyles.body(color: HLGColors.sageMid), maxLines: 2, overflow: TextOverflow.ellipsis),
                           ],
                         ),
                       ),

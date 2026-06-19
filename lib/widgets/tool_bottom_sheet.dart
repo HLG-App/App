@@ -209,7 +209,7 @@ class ToolBottomSheet extends StatelessWidget {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: HLGColors.midSage.withValues(alpha: 0.4),
+              color: HLGColors.sageMid.withValues(alpha: 0.4),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -334,7 +334,7 @@ class ToolBottomSheet extends StatelessWidget {
                 const SizedBox(height: 16),
                 Text(
                   '${_toolName()} is coming soon.',
-                  style: HLGTextStyles.body(color: HLGColors.midSage).copyWith(fontStyle: FontStyle.italic),
+                  style: HLGTextStyles.body(color: HLGColors.sageMid).copyWith(fontStyle: FontStyle.italic),
                   textAlign: TextAlign.center,
                 ),
               ],

@@ -245,7 +245,7 @@ class PhaseCard extends StatelessWidget {
           Row(
             children: [
               Expanded(child: Text(phase.title, style: HLGTextStyles.eyebrowAllCaps(color: phase.accentColor))),
-              if (!unlocked) const Icon(Icons.lock, color: HLGColors.midSage, size: 18),
+              if (!unlocked) const Icon(Icons.lock, color: HLGColors.sageMid, size: 18),
               if (unlocked && !seen) const Icon(Icons.fiber_new_rounded, color: HLGColors.horizonOrange, size: 18),
             ],
           ),
@@ -277,7 +277,7 @@ class PhaseCard extends StatelessWidget {
           onTap: onTap,
           overlayColor: WidgetStatePropertyAll(HLGColors.sage.withValues(alpha: 0.12)),
           child: DecoratedBox(
-            decoration: BoxDecoration(border: Border.all(color: HLGColors.midSage, width: 1), borderRadius: BorderRadius.circular(16)),
+            decoration: BoxDecoration(border: Border.all(color: HLGColors.sageMid, width: 1), borderRadius: BorderRadius.circular(16)),
             child: baseChild,
           ),
         ),
@@ -426,11 +426,11 @@ class ModuleCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(child: Text(moduleLabel.toUpperCase(), style: HLGTextStyles.eyebrowAllCaps(color: HLGColors.crownGold))),
-              if (!unlocked) const Icon(Icons.lock, color: HLGColors.midSage, size: 18),
+              if (!unlocked) const Icon(Icons.lock, color: HLGColors.sageMid, size: 18),
             ],
           ),
           const SizedBox(height: 8),
-          Text(title, style: HLGTextStyles.moduleTitle(color: HLGColors.night)),
+          Text(title, style: HLGTextStyles.moduleTitle(color: HLGColors.textBody)),
           const SizedBox(height: 12),
           Text('$completed of $total', style: HLGTextStyles.labelMedium(color: HLGColors.textMuted)),
           const SizedBox(height: 10),
@@ -455,7 +455,7 @@ class ModuleCard extends StatelessWidget {
           onTap: onTap,
           overlayColor: WidgetStatePropertyAll(HLGColors.sage.withValues(alpha: 0.12)),
           child: DecoratedBox(
-            decoration: BoxDecoration(border: Border.all(color: HLGColors.midSage, width: 1), borderRadius: BorderRadius.circular(12)),
+            decoration: BoxDecoration(border: Border.all(color: HLGColors.sageMid, width: 1), borderRadius: BorderRadius.circular(12)),
             child: baseChild,
           ),
         ),

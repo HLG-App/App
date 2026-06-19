@@ -62,16 +62,16 @@ class WelcomeModuleCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 6),
-                Text('Before We Begin', style: HLGTextStyles.moduleTitle(color: HLGColors.night)),
+                Text('Before We Begin', style: HLGTextStyles.moduleTitle(color: HLGColors.textBody)),
                 const SizedBox(height: 6),
                 Text(
                   'A short welcome before the long game.',
-                  style: HLGTextStyles.body(color: HLGColors.midSage),
+                  style: HLGTextStyles.body(color: HLGColors.sageMid),
                 ),
                 const SizedBox(height: 12),
                 Text(
                   '$completed of $total',
-                  style: HLGTextStyles.homeMeta13(color: HLGColors.midSage),
+                  style: HLGTextStyles.homeMeta13(color: HLGColors.sageMid),
                 ),
                 const SizedBox(height: 6),
                 ClipRRect(

@@ -47,7 +47,7 @@ class GoalsSnapshotPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: HLGColors.petal,
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.5)),
+                    border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.5)),
                   ),
                   child: Row(
                     children: [
@@ -69,7 +69,7 @@ class GoalsSnapshotPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: HLGColors.petal,
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.5)),
+                    border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.5)),
                   ),
                   child: Row(
                     children: [
@@ -96,7 +96,7 @@ class GoalsSnapshotPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: HLGColors.petal,
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.45)),
+                    border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.45)),
                   ),
                   child: Row(
                     children: [

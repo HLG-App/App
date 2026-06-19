@@ -112,7 +112,7 @@ class _LearningProgressOverviewPageState extends State<LearningProgressOverviewP
         surfaceTintColor: Colors.transparent,
         title: Text('Learning progress', style: HLGTextStyles.labelMedium(color: HLGColors.textBody)),
         actions: [
-          IconButton(tooltip: 'Refresh', onPressed: _isLoading ? null : _load, icon: const Icon(Icons.refresh, color: HLGColors.midSage)),
+          IconButton(tooltip: 'Refresh', onPressed: _isLoading ? null : _load, icon: const Icon(Icons.refresh, color: HLGColors.sageMid)),
           const SizedBox(width: 6),
         ],
       ),
@@ -125,15 +125,15 @@ class _LearningProgressOverviewPageState extends State<LearningProgressOverviewP
               decoration: BoxDecoration(
                 color: HLGColors.petal,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.5)),
+                border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.5)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Overview', style: HLGTextStyles.lessonHeading(color: HLGColors.night)),
+                  Text('Overview', style: HLGTextStyles.lessonHeading(color: HLGColors.textBody)),
                   const SizedBox(height: 8),
                   if (_isLoading)
-                    Text('Loading…', style: HLGTextStyles.body(color: HLGColors.midSage))
+                    Text('Loading…', style: HLGTextStyles.body(color: HLGColors.sageMid))
                   else if (_error != null)
                     Text(_error!, style: HLGTextStyles.body(color: HLGColors.horizonOrange))
                   else
@@ -154,7 +154,7 @@ class _LearningProgressOverviewPageState extends State<LearningProgressOverviewP
                     decoration: BoxDecoration(
                       color: HLGColors.warmCream,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: HLGColors.midSage.withValues(alpha: 0.35)),
+                      border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.35)),
                     ),
                     child: Row(
                       children: [

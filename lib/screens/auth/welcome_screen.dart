@@ -133,7 +133,7 @@ class _DotIndicator extends StatelessWidget {
                 width: 8,
                 height: 8,
                 decoration: BoxDecoration(
-                  color: active ? HLGColors.crownGold : HLGColors.midSage,
+                  color: active ? HLGColors.crownGold : HLGColors.sageMid,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -180,7 +180,7 @@ class _WordmarkPage extends StatelessWidget {
                     Text(
                       'Swipe to continue',
                       textAlign: TextAlign.center,
-                      style: HLGTextStyles.uiElement(color: HLGColors.midSage).copyWith(fontSize: 11),
+                      style: HLGTextStyles.uiElement(color: HLGColors.sageMid).copyWith(fontSize: 11),
                     ),
                   ],
                 ),
