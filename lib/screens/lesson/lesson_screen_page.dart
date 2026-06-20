@@ -28,6 +28,17 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
   final LessonRepository _lessonRepo = LessonRepository();
   final UserRepository _userRepo = UserRepository();
 
+  // Prevent double navigation when async loads and button taps race.
+  // This is critical for avoiding duplicate "Lesson Complete" / "Carry this" experiences.
+  bool _didNavigateAway = false;
+
+  void _pushReplacementOnce(String route) {
+    if (!mounted) return;
+    if (_didNavigateAway) return;
+    _didNavigateAway = true;
+    context.pushReplacement(route);
+  }
+
   final TextEditingController _reflectionController = TextEditingController();
 
   int _currentScreenIndex = 0;
@@ -62,6 +73,7 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
   void didUpdateWidget(covariant LessonScreenPage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.lessonCode != widget.lessonCode || oldWidget.initialScreenIndex != widget.initialScreenIndex) {
+      _didNavigateAway = false;
       _currentScreenIndex = widget.initialScreenIndex;
       _selectedOption = null;
       _screen = null;
@@ -174,7 +186,7 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
         }
 
         if (hasCompleteScreen) {
-          context.pushReplacement(LessonFlow.nextRouteAfterLesson(widget.lessonCode));
+          _pushReplacementOnce(LessonFlow.nextRouteAfterLesson(widget.lessonCode));
           return;
         }
 
@@ -192,7 +204,7 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
           debugPrint('[LessonScreenPage] Failed to auto-complete ${widget.lessonCode}: $e');
         }
 
-        context.pushReplacement(LessonFlow.nextRouteAfterClose(widget.lessonCode));
+        _pushReplacementOnce(LessonFlow.nextRouteAfterClose(widget.lessonCode));
         return;
       }
 
@@ -220,8 +232,7 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
         } catch (e) {
           debugPrint('[LessonScreenPage] Failed to complete ${widget.lessonCode} at complete marker: $e');
         }
-        if (!mounted) return;
-        context.pushReplacement(LessonFlow.nextRouteAfterLesson(widget.lessonCode));
+        _pushReplacementOnce(LessonFlow.nextRouteAfterLesson(widget.lessonCode));
         return;
       }
 
@@ -366,7 +377,7 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
         // Use pushReplacement so the user can navigate "back" to where they
         // came from (e.g., Learn), without leaving the completed lesson screen
         // on the stack.
-        context.pushReplacement(LessonFlow.nextRouteAfterLesson(widget.lessonCode));
+        _pushReplacementOnce(LessonFlow.nextRouteAfterLesson(widget.lessonCode));
         return;
       }
 

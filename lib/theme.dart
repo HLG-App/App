@@ -43,6 +43,14 @@ class HLGColors {
   static const Color warmCream = Color(0xFFF7F5F0); // Primary surface
   static const Color creamWarm = Color(0xFFF2EFE8); // Input fields
 
+  /// Lighter gold intended for small text on dark/tinted backgrounds.
+  ///
+  /// Keeps the brand hue but boosts contrast against sage/deepSage surfaces.
+  static Color get crownGoldSoft => Color.lerp(crownGold, warmCream, 0.55)!;
+
+  /// Even lighter variant for eyebrow labels on dark hero bands.
+  static Color get crownGoldOnDark => Color.lerp(crownGold, warmCream, 0.70)!;
+
   /// Soft surface tint derived from the core palette.
   ///
   /// This avoids introducing extra “mystery hex” colors while still giving

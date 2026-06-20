@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:her_long_game/auth/supabase_auth_manager.dart';
 import 'package:her_long_game/nav.dart';
 import 'package:her_long_game/theme.dart';
+import 'package:her_long_game/widgets/her_app_bar.dart';
+import 'package:her_long_game/widgets/her_tab_header.dart';
 import 'package:her_long_game/widgets/terms_privacy_consent_text.dart';
 
 class SignInPage extends StatefulWidget {
@@ -54,6 +56,7 @@ class _SignInPageState extends State<SignInPage> {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Scaffold(
+      appBar: HerAppBar(showBack: true, fallbackRoute: '/auth', backButtonColor: cs.onSurface, titleText: ''),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) => Center(
@@ -65,20 +68,14 @@ class _SignInPageState extends State<SignInPage> {
                 child: ConstrainedBox(
                   constraints: BoxConstraints(minHeight: constraints.maxHeight - MediaQuery.paddingOf(context).vertical),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Center(
-                        child: Image.asset(
-                          'assets/images/Her_Long_Game-01_1.png',
-                          width: 180,
-                          fit: BoxFit.contain,
-                        ),
+                      const HerTabHeader(
+                        showEyebrow: false,
+                        title: 'Welcome back',
+                        subtitle: 'Sign in to continue.',
+                        padding: EdgeInsets.zero,
                       ),
-                      const SizedBox(height: AppSpacing.lg),
-                      Text('Welcome back', style: context.textStyles.titleLarge?.copyWith(color: cs.onSurface).semiBold),
-                      const SizedBox(height: AppSpacing.sm),
-                      Text('Sign in to continue.', style: context.textStyles.bodyMedium?.copyWith(color: cs.onSurfaceVariant)),
                       const SizedBox(height: AppSpacing.sm),
                       Text(
                         'The money lessons women were never taught. But are expected to use everyday.',

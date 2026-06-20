@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:her_long_game/flow/onboarding_flow_controller.dart';
 import 'package:her_long_game/supabase/supabase_config.dart';
 import 'package:her_long_game/theme.dart';
+import 'package:her_long_game/widgets/her_app_bar.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -17,7 +18,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
   int _index = 0;
   bool _isSubmitting = false;
 
+  bool _founderNoteSubmitting = false;
+
   static const Color _warmDarkSage = HLGColors.deepSage;
+  static const Color _warmLight = HLGColors.warmCream;
+
+  static const int _founderNoteStepCount = 5;
 
   late final AnimationController _pulseController;
   late final Animation<double> _pulse;
@@ -34,6 +40,51 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
     _controller.dispose();
     _pulseController.dispose();
     super.dispose();
+  }
+
+  bool get _isFounderNotePage => _index >= 1 && _index <= _founderNoteStepCount;
+
+  int get _founderNoteStepIndex => (_index - 1).clamp(0, _founderNoteStepCount - 1);
+
+  Future<void> _goToPage(int i) async {
+    if (!_controller.hasClients) return;
+    await _controller.animateToPage(i, duration: const Duration(milliseconds: 260), curve: Curves.easeOutCubic);
+  }
+
+  Future<void> _nextPage() async => _goToPage((_index + 1).clamp(0, _pageCount - 1));
+
+  Future<void> _prevPage() async => _goToPage((_index - 1).clamp(0, _pageCount - 1));
+
+  static int get _pageCount => 1 + _founderNoteStepCount + 3; // wordmark + founder(5) + is + isNot + commitment
+
+  Future<void> _markFounderNoteSeenAndContinue() async {
+    if (_founderNoteSubmitting) return;
+    final uid = SupabaseConfig.auth.currentUser?.id;
+    if (uid == null) {
+      debugPrint('WelcomeScreen(FounderNote): no current user session; sending to /auth');
+      if (!mounted) return;
+      context.go('/auth');
+      return;
+    }
+
+    setState(() => _founderNoteSubmitting = true);
+    try {
+      await SupabaseConfig.client.from('users').update({'founder_note_seen': true}).eq('id', uid);
+      if (!mounted) return;
+      await _nextPage();
+    } catch (e) {
+      debugPrint('WelcomeScreen(FounderNote): failed to set founder_note_seen: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Couldn\'t continue. Please try again.', style: HLGTextStyles.body(color: HLGColors.warmCream)),
+          backgroundColor: HLGColors.deepSage,
+        ),
+      );
+    } finally {
+      if (!mounted) return;
+      setState(() => _founderNoteSubmitting = false);
+    }
   }
 
   Future<void> _markWelcomedAndContinue() async {
@@ -69,17 +120,22 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
     }
   }
 
-  Future<void> _goToPage(int i) async {
-    if (!_controller.hasClients) return;
-    await _controller.animateToPage(i, duration: const Duration(milliseconds: 260), curve: Curves.easeOutCubic);
-  }
-
   @override
   Widget build(BuildContext context) {
+    final scaffoldBg = _isFounderNotePage ? _warmLight : _warmDarkSage;
+    final appBarBg = scaffoldBg;
     return PopScope(
       canPop: false,
       child: Scaffold(
-        backgroundColor: _warmDarkSage,
+        backgroundColor: scaffoldBg,
+        appBar: HerAppBar(
+          backgroundColor: appBarBg,
+          surfaceTintColor: Colors.transparent,
+          titleText: '',
+          showBack: _isFounderNotePage && _founderNoteStepIndex > 0,
+          onBackPressed: _isFounderNotePage && _founderNoteStepIndex > 0 ? _prevPage : null,
+          useBrandBand: _isFounderNotePage,
+        ),
         body: SafeArea(
           child: Stack(
             children: [
@@ -89,17 +145,33 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
                 onPageChanged: (i) => setState(() => _index = i),
                 children: [
                   _WordmarkPage(pulse: _pulse),
+                  for (int i = 0; i < _founderNoteStepCount; i++)
+                    _FounderNoteStepPage(
+                      stepIndex: i,
+                      totalSteps: _founderNoteStepCount,
+                      onContinue: i == _founderNoteStepCount - 1
+                          ? (_founderNoteSubmitting ? null : _markFounderNoteSeenAndContinue)
+                          : (_nextPage),
+                      isSubmitting: i == _founderNoteStepCount - 1 ? _founderNoteSubmitting : false,
+                    ),
                   const _IsPage(),
                   const _IsNotPage(),
                   _CommitmentPage(onReady: _isSubmitting ? null : _markWelcomedAndContinue, isLoading: _isSubmitting),
                 ],
               ),
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 18,
-                child: _DotIndicator(index: _index, onTapDot: _goToPage),
-              ),
+              if (!_isFounderNotePage)
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 18,
+                  child: _DotIndicator(index: _index, onTapDot: (i) {
+                    // The Welcome section is now a larger PageView. We only expose
+                    // dot navigation for the original 4 "welcome" pages.
+                    const map = <int, int>{0: 0, 1: 1 + _founderNoteStepCount, 2: 2 + _founderNoteStepCount, 3: 3 + _founderNoteStepCount};
+                    final target = map[i];
+                    if (target != null) _goToPage(target);
+                  }),
+                ),
             ],
           ),
         ),
@@ -116,11 +188,21 @@ class _DotIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // We only show dot navigation for the original 4 welcome pages. Map the
+    // extended PageView indexes to the 0..3 dot positions.
+    const founderSteps = _WelcomeScreenState._founderNoteStepCount;
+    final mapped = switch (index) {
+      0 => 0,
+      const (1 + founderSteps) => 1,
+      const (2 + founderSteps) => 2,
+      const (3 + founderSteps) => 3,
+      _ => 0,
+    };
     return Center(
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: List.generate(4, (i) {
-          final active = i == index;
+          final active = i == mapped;
           return GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () => onTapDot(i),
@@ -141,6 +223,416 @@ class _DotIndicator extends StatelessWidget {
           );
         }),
       ),
+    );
+  }
+}
+
+class _FounderNoteStepPage extends StatelessWidget {
+  const _FounderNoteStepPage({required this.stepIndex, required this.totalSteps, required this.onContinue, required this.isSubmitting});
+
+  final int stepIndex;
+  final int totalSteps;
+  final VoidCallback? onContinue;
+  final bool isSubmitting;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final maxWidth = MediaQuery.of(context).size.width;
+    final pad = maxWidth >= 520 ? const EdgeInsets.symmetric(horizontal: 32, vertical: 24) : const EdgeInsets.fromLTRB(24, 20, 24, 24);
+
+    return SafeArea(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('A NOTE FROM THE FOUNDER', style: HLGTextStyles.eyebrowAllCaps(color: HLGColors.deepSage).copyWith(letterSpacing: 4.0)),
+                const SizedBox(height: 10),
+                _FounderDots(count: totalSteps, index: stepIndex),
+              ],
+            ),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: pad,
+              physics: const BouncingScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 560),
+                child: _FounderNoteStepBody(stepIndex: stepIndex),
+              ),
+            ),
+          ),
+          _FounderNoteActions(stepIndex: stepIndex, totalSteps: totalSteps, onContinue: onContinue, isSubmitting: isSubmitting),
+        ],
+      ),
+    );
+  }
+}
+
+class _FounderDots extends StatelessWidget {
+  const _FounderDots({required this.count, required this.index});
+
+  final int count;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Row(
+      children: [
+        for (int i = 0; i < count; i++)
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            curve: Curves.easeOut,
+            margin: EdgeInsets.only(right: i == count - 1 ? 0 : 8),
+            height: 7,
+            width: i == index ? 18 : 7,
+            decoration: BoxDecoration(
+              color: i == index ? cs.primary : cs.outlineVariant.withValues(alpha: 0.7),
+              borderRadius: BorderRadius.circular(999),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _FounderNoteActions extends StatelessWidget {
+  const _FounderNoteActions({required this.stepIndex, required this.totalSteps, required this.onContinue, required this.isSubmitting});
+
+  final int stepIndex;
+  final int totalSteps;
+  final VoidCallback? onContinue;
+  final bool isSubmitting;
+
+  bool get _isFinal => stepIndex == totalSteps - 1;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final bottomPad = 16 + MediaQuery.of(context).viewPadding.bottom;
+    final label = _isFinal ? 'Start your long game →' : 'Continue';
+
+    // Per spec: screen 2 gets even more breathing room above the CTA.
+    final topGap = stepIndex == 1 ? 26.0 : (_isFinal ? 34.0 : 18.0);
+
+    return Container(
+      padding: EdgeInsets.fromLTRB(16, topGap, 16, bottomPad),
+      decoration: BoxDecoration(color: cs.surface, border: Border(top: BorderSide(color: cs.outlineVariant.withValues(alpha: 0.6)))),
+      child: SizedBox(
+        width: double.infinity,
+        child: FilledButton(
+          onPressed: isSubmitting ? null : onContinue,
+          style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999))),
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            child: isSubmitting
+                ? Text('Just a second…', key: const ValueKey('loading'))
+                : Text(label, key: const ValueKey('label')),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FounderNoteStepBody extends StatelessWidget {
+  const _FounderNoteStepBody({required this.stepIndex});
+
+  final int stepIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    return switch (stepIndex) {
+      0 => const _FounderNoteStep1(),
+      1 => const _FounderNoteStep2(),
+      2 => const _FounderNoteStep3(),
+      3 => const _FounderNoteStep4(),
+      4 => const _FounderNoteStep5(),
+      _ => const SizedBox.shrink(),
+    };
+  }
+}
+
+class _StaggeredFadeIn extends StatefulWidget {
+  const _StaggeredFadeIn({required this.children, this.initialDelay = Duration.zero, this.stagger = const Duration(milliseconds: 200)});
+
+  final List<Widget> children;
+  final Duration initialDelay;
+  final Duration stagger;
+
+  @override
+  State<_StaggeredFadeIn> createState() => _StaggeredFadeInState();
+}
+
+class _StaggeredFadeInState extends State<_StaggeredFadeIn> {
+  late List<bool> _visible;
+
+  @override
+  void initState() {
+    super.initState();
+    _visible = List<bool>.filled(widget.children.length, false);
+    _schedule();
+  }
+
+  @override
+  void didUpdateWidget(covariant _StaggeredFadeIn oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.children.length != widget.children.length) {
+      _visible = List<bool>.filled(widget.children.length, false);
+      _schedule();
+    }
+  }
+
+  void _schedule() {
+    Future<void>.delayed(widget.initialDelay, () {
+      if (!mounted) return;
+      for (int i = 0; i < _visible.length; i++) {
+        Future<void>.delayed(widget.stagger * i, () {
+          if (!mounted) return;
+          setState(() => _visible[i] = true);
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (int i = 0; i < widget.children.length; i++)
+          AnimatedOpacity(
+            duration: const Duration(milliseconds: 280),
+            curve: Curves.easeOutCubic,
+            opacity: _visible[i] ? 1 : 0,
+            child: AnimatedSlide(
+              duration: const Duration(milliseconds: 280),
+              curve: Curves.easeOutCubic,
+              offset: _visible[i] ? Offset.zero : const Offset(0, 0.02),
+              child: widget.children[i],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _FounderNoteStep1 extends StatelessWidget {
+  const _FounderNoteStep1();
+
+  @override
+  Widget build(BuildContext context) {
+    final base = HLGTextStyles.body(color: HLGColors.textBody.withValues(alpha: 0.82)).copyWith(height: 1.75);
+    final thesis = base.copyWith(fontSize: (base.fontSize ?? 14) + 2, fontWeight: FontWeight.w500, color: HLGColors.textBody.withValues(alpha: 0.92));
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _StaggeredFadeIn(
+          children: [
+            Text('I am not a financial advisor.', style: base),
+            const SizedBox(height: 12),
+            Text('I am not a guru.', style: base),
+            const SizedBox(height: 12),
+            Text('I am definitely not here to tell you to manifest wealth while journalling beside a beige candle.', style: base),
+          ],
+        ),
+        const SizedBox(height: 28),
+        _StaggeredFadeIn(
+          initialDelay: const Duration(milliseconds: 800), // 3 lines @200ms + buffer
+          children: [
+            Text('I built Her Long Game because I worked out pretty early that enjoying life requires options.', style: base),
+            const SizedBox(height: 12),
+            Text('And options require money.', style: base),
+            const SizedBox(height: 12),
+            Text('That is all money is, really.', style: base),
+            const SizedBox(height: 14),
+            Text('A tool that stores your time and energy so you can use it later.', style: thesis),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _FounderNoteStep2 extends StatelessWidget {
+  const _FounderNoteStep2();
+
+  @override
+  Widget build(BuildContext context) {
+    final base = HLGTextStyles.body(color: HLGColors.textBody.withValues(alpha: 0.82)).copyWith(height: 1.75);
+
+    return _StaggeredFadeIn(
+      children: [
+        Text('I am not perfect with it either. Once, after a few too many wines, I bought a large inflatable projector screen off eBay.', style: base),
+        const SizedBox(height: 18),
+        Text('A large one.', style: base.copyWith(fontWeight: FontWeight.w600)),
+        const SizedBox(height: 18),
+        Text('For what cinema empire, I cannot say.', style: base.copyWith(fontStyle: FontStyle.italic)),
+        const SizedBox(height: 18),
+        Text('I sold it on Facebook Marketplace three years later for \$50 less than I paid.', style: base),
+        const SizedBox(height: 16),
+        Text(
+          'Honestly, not my worst investment. But still, the poor guy on Facebook Marketplace did not have the tools I am about to give you. The ones that help you see the true cost of the thing you absolutely do not need, but suddenly believe will transform your life after two glasses of shiraz.',
+          style: base,
+        ),
+        const SizedBox(height: 16),
+        Text('So no, I am not perfect.', style: base),
+        const SizedBox(height: 12),
+        Text('But I am money smart in a street-smart kind of way.', style: base),
+        const SizedBox(height: 12),
+        Text('And that did not happen overnight.', style: base),
+      ],
+    );
+  }
+}
+
+class _FounderNoteStep3 extends StatelessWidget {
+  const _FounderNoteStep3();
+
+  @override
+  Widget build(BuildContext context) {
+    final base = HLGTextStyles.body(color: HLGColors.textBody.withValues(alpha: 0.82)).copyWith(height: 1.75);
+    final section = HLGTextStyles.eyebrowAllCaps(color: HLGColors.deepSage).copyWith(letterSpacing: 4.0);
+    final cs = Theme.of(context).colorScheme;
+
+    Widget listItem(String s) => Padding(
+          padding: const EdgeInsets.only(bottom: 14),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 10),
+                width: 6,
+                height: 6,
+                decoration: BoxDecoration(shape: BoxShape.circle, color: cs.primary),
+              ),
+              const SizedBox(width: 12),
+              Expanded(child: Text(s, style: base)),
+            ],
+          ),
+        );
+
+    return _StaggeredFadeIn(
+      children: [
+        Text('What still breaks my heart is the shame, stress and silence around money. Especially when most people were never properly taught how any of it works.', style: base),
+        const SizedBox(height: 16),
+        Text('I have never once used Pythagoras\' theorem in adult life.', style: base),
+        const SizedBox(height: 16),
+        Text(
+          'But compound interest? Inflation? Credit card interest? The small matter of not turning a \$5 coffee into a \$15 coffee because future-you got mugged by past-you?',
+          style: base,
+        ),
+        const SizedBox(height: 16),
+        Text('Apparently that was all supposed to sort itself out.', style: base),
+        const SizedBox(height: 12),
+        Text('It won\'t.', style: base.copyWith(fontWeight: FontWeight.w700)),
+        const SizedBox(height: 12),
+        Text('But you can.', style: base.copyWith(fontWeight: FontWeight.w700)),
+        const SizedBox(height: 26),
+        Text('The real context', style: section),
+        const SizedBox(height: 12),
+        Text('Women are navigating a financial system that was not built around their lives.', style: base),
+        const SizedBox(height: 18),
+        listItem('Lower lifetime earnings'),
+        listItem('Career breaks'),
+        listItem('Unpaid labour'),
+        listItem('Longer life expectancy'),
+        listItem('Less access to financial education'),
+        const SizedBox(height: 18),
+        Text('And then somehow, women are expected to make calm, confident, informed decisions inside that system.', style: base),
+        const SizedBox(height: 14),
+        Text('In every country studied, women score lower on financial literacy measures.', style: base),
+        const SizedBox(height: 18),
+        Container(height: 1, color: cs.outlineVariant.withValues(alpha: 0.75)),
+        const SizedBox(height: 18),
+        Text('That is not a personal failing.', style: base.copyWith(fontWeight: FontWeight.w700)),
+        const SizedBox(height: 10),
+        Text('That is a structural one.', style: base.copyWith(fontWeight: FontWeight.w700)),
+      ],
+    );
+  }
+}
+
+class _FounderNoteStep4 extends StatelessWidget {
+  const _FounderNoteStep4();
+
+  @override
+  Widget build(BuildContext context) {
+    final base = HLGTextStyles.body(color: HLGColors.textBody.withValues(alpha: 0.82)).copyWith(height: 1.75);
+    final section = HLGTextStyles.eyebrowAllCaps(color: HLGColors.deepSage).copyWith(letterSpacing: 4.0);
+    final mission = HLGTextStyles.h3SubheadItalic(color: HLGColors.textBody).copyWith(fontSize: 22, height: 1.4);
+    final cs = Theme.of(context).colorScheme;
+
+    Widget listItem(String s) => Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 10),
+                width: 6,
+                height: 6,
+                decoration: BoxDecoration(shape: BoxShape.circle, color: cs.primary),
+              ),
+              const SizedBox(width: 12),
+              Expanded(child: Text(s, style: base)),
+            ],
+          ),
+        );
+
+    return _StaggeredFadeIn(
+      children: [
+        Text('What this is', style: section),
+        const SizedBox(height: 14),
+        Text('This app is not here to create dependency.', style: mission),
+        const SizedBox(height: 10),
+        Text('It is here to end one.', style: mission),
+        const SizedBox(height: 24),
+        Text('It is access to the lessons you were expected to use every day, but were never properly taught.', style: base),
+        const SizedBox(height: 16),
+        listItem('How money works'),
+        listItem('How the system works'),
+        listItem('Why inflation matters'),
+        listItem('Why assets matter'),
+        listItem('Why time matters'),
+        listItem('Why debt is a tool, not a character flaw'),
+        listItem('Why your income is not fixed'),
+        listItem('And why financial education does not stop with you'),
+      ],
+    );
+  }
+}
+
+class _FounderNoteStep5 extends StatelessWidget {
+  const _FounderNoteStep5();
+
+  @override
+  Widget build(BuildContext context) {
+    final base = HLGTextStyles.body(color: HLGColors.textBody.withValues(alpha: 0.82)).copyWith(height: 1.75);
+    final signOff = base.copyWith(fontStyle: FontStyle.italic, color: HLGColors.deepSage.withValues(alpha: 0.95));
+
+    return _StaggeredFadeIn(
+      children: [
+        Text('It is not your fault you were not taught this.', style: base),
+        const SizedBox(height: 14),
+        Text('But it is your responsibility now.', style: base.copyWith(fontWeight: FontWeight.w700)),
+        const SizedBox(height: 16),
+        Text('Not in a shamey way.', style: base),
+        const SizedBox(height: 12),
+        Text('In a "you are allowed to understand the tool" way.', style: base),
+        const SizedBox(height: 18),
+        Text('Start your long game.', style: base.copyWith(fontWeight: FontWeight.w700)),
+        const SizedBox(height: 26),
+        Text('Tamara', style: signOff),
+        const SizedBox(height: 6),
+        Text('Founder, Her Long Game', style: signOff),
+        const SizedBox(height: 18),
+      ],
     );
   }
 }
@@ -200,13 +692,13 @@ class _IsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return _InfoPage(
       eyebrow: 'DESIGNED FOR HER.',
-      eyebrowColor: HLGColors.crownGold,
+      eyebrowColor: HLGColors.crownGoldOnDark,
       heading: 'Here\'s what you\'re getting.',
-      items: const [
+      items: [
         _InfoCardData(
-          stripeColor: HLGColors.crownGold,
+          stripeColor: HLGColors.crownGoldSoft,
           title: 'Simple.',
-          titleColor: HLGColors.crownGold,
+          titleColor: HLGColors.crownGoldSoft,
           bodyLines: [
             'Financial concepts explained the way they should have been explained years ago.',
             'Plain language.',
@@ -214,18 +706,18 @@ class _IsPage extends StatelessWidget {
           ],
         ),
         _InfoCardData(
-          stripeColor: HLGColors.crownGold,
+          stripeColor: HLGColors.crownGoldSoft,
           title: 'Grounded in reality.',
-          titleColor: HLGColors.crownGold,
+          titleColor: HLGColors.crownGoldSoft,
           bodyLines: [
             'We give you Her Tools: interactive calculators that use numbers you select, so the picture makes sense for your life.',
             'You will leave every lesson with clear takeaways so you can choose what you do next.',
           ],
         ),
         _InfoCardData(
-          stripeColor: HLGColors.crownGold,
+          stripeColor: HLGColors.crownGoldSoft,
           title: 'Long game.',
-          titleColor: HLGColors.crownGold,
+          titleColor: HLGColors.crownGoldSoft,
           bodyLines: [
             'Not quick wins.',
             'Not 30-day transformations.',
@@ -244,13 +736,14 @@ class _IsNotPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return _InfoPage(
       eyebrow: 'LET\'S BE CLEAR.',
-      eyebrowColor: HLGColors.horizonOrange,
+      // Use brand gold variants for readability and consistency on the sage background.
+      eyebrowColor: HLGColors.crownGoldOnDark,
       heading: 'What this isn\'t.',
-      items: const [
+      items: [
         _InfoCardData(
-          stripeColor: HLGColors.horizonOrange,
+          stripeColor: HLGColors.crownGoldSoft,
           title: 'Not financial advice.',
-          titleColor: HLGColors.horizonOrange,
+          titleColor: HLGColors.crownGoldSoft,
           bodyLines: [
             'Advice tells you what to do today.',
             'Principles tell you how to think for the rest of your life.',
@@ -260,9 +753,9 @@ class _IsNotPage extends StatelessWidget {
           accentLineIndexes: {3},
         ),
         _InfoCardData(
-          stripeColor: HLGColors.horizonOrange,
+          stripeColor: HLGColors.crownGoldSoft,
           title: 'Not a firehose.',
-          titleColor: HLGColors.horizonOrange,
+          titleColor: HLGColors.crownGoldSoft,
           bodyLines: [
             'If we thought you needed another degree, on top of your career, your relationships, your life, we wouldn\'t be here.',
             'We\'re stripping back to what matters.',
@@ -271,9 +764,9 @@ class _IsNotPage extends StatelessWidget {
           ],
         ),
         _InfoCardData(
-          stripeColor: HLGColors.horizonOrange,
+          stripeColor: HLGColors.crownGoldSoft,
           title: 'Not political.',
-          titleColor: HLGColors.horizonOrange,
+          titleColor: HLGColors.crownGoldSoft,
           bodyLines: [
             'Facts. Numbers.',
             'How the system works and how it impacts women specifically.',
@@ -299,7 +792,7 @@ class _InfoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final bodyStyle = HLGTextStyles.body(color: HLGColors.warmCream.withValues(alpha: 0.85)).copyWith(fontSize: 14, height: 1.6);
     final signatureStyle = bodyStyle.copyWith(color: HLGColors.warmCream.withValues(alpha: 0.98), fontWeight: FontWeight.w700, fontStyle: FontStyle.italic);
-    final signatureAccentStyle = bodyStyle.copyWith(color: HLGColors.crownGold.withValues(alpha: 0.98), fontWeight: FontWeight.w700, fontStyle: FontStyle.italic);
+    final signatureAccentStyle = bodyStyle.copyWith(color: HLGColors.crownGoldSoft.withValues(alpha: 0.98), fontWeight: FontWeight.w700, fontStyle: FontStyle.italic);
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(

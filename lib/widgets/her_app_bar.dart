@@ -92,7 +92,15 @@ class HerAppBar extends StatelessWidget implements PreferredSizeWidget {
       shape: useBrandBand ? Border(bottom: BorderSide(color: HLGColors.sageTint, width: 1)) : null,
       // Leave enough room for the back button + horizontal wordmark.
       leadingWidth: showBack ? 168 : 92,
-      leading: showBack ? _BackAndLogo(fallbackRoute: fallbackRoute, backButtonColor: backButtonColor, onPressed: onBackPressed) : const _CornerLogo(),
+      leading: showBack
+          ? _BackAndLogo(
+              fallbackRoute: fallbackRoute,
+              backButtonColor: backButtonColor,
+              onPressed: onBackPressed,
+              useBrandBand: useBrandBand,
+              isDarkPanel: isDarkBrandPanel,
+            )
+          : _CornerLogo(useBrandBand: useBrandBand, isDarkPanel: isDarkBrandPanel),
       title: DefaultTextStyle(style: Theme.of(context).textTheme.titleMedium?.copyWith(color: titleColor) ?? TextStyle(color: titleColor), child: titleWidget),
       actions: actions,
     );
@@ -190,23 +198,43 @@ class HerLogoutIconButton extends StatelessWidget {
 }
 
 class _CornerLogo extends StatelessWidget {
-  const _CornerLogo();
+  const _CornerLogo({required this.useBrandBand, required this.isDarkPanel});
 
-  static const String _logoAsset = 'assets/images/Her_Long_Game-01_2.png';
+  final bool useBrandBand;
+  final bool isDarkPanel;
+
+  // Use the primary brand wordmark asset for maximum legibility.
+  static const String _logoAsset = 'assets/images/Her_Long_Game-01.png';
   static const double _logoHeight = 24;
   static const double _logoWidth = 70;
 
   @override
   Widget build(BuildContext context) {
+    // The wordmark asset is light-toned; on cream/petal headers it needs a dark
+    // capsule behind it to remain visible. On dark panels (e.g. diagnostic)
+    // we avoid adding an extra block.
+    final showCapsule = useBrandBand && !isDarkPanel;
+
     return Padding(
       padding: const EdgeInsets.only(left: 14),
       child: Align(
         alignment: Alignment.centerLeft,
         // Give the wordmark a stable width so it can’t be rendered as a thin
         // clipped strip when constraints get tight (seen on some lesson screens).
-        child: SizedBox(
-          width: _logoWidth,
-          child: Image.asset(_logoAsset, height: _logoHeight, fit: BoxFit.contain),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOut,
+          padding: showCapsule ? const EdgeInsets.symmetric(horizontal: 10, vertical: 8) : EdgeInsets.zero,
+          decoration: showCapsule
+              ? BoxDecoration(
+                  color: HLGColors.deepSage,
+                  borderRadius: BorderRadius.circular(999),
+                )
+              : null,
+          child: SizedBox(
+            width: _logoWidth,
+            child: Image.asset(_logoAsset, height: _logoHeight, fit: BoxFit.contain),
+          ),
         ),
       ),
     );
@@ -214,14 +242,17 @@ class _CornerLogo extends StatelessWidget {
 }
 
 class _BackAndLogo extends StatelessWidget {
-  const _BackAndLogo({this.fallbackRoute, this.backButtonColor, this.onPressed});
+  const _BackAndLogo({this.fallbackRoute, this.backButtonColor, this.onPressed, required this.useBrandBand, required this.isDarkPanel});
 
   final String? fallbackRoute;
   final Color? backButtonColor;
   final VoidCallback? onPressed;
+  final bool useBrandBand;
+  final bool isDarkPanel;
 
   @override
   Widget build(BuildContext context) {
+    final showCapsule = useBrandBand && !isDarkPanel;
     return Padding(
       padding: const EdgeInsets.only(left: 6),
       child: Row(
@@ -229,9 +260,20 @@ class _BackAndLogo extends StatelessWidget {
         children: [
           AppBackButton(color: backButtonColor ?? HLGColors.textBody, fallbackRoute: fallbackRoute, onPressed: onPressed),
           const SizedBox(width: 8),
-          SizedBox(
-            width: _CornerLogo._logoWidth,
-            child: Image.asset(_CornerLogo._logoAsset, height: 20, fit: BoxFit.contain),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            curve: Curves.easeOut,
+            padding: showCapsule ? const EdgeInsets.symmetric(horizontal: 10, vertical: 7) : EdgeInsets.zero,
+            decoration: showCapsule
+                ? BoxDecoration(
+                    color: HLGColors.deepSage,
+                    borderRadius: BorderRadius.circular(999),
+                  )
+                : null,
+            child: SizedBox(
+              width: _CornerLogo._logoWidth,
+              child: Image.asset(_CornerLogo._logoAsset, height: 20, fit: BoxFit.contain),
+            ),
           ),
         ],
       ),

@@ -16,7 +16,6 @@ class OnboardingFlowController {
 
   static const List<String> _orderedSteps = <String>[
     AppRoutes.welcome,
-    AppRoutes.founderNote,
     AppRoutes.financialWellbeingDiagnostic,
   ];
 
@@ -37,10 +36,7 @@ class OnboardingFlowController {
     // 1) Not welcomed
     if (!progress.welcomed) return AppRoutes.welcome;
 
-    // 2) Founder note not seen
-    if (!progress.founderNoteSeen) return AppRoutes.founderNote;
-
-    // 3) Diagnostic not complete — show ONCE only
+    // 2) Diagnostic not complete — show ONCE only
     if (!progress.diagnosticComplete) return AppRoutes.financialWellbeingDiagnostic;
 
     // 4) Everything done

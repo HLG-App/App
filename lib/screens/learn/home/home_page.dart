@@ -82,6 +82,7 @@ class _HomePageState extends State<HomePage> {
   String? _error;
   _NextLesson? _next;
   bool _hasStartedLongGame = false;
+  bool _hasEnteredWelcome = false;
   int _welcomeCompleted = 0;
   static const List<String> _welcomeCodes = ['O1', 'O2', 'O3', 'O4', 'O5'];
   final Map<String, String> _displayNameByCode = {};
@@ -168,6 +169,7 @@ class _HomePageState extends State<HomePage> {
       // "Started" = any lesson has been marked in_progress or complete.
       final hasStarted = progressByCode.values.any((s) => s == 'in_progress' || s == 'complete');
       final welcomeDone = _welcomeCodes.where((c) => progressByCode[c] == 'complete').length;
+      final hasEnteredWelcome = _welcomeCodes.any((c) => progressByCode.containsKey(c));
 
       _NextLesson? next;
       next = _computeNextFromProgress(progressByCode);
@@ -192,6 +194,7 @@ class _HomePageState extends State<HomePage> {
         _isLoading = false;
         _next = next;
         _hasStartedLongGame = hasStarted;
+        _hasEnteredWelcome = hasEnteredWelcome;
         _welcomeCompleted = welcomeDone;
       });
     } catch (e) {
@@ -206,6 +209,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final headerTitle = _hasStartedLongGame ? 'Welcome back' : 'Welcome';
+    final showUpNext = _hasStartedLongGame || _hasEnteredWelcome;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark.copyWith(
         statusBarColor: Colors.transparent,
@@ -227,12 +232,12 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const HerTabHeader(
-                    tabLabel: 'HOME',
-                    showEyebrow: false,
-                    title: 'Welcome back',
-                    subtitle: 'Pick up where you left off — small steps, long game.',
-                  ),
+                   HerTabHeader(
+                     tabLabel: 'HOME',
+                     showEyebrow: false,
+                     title: headerTitle,
+                     subtitle: 'Pick up where you left off — small steps, long game.',
+                   ),
                   const SizedBox(height: 6),
                   if (_showFirstRunWelcomeCard) ...[
                     Padding(
@@ -266,14 +271,15 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 12),
                   ],
-                  _NextLessonSection(
-                    isLoading: _isLoading,
-                    error: _error,
-                    next: _next,
-                    hasStartedLongGame: _hasStartedLongGame,
-                    titleFor: (c) => _displayNameByCode[c] ?? (lessonDisplayNames[c] ?? c),
-                    minutesFor: (c) => _lessonMinutes[c],
-                  ),
+                  if (showUpNext)
+                    _NextLessonSection(
+                      isLoading: _isLoading,
+                      error: _error,
+                      next: _next,
+                      hasStartedLongGame: _hasStartedLongGame,
+                      titleFor: (c) => _displayNameByCode[c] ?? (lessonDisplayNames[c] ?? c),
+                      minutesFor: (c) => _lessonMinutes[c],
+                    ),
                   const SizedBox(height: 8),
                   _GoalsSnapshotSection(goals: _goalsSnapshot),
                   const SizedBox(height: 8),

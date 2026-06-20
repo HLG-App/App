@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:her_long_game/theme.dart';
+import 'package:her_long_game/widgets/her_app_bar.dart';
+import 'package:her_long_game/widgets/her_tab_header.dart';
 
 class PrinciplesPage extends StatelessWidget {
   const PrinciplesPage({super.key});
@@ -73,79 +75,40 @@ class PrinciplesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: warmCream,
+      appBar: const HerAppBar(useBrandBand: true, actions: [HerLogoutIconButton()]),
       body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              backgroundColor: warmCream,
-              surfaceTintColor: Colors.transparent,
-              floating: true,
-              leadingWidth: 132,
-              leading: Padding(
-                padding: const EdgeInsets.only(left: 6),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back_ios_rounded, size: 18, color: deepSage),
-                      onPressed: () => context.pop(),
-                      tooltip: 'Back',
-                    ),
-                    const SizedBox(width: 6),
-                    Image.asset('assets/images/Her_Long_Game-01.png', height: 20, fit: BoxFit.contain),
-                  ],
-                ),
-              ),
-              title: Text(
-                'Her Long Game: The Ten Principles',
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const HerTabHeader(
+              tabLabel: 'WISDOM',
+              title: 'The Ten Principles',
+              subtitle: 'The foundations Her Long Game is built on.',
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 18),
+              child: Text(
+                'Not rules. Not advice. Principles – the kind that held true in 1971 and will hold true when you explain them to your daughter.',
                 style: GoogleFonts.dmSans(
                   fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: textBody,
+                  color: midSage,
+                  height: 1.6,
+                  fontStyle: FontStyle.italic,
                 ),
               ),
             ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'The foundations Her Long Game is built on.',
-                      style: GoogleFonts.playfairDisplay(
-                        fontSize: 26,
-                        fontStyle: FontStyle.italic,
-                        color: night,
-                        height: 1.3,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Not rules. Not advice. Principles – the kind that held true in 1971 and will hold true when you explain them to your daughter.',
-                      style: GoogleFonts.dmSans(
-                        fontSize: 14,
-                        color: midSage,
-                        height: 1.6,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Container(height: 1, color: crownGold.withValues(alpha: 0.3)),
-                    const SizedBox(height: 24),
-                  ],
-                ),
+            ...List.generate(_principles.length, (index) => _buildPrincipleCard(_principles[index], index)),
+            _buildClosingStatement(),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: OutlinedButton.icon(
+                onPressed: () => context.pop(),
+                icon: const Icon(Icons.arrow_back_rounded, color: HLGColors.textBody, size: 18),
+                label: Text('Back', style: HLGTextStyles.labelMedium(color: HLGColors.textBody)),
               ),
             ),
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  if (index == _principles.length) return _buildClosingStatement();
-                  return _buildPrincipleCard(_principles[index], index);
-                },
-                childCount: _principles.length + 1,
-              ),
-            ),
+            const SizedBox(height: 28),
           ],
         ),
       ),
