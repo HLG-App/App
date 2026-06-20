@@ -2,16 +2,19 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:her_long_game/app.dart';
+import 'package:her_long_game/flow/onboarding_flow_controller.dart';
 import 'package:her_long_game/flow/user_state.dart';
 import 'package:her_long_game/flow/user_state_repository.dart';
+import 'package:her_long_game/flow/user_progress.dart';
 import 'package:her_long_game/theme.dart';
 
 /// Initial page that checks auth state and routes accordingly.
 ///
 /// Rules (in order):
 /// - no session -> `/auth`
-/// - session + onboarding_complete=false -> `/onboarding/intro`
-/// - session + onboarding_complete=true -> `/home`
+/// - session + welcomed=false -> `/welcome`
+/// - session + diagnostic_complete=false -> `/onboarding/diagnostic`
+/// - session + diagnostic_complete=true -> `/home`
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
 
@@ -24,11 +27,8 @@ class _SplashPageState extends State<SplashPage> {
     // 1. Not authenticated
     if (!state.isAuthenticated) return AppRoutes.auth;
 
-    // 2. New onboarding intro flow (shown once; can be replayed later from Profile)
-    if (!state.onboardingComplete) return AppRoutes.onboardingIntro;
-
-    // 3. Everything done — go home
-    return AppRoutes.home;
+    // 2. Onboarding flow is now canonical: Welcome -> Diagnostic -> Home
+    return OnboardingFlowController.instance.resumeOnboarding(UserProgress.fromUserState(state));
   }
 
   @override

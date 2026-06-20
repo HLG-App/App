@@ -20,39 +20,19 @@ class OnboardingIntroFlowPage extends StatefulWidget {
 }
 
 class _OnboardingIntroFlowPageState extends State<OnboardingIntroFlowPage> {
-  static const int _totalSteps = 8;
+  // This page is now the practical "App Guide" (not the manifesto onboarding).
+  // It intentionally contains only:
+  // - App map
+  // - How to get the most out of the app
+  static const int _totalSteps = 2;
 
   int _step = 0;
-  String? _moneyFeels;
   bool _saving = false;
-
-  Future<void> _setOnboardingComplete({required bool skipped}) async {
-    final uid = SupabaseConfig.auth.currentUser?.id;
-    if (uid == null) return;
-    try {
-      await SupabaseConfig.client.from('users').update({'onboarding_complete': true}).eq('id', uid);
-    } catch (e) {
-      debugPrint('[OnboardingIntroFlow] Failed to update onboarding_complete: $e');
-    }
-  }
-
-  Future<void> _saveStartingPoint() async {
-    if (_moneyFeels == null) return;
-    final uid = SupabaseConfig.auth.currentUser?.id;
-    if (uid == null) return;
-    try {
-      // Optional column. If it doesn't exist yet, we degrade gracefully.
-      await SupabaseConfig.client.from('users').update({'money_feels': _moneyFeels}).eq('id', uid);
-    } catch (e) {
-      debugPrint('[OnboardingIntroFlow] Failed to save money_feels (column may not exist): $e');
-    }
-  }
 
   Future<void> _finish({required bool goToLearn}) async {
     if (_saving) return;
     setState(() => _saving = true);
     try {
-      await _setOnboardingComplete(skipped: false);
       if (!mounted) return;
       if (goToLearn) {
         context.go('${AppRoutes.learn}?welcome=1');
@@ -69,7 +49,6 @@ class _OnboardingIntroFlowPageState extends State<OnboardingIntroFlowPage> {
     if (_saving) return;
     setState(() => _saving = true);
     try {
-      await _setOnboardingComplete(skipped: true);
       if (!mounted) return;
       // If they skip, we still don’t block them later. Gentle reminder can be shown on Home.
       context.go('${AppRoutes.home}?baseline_reminder=1');
@@ -129,48 +108,25 @@ class _OnboardingIntroFlowPageState extends State<OnboardingIntroFlowPage> {
               child: _OnboardingActions(
                 step: _step,
                 isSaving: _saving,
-                moneyFeels: _moneyFeels,
+                  moneyFeels: null,
                 onPrimaryPressed: () async {
                   switch (_step) {
-                    case 0:
-                      _goNext();
-                      return;
-                    case 1:
-                      _goNext();
-                      return;
-                    case 2:
-                      _goNext();
-                      return;
-                    case 3:
-                      _goNext();
-                      return;
-                    case 4:
-                      await _saveStartingPoint();
-                      if (!mounted) return;
-                      _goNext();
-                      return;
-                    case 5:
-                      _goNext();
-                      return;
-                    case 6:
-                      _goNext();
-                      return;
-                    case 7:
-                      await _finish(goToLearn: false);
-                      return;
+                      case 0:
+                        _goNext();
+                        return;
+                      case 1:
+                        await _finish(goToLearn: false);
+                        return;
                   }
                 },
                 onSecondaryPressed: () async {
                   switch (_step) {
                     case 0:
-                      await _skipAll();
+                        // Only offer "Skip" for non-replay entry points.
+                        if (!widget.isReplay) await _skipAll();
                       return;
-                    case 4:
-                      // “I’ll do this later”
-                      _goNext();
-                      return;
-                    case 7:
-                      await _finish(goToLearn: true);
+                      case 1:
+                        await _finish(goToLearn: true);
                       return;
                     default:
                       // No-op for steps without a secondary action.
@@ -239,21 +195,9 @@ class _OnboardingStepBody extends StatelessWidget {
   Widget build(BuildContext context) {
     switch (step) {
       case 0:
-        return const _WelcomeStep();
-      case 1:
-        return const _WhyThisExistsStep();
-      case 2:
-        return const _WhatItDoesStep();
-      case 3:
-        return const _WhatItDoesNotDoStep();
-      case 4:
-        return _StartingPointStep(selected: moneyFeels, onSelected: onMoneyFeelsChanged);
-      case 5:
         return const _AppMapStep();
-      case 6:
+      case 1:
         return const _BestOutOfAppStep();
-      case 7:
-        return const _FinalStep();
       default:
         return const SizedBox.shrink();
     }
