@@ -1,8 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:her_long_game/app.dart';
-import 'package:her_long_game/supabase/supabase_config.dart';
 import 'package:her_long_game/theme.dart';
 import 'package:her_long_game/widgets/her_app_bar.dart';
 
@@ -34,6 +32,10 @@ class _OnboardingIntroFlowPageState extends State<OnboardingIntroFlowPage> {
     setState(() => _saving = true);
     try {
       if (!mounted) return;
+      if (widget.isReplay) {
+        context.pop();
+        return;
+      }
       if (goToLearn) {
         context.go('${AppRoutes.learn}?welcome=1');
       } else {
@@ -96,8 +98,8 @@ class _OnboardingIntroFlowPageState extends State<OnboardingIntroFlowPage> {
                   padding: AppSpacing.paddingLg,
                   child: _OnboardingStepBody(
                     step: _step,
-                    moneyFeels: _moneyFeels,
-                    onMoneyFeelsChanged: (v) => setState(() => _moneyFeels = v),
+                    moneyFeels: null,
+                    onMoneyFeelsChanged: (_) {},
                   ),
                 ),
               ),
@@ -108,7 +110,7 @@ class _OnboardingIntroFlowPageState extends State<OnboardingIntroFlowPage> {
               child: _OnboardingActions(
                 step: _step,
                 isSaving: _saving,
-                  moneyFeels: null,
+                moneyFeels: null,
                 onPrimaryPressed: () async {
                   switch (_step) {
                       case 0:
@@ -140,6 +142,9 @@ class _OnboardingIntroFlowPageState extends State<OnboardingIntroFlowPage> {
       ),
     );
   }
+}
+
+class _moneyFeels {
 }
 
 class _OnboardingTopBar extends StatelessWidget {

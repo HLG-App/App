@@ -95,7 +95,7 @@ class _FinancialWellbeingDiagnosticScreenState extends State<FinancialWellbeingD
         'financial_confidence': result.financialConfidenceScore,
         'financial_behaviour': result.financialBehaviourScore,
       };
-      return _CompletionScreen(archetype: result.archetype, selectedBaseline: selectedBaseline, scores: scores);
+      return _CompletionScreen(archetype: result.archetype, selectedBaseline: selectedBaseline, scores: scores, fallbackRoute: widget.fallbackRoute);
     }
 
     final question = _current;
@@ -106,7 +106,7 @@ class _FinancialWellbeingDiagnosticScreenState extends State<FinancialWellbeingD
       backgroundColor: bg,
       appBar: HerAppBar(
         showBack: true,
-        fallbackRoute: '/welcome',
+        fallbackRoute: widget.fallbackRoute,
         backButtonColor: HLGColors.warmCream,
         backgroundColor: bg,
         surfaceTintColor: Colors.transparent,
@@ -341,11 +341,12 @@ class _BottomContinueBar extends StatelessWidget {
 }
 
 class _CompletionScreen extends StatelessWidget {
-  const _CompletionScreen({required this.archetype, required this.selectedBaseline, required this.scores});
+  const _CompletionScreen({required this.archetype, required this.selectedBaseline, required this.scores, required this.fallbackRoute});
 
   final FinancialWellbeingArchetype archetype;
   final String? selectedBaseline;
   final Map<String, dynamic> scores;
+  final String fallbackRoute;
 
   Future<void> _saveAndGoHome(BuildContext context) async {
     try {
@@ -381,9 +382,9 @@ class _CompletionScreen extends StatelessWidget {
     final info = archetype.info;
     return Scaffold(
       backgroundColor: HLGColors.deepSage,
-      appBar: const HerAppBar(
+      appBar: HerAppBar(
         showBack: true,
-        fallbackRoute: '/welcome',
+        fallbackRoute: fallbackRoute,
         backButtonColor: HLGColors.warmCream,
         backgroundColor: HLGColors.deepSage,
         surfaceTintColor: Colors.transparent,

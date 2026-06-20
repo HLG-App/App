@@ -89,6 +89,7 @@ class _HomePageState extends State<HomePage> {
 
   bool _showFirstRunWelcomeCard = false;
   bool _showBaselineReminderCard = false;
+  bool _showFounderNoteCard = false;
 
   List<Map<String, dynamic>> _goalsSnapshot = const [];
 
@@ -105,6 +106,28 @@ class _HomePageState extends State<HomePage> {
     });
     _loadNextLesson();
     _loadGoalsSnapshot();
+    _loadFounderNoteCardVisibility();
+  }
+
+  Future<void> _loadFounderNoteCardVisibility() async {
+    try {
+      final uid = SupabaseConfig.auth.currentUser?.id;
+      if (uid == null) {
+        if (!mounted) return;
+        setState(() => _showFounderNoteCard = false);
+        return;
+      }
+
+      final row = await SupabaseConfig.client.from('users').select('founder_note_seen').eq('id', uid).maybeSingle();
+      final seen = row?['founder_note_seen'] == true;
+      if (!mounted) return;
+      setState(() => _showFounderNoteCard = !seen);
+    } catch (e) {
+      debugPrint('[HomePage] Failed to load founder_note_seen: $e');
+      if (!mounted) return;
+      // Fail open (show the card) if we can't load the flag.
+      setState(() => _showFounderNoteCard = true);
+    }
   }
 
   Future<void> _loadGoalsSnapshot() async {
@@ -288,11 +311,14 @@ class _HomePageState extends State<HomePage> {
                     child: PrinciplesCard(compact: true),
                   ),
                   const SizedBox(height: 12),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: FounderNoteCard(),
-                  ),
-                  const SizedBox(height: 24),
+                  if (_showFounderNoteCard) ...[
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: FounderNoteCard(),
+                    ),
+                    const SizedBox(height: 24),
+                  ] else
+                    const SizedBox(height: 24),
                 ],
               ),
             ),
