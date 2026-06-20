@@ -173,9 +173,19 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 10),
             _ProfileMenuCard(
               icon: Icons.replay_rounded,
-              title: 'Replay onboarding',
-              subtitle: 'Revisit the basics and the app map any time.',
+              title: 'App Guide',
+              subtitle: 'A practical guide: app map + how to get the most out of it.',
               onTap: () => context.push('${AppRoutes.onboardingIntro}?replay=1'),
+            ),
+            const SizedBox(height: 22),
+
+            Text('Financial wellbeing', style: HLGTextStyles.lessonHeading(color: HLGColors.textBody)),
+            const SizedBox(height: 10),
+            _ProfileMenuCard(
+              icon: Icons.favorite_border,
+              title: 'Retake diagnostic',
+              subtitle: 'See how your money feels have changed over time.',
+              onTap: () => context.push('${AppRoutes.financialWellbeingDiagnostic}?from=profile'),
             ),
                 ],
               ),

@@ -80,7 +80,11 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.financialWellbeingDiagnostic,
         name: 'financialWellbeingDiagnostic',
-        pageBuilder: (context, state) => const MaterialPage(child: FinancialWellbeingDiagnosticScreen()),
+        pageBuilder: (context, state) {
+          final from = (state.uri.queryParameters['from'] ?? '').trim();
+          final fallback = from == 'profile' ? AppRoutes.profile : AppRoutes.welcome;
+          return MaterialPage(child: FinancialWellbeingDiagnosticScreen(fallbackRoute: fallback));
+        },
       ),
 
       // Lesson + checkpoint flows are intentionally outside the tab shell so the

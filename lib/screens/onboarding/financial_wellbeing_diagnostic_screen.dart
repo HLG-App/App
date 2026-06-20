@@ -17,7 +17,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 /// - Responses are stored locally in memory only (no backend integration yet).
 /// - Uses a subtle fade + slide transition between questions.
 class FinancialWellbeingDiagnosticScreen extends StatefulWidget {
-  const FinancialWellbeingDiagnosticScreen({super.key});
+  const FinancialWellbeingDiagnosticScreen({super.key, this.fallbackRoute = AppRoutes.welcome});
+
+  /// Where the back button should return when this screen is entered.
+  ///
+  /// - Onboarding flow: '/welcome'
+  /// - Profile retake: '/profile'
+  final String fallbackRoute;
 
   @override
   State<FinancialWellbeingDiagnosticScreen> createState() => _FinancialWellbeingDiagnosticScreenState();

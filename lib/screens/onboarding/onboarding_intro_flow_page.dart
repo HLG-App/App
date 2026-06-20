@@ -653,25 +653,18 @@ class _OnboardingActions extends StatelessWidget {
   final VoidCallback onSecondaryPressed;
 
   String get _primaryLabel => switch (step) {
-        0 => 'Start my long game',
-        1 => 'Keep going',
-        2 => 'That makes sense',
-        3 => 'I understand',
-        4 => 'Save my starting point',
-        5 => 'Show me how to use it',
-        6 => 'I’m ready',
-        7 => 'Go to Home',
+        0 => 'Next',
+        1 => 'Done',
         _ => 'Continue',
       };
 
   String? get _secondaryLabel => switch (step) {
         0 => 'Skip for now',
-        4 => 'I’ll do this later',
-        7 => 'Start with Learn',
+        1 => 'Start with Learn',
         _ => null,
       };
 
-  bool get _primaryEnabled => !isSaving && (step != 4 || moneyFeels != null);
+  bool get _primaryEnabled => !isSaving;
 
   @override
   Widget build(BuildContext context) {
