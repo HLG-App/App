@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:her_long_game/app.dart';
 import 'package:her_long_game/supabase/supabase_config.dart';
 import 'package:her_long_game/data/repositories/lesson_repository.dart';
 import 'package:her_long_game/theme.dart';
@@ -81,13 +82,14 @@ class _ProfilePageState extends State<ProfilePage> {
     final progress = (_lessonsTotal <= 0) ? 0.0 : (_lessonsCompleted / _lessonsTotal).clamp(0.0, 1.0);
     return Scaffold(
       backgroundColor: HLGColors.warmCream,
-      appBar: const HerAppBar(actions: [HerLogoutIconButton()]),
+      appBar: const HerAppBar(useBrandBand: true, actions: [HerLogoutIconButton()]),
       body: SafeArea(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             const HerTabHeader(
               tabLabel: 'PROFILE',
+              showEyebrow: false,
               title: 'Your account',
               subtitle: 'Settings, learning progress, and what you\'ve saved.',
             ),
@@ -164,6 +166,16 @@ class _ProfilePageState extends State<ProfilePage> {
               title: 'Referral',
               subtitle: 'Invite a friend and share your code.',
               onTap: () => context.push('/profile/referral'),
+            ),
+            const SizedBox(height: 22),
+
+            Text('Support', style: HLGTextStyles.lessonHeading(color: HLGColors.textBody)),
+            const SizedBox(height: 10),
+            _ProfileMenuCard(
+              icon: Icons.replay_rounded,
+              title: 'Replay onboarding',
+              subtitle: 'Revisit the basics and the app map any time.',
+              onTap: () => context.push('${AppRoutes.onboardingIntro}?replay=1'),
             ),
                 ],
               ),

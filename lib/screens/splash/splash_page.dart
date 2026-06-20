@@ -10,9 +10,8 @@ import 'package:her_long_game/theme.dart';
 ///
 /// Rules (in order):
 /// - no session -> `/auth`
-/// - session + welcomed_at IS NULL -> `/welcome`
-/// - session + welcomed_at set + onboarding_complete=false -> `/lesson/L0`
-/// - session + welcomed_at set + onboarding_complete=true -> `/home`
+/// - session + onboarding_complete=false -> `/onboarding/intro`
+/// - session + onboarding_complete=true -> `/home`
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
 
@@ -25,16 +24,10 @@ class _SplashPageState extends State<SplashPage> {
     // 1. Not authenticated
     if (!state.isAuthenticated) return AppRoutes.auth;
 
-    // 2. Not welcomed
-    if (state.welcomedAt == null) return AppRoutes.welcome;
+    // 2. New onboarding intro flow (shown once; can be replayed later from Profile)
+    if (!state.onboardingComplete) return AppRoutes.onboardingIntro;
 
-    // 3. Founder note not seen
-    if (!state.founderNoteSeen) return AppRoutes.founderNote;
-
-    // 4. Diagnostic not complete — show ONCE only
-    if (!state.diagnosticComplete) return AppRoutes.financialWellbeingDiagnostic;
-
-    // 5. Everything done — go home
+    // 3. Everything done — go home
     return AppRoutes.home;
   }
 

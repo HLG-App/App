@@ -130,7 +130,7 @@ class _WisdomPageState extends State<WisdomPage> {
 
     return Scaffold(
       backgroundColor: HLGColors.warmCream,
-      appBar: const HerAppBar(actions: [HerLogoutIconButton()]),
+      appBar: const HerAppBar(useBrandBand: true, actions: [HerLogoutIconButton()]),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.only(bottom: 80),
@@ -139,6 +139,7 @@ class _WisdomPageState extends State<WisdomPage> {
             children: [
               const HerTabHeader(
                 tabLabel: 'WISDOM',
+                showEyebrow: false,
                 title: 'Truths worth carrying',
                 subtitle: 'Founder notes, principles, and voices from women on the same path.',
               ),

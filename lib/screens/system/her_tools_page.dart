@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:her_long_game/theme.dart';
 import 'package:her_long_game/widgets/her_app_bar.dart';
+import 'package:her_long_game/widgets/her_tab_header.dart';
 import 'package:her_long_game/widgets/tool_bottom_sheet.dart';
 
 /// HerTools (pillar)
@@ -145,29 +146,40 @@ class HerToolsPage extends StatelessWidget {
       appBar: HerAppBar(
         showBack: true,
         fallbackRoute: '/system',
-        title: Text('Her Tools', style: HLGTextStyles.labelMedium(color: HLGColors.textBody)),
         backgroundColor: HLGColors.warmCream,
         surfaceTintColor: Colors.transparent,
       ),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+        child: Column(
           children: [
-            const _ToolsIntroCard(),
-            const SizedBox(height: 16),
-            for (final section in _sections) ...[
-              _ToolsSectionHeader(title: section.title, subtitle: section.subtitle),
-              const SizedBox(height: 10),
-              for (final category in section.categoryOrder)
-                for (final tool in (toolsByCategory[category] ?? const <_ToolEntry>[])) ...[
-                  _ToolCard(
-                    entry: tool,
-                    onTap: () => ToolBottomSheet.show(context, toolCode: tool.code, lessonCode: 'SYSTEM'),
-                  ),
-                  const SizedBox(height: 12),
+            const HerTabHeader(
+              tabLabel: 'SYSTEM',
+              title: 'Tools that make it real',
+              subtitle: 'Calculators and what‑ifs — so the concepts land in your numbers.',
+              padding: EdgeInsets.fromLTRB(20, 12, 20, 18),
+            ),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(20, 6, 20, 24),
+                children: [
+                  const _ToolsIntroCard(),
+                  const SizedBox(height: 18),
+                  for (final section in _sections) ...[
+                    _ToolsSectionHeader(title: section.title, subtitle: section.subtitle),
+                    const SizedBox(height: 12),
+                    for (final category in section.categoryOrder)
+                      for (final tool in (toolsByCategory[category] ?? const <_ToolEntry>[])) ...[
+                        _ToolCard(
+                          entry: tool,
+                          onTap: () => ToolBottomSheet.show(context, toolCode: tool.code, lessonCode: 'SYSTEM'),
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    const SizedBox(height: 18),
+                  ],
                 ],
-              const SizedBox(height: 6),
-            ],
+              ),
+            ),
           ],
         ),
       ),
@@ -183,17 +195,20 @@ class _ToolsIntroCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
       decoration: BoxDecoration(
-        // Make the intro card visually distinct from the tool cards.
-        color: HLGColors.sagePale,
+        color: HLGColors.petal,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: HLGColors.crownGold.withValues(alpha: 0.55), width: 1.2),
+        border: Border.all(color: HLGColors.deepSage.withValues(alpha: 0.18), width: 1),
       ),
       child: Row(
         children: [
           Container(
             height: 44,
             width: 44,
-            decoration: BoxDecoration(color: HLGColors.petal, borderRadius: BorderRadius.circular(14), border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.25))),
+            decoration: BoxDecoration(
+              color: HLGColors.warmCream,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: HLGColors.deepSage.withValues(alpha: 0.12)),
+            ),
             child: const Icon(Icons.auto_awesome_rounded, color: HLGColors.deepSage),
           ),
           const SizedBox(width: 12),
@@ -201,9 +216,9 @@ class _ToolsIntroCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Tools \u2013 in one place', style: HLGTextStyles.moduleTitle(color: HLGColors.textBody)),
+                Text('Tools — in one place', style: HLGTextStyles.moduleTitle(color: HLGColors.textBody)),
                 const SizedBox(height: 4),
-                Text('These are the same tools you see inside lessons, surfaced here for quick access.', style: HLGTextStyles.homeBody14(color: HLGColors.textMuted)),
+                Text('Same tools as inside lessons. Here for quick, calm access.', style: HLGTextStyles.homeBody14(color: HLGColors.textMuted)),
               ],
             ),
           ),
@@ -219,46 +234,79 @@ class _ToolCard extends StatelessWidget {
   final _ToolEntry entry;
   final VoidCallback onTap;
 
+  Color get _accent {
+    switch (entry.category) {
+      case _ToolCategory.clarity:
+        return HLGColors.crownGold;
+      case _ToolCategory.spending:
+        return HLGColors.horizonOrange;
+      case _ToolCategory.security:
+        return HLGColors.deepSage;
+      case _ToolCategory.growth:
+        return HLGColors.sage;
+      case _ToolCategory.debt:
+        return HLGColors.antiqueRose;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: HLGColors.petal,
-      borderRadius: BorderRadius.circular(AppRadius.lg),
+      color: HLGColors.warmCream,
+      borderRadius: BorderRadius.circular(AppRadius.md),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(AppRadius.md),
           child: Row(
             children: [
-              Container(
-                height: 44,
-                width: 44,
-                decoration: BoxDecoration(
-                  color: HLGColors.sagePale,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: HLGColors.sageMid.withValues(alpha: 0.22)),
-                ),
-                child: Icon(entry.icon, color: HLGColors.deepSage),
-              ),
-              const SizedBox(width: 12),
+              Container(width: 5, height: 124, color: _accent.withValues(alpha: 0.85)),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(entry.functionalTitle, style: HLGTextStyles.moduleTitle(color: HLGColors.textBody)),
-                    const SizedBox(height: 4),
-                    Text(
-                      entry.brandedName,
-                      style: HLGTextStyles.labelMedium(color: HLGColors.crownGold).copyWith(fontStyle: FontStyle.italic, fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(height: 6),
-                    Text('What it brings to your attention: ${entry.bringsToAttention}', style: HLGTextStyles.homeBody14(color: HLGColors.textMuted)),
-                  ],
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: _accent.withValues(alpha: 0.18), width: 1),
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        height: 42,
+                        width: 42,
+                        decoration: BoxDecoration(
+                          color: _accent.withValues(alpha: 0.10),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(entry.icon, color: _accent, size: 20),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              entry.brandedName,
+                              style: HLGTextStyles.quoteItalic(color: HLGColors.textBody).copyWith(fontWeight: FontWeight.w600, height: 1.25),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(entry.functionalTitle, style: HLGTextStyles.labelMedium(color: HLGColors.textMuted)),
+                            const SizedBox(height: 10),
+                            Text(
+                              entry.bringsToAttention,
+                              style: HLGTextStyles.homeBody14(color: HLGColors.textBody).copyWith(height: 1.55),
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: HLGColors.sageMid),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(width: 10),
-              const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: HLGColors.sageMid),
             ],
           ),
         ),
@@ -276,13 +324,15 @@ class _ToolsSectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 4),
+      padding: const EdgeInsets.only(left: 2),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: HLGTextStyles.moduleTitle(color: HLGColors.textBody)),
+          Text(title.toUpperCase(), style: HLGTextStyles.eyebrowAllCaps(color: HLGColors.crownGold)),
+          const SizedBox(height: 6),
+          Text(title, style: HLGTextStyles.lessonHeading(color: HLGColors.textBody).copyWith(fontSize: 22, fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
-          Text(subtitle, style: HLGTextStyles.homeBody14(color: HLGColors.textMuted)),
+          Text(subtitle, style: HLGTextStyles.homeBody14(color: HLGColors.textMuted).copyWith(height: 1.55)),
         ],
       ),
     );

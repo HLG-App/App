@@ -20,6 +20,7 @@ class HerTabHeader extends StatelessWidget {
     this.tabLabel,
     required this.title,
     this.subtitle,
+    this.showEyebrow = true,
     this.padding = const EdgeInsets.fromLTRB(20, 14, 20, 18),
   });
 
@@ -32,6 +33,9 @@ class HerTabHeader extends StatelessWidget {
   /// Optional short subtitle / orienting line beneath the title.
   final String? subtitle;
 
+  /// When false, hides the archived "Her + TAB" eyebrow row.
+  final bool showEyebrow;
+
   final EdgeInsets padding;
 
   @override
@@ -41,7 +45,7 @@ class HerTabHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (tabLabel != null && tabLabel!.trim().isNotEmpty) ...[
+          if (showEyebrow && tabLabel != null && tabLabel!.trim().isNotEmpty) ...[
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [

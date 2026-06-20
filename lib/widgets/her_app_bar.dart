@@ -19,6 +19,7 @@ class HerAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.titleText,
     this.actions,
     this.showBack = false,
+    this.useBrandBand = false,
     this.fallbackRoute,
     this.onBackPressed,
     this.backButtonColor,
@@ -34,6 +35,13 @@ class HerAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   /// If true, renders a back arrow (go_router-safe) plus logo in the leading.
   final bool showBack;
+
+  /// Adds a subtle on-brand band behind the logo to ensure contrast across
+  /// the primary tab screens.
+  ///
+  /// When enabled and [backgroundColor] is not provided, the AppBar background
+  /// defaults to [HLGColors.petal] and a soft bottom border is applied.
+  final bool useBrandBand;
 
   /// Used by [AppBackButton] when there is no back stack.
   final String? fallbackRoute;
@@ -69,17 +77,19 @@ class HerAppBar extends StatelessWidget implements PreferredSizeWidget {
 
     // The app uses Cream as the dominant surface. Only a small number of
     // screens should ever place AppBar text on a dark panel.
-    final resolvedBg = backgroundColor ?? Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).colorScheme.surface;
+    final resolvedBg = backgroundColor ?? (useBrandBand ? HLGColors.petal : null) ?? Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).colorScheme.surface;
     final isDarkBrandPanel = resolvedBg == HLGColors.deepSage;
     final titleColor = isDarkBrandPanel ? HLGColors.warmCream : HLGColors.textBody;
 
     return AppBar(
-      backgroundColor: backgroundColor,
+      backgroundColor: backgroundColor ?? (useBrandBand ? HLGColors.petal : null),
       surfaceTintColor: surfaceTintColor ?? Colors.transparent,
+      elevation: 0,
       automaticallyImplyLeading: false,
       centerTitle: centerTitle ?? false,
       titleSpacing: 0,
       toolbarHeight: toolbarHeight,
+      shape: useBrandBand ? Border(bottom: BorderSide(color: HLGColors.sageTint, width: 1)) : null,
       // Leave enough room for the back button + horizontal wordmark.
       leadingWidth: showBack ? 168 : 92,
       leading: showBack ? _BackAndLogo(fallbackRoute: fallbackRoute, backButtonColor: backButtonColor, onPressed: onBackPressed) : const _CornerLogo(),

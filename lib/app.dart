@@ -19,6 +19,7 @@ import 'package:her_long_game/screens/learn/lesson_list_page.dart';
 import 'package:her_long_game/screens/learn/phase_entry_page.dart';
 import 'package:her_long_game/screens/now/now_page.dart';
 import 'package:her_long_game/screens/onboarding/financial_wellbeing_diagnostic_screen.dart';
+import 'package:her_long_game/screens/onboarding/onboarding_intro_flow_page.dart';
 import 'package:her_long_game/screens/profile/profile_page.dart';
 import 'package:her_long_game/screens/profile/her_notes_page.dart';
 import 'package:her_long_game/screens/profile/account_settings_page.dart';
@@ -61,6 +62,15 @@ class AppRouter {
     routes: [
       GoRoute(path: AppRoutes.splash, name: 'splash', pageBuilder: (context, state) => const NoTransitionPage(child: SplashPage())),
       GoRoute(path: AppRoutes.auth, name: 'auth', pageBuilder: (context, state) => const MaterialPage(child: AuthPage())),
+
+      GoRoute(
+        path: AppRoutes.onboardingIntro,
+        name: 'onboardingIntro',
+        pageBuilder: (context, state) {
+          final replay = (state.uri.queryParameters['replay'] ?? '').trim() == '1';
+          return MaterialPage(child: OnboardingIntroFlowPage(isReplay: replay));
+        },
+      ),
 
       // Welcome flow: shown once after account creation.
       GoRoute(path: AppRoutes.welcome, name: 'welcome', pageBuilder: (context, state) => const MaterialPage(child: WelcomeScreen())),
@@ -116,7 +126,15 @@ class AppRouter {
         builder: (context, state, child) => _TabScaffold(state: state, child: child),
         routes: [
           GoRoute(path: AppRoutes.system, name: 'system', pageBuilder: (context, state) => const NoTransitionPage(child: HerSystemPage())),
-          GoRoute(path: AppRoutes.home, name: 'home', pageBuilder: (context, state) => const NoTransitionPage(child: HomePage())),
+          GoRoute(
+            path: AppRoutes.home,
+            name: 'home',
+            pageBuilder: (context, state) {
+              final showWelcome = (state.uri.queryParameters['welcome'] ?? '').trim() == '1';
+              final showBaselineReminder = (state.uri.queryParameters['baseline_reminder'] ?? '').trim() == '1';
+              return NoTransitionPage(child: HomePage(showFirstRunWelcomeCard: showWelcome, showBaselineReminder: showBaselineReminder));
+            },
+          ),
 
           GoRoute(
             path: '/principles',
@@ -251,6 +269,7 @@ class AppRouter {
 class AppRoutes {
   static const String splash = '/';
   static const String auth = '/auth';
+  static const String onboardingIntro = '/onboarding/intro';
   static const String welcome = '/welcome';
   static const String founderNote = '/founder-note';
   static const String financialWellbeingDiagnostic = '/onboarding/diagnostic';

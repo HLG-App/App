@@ -6,6 +6,7 @@ import 'package:her_long_game/theme.dart';
 import 'package:her_long_game/supabase/supabase_config.dart';
 import 'package:her_long_game/data/repositories/lesson_repository.dart';
 import 'package:her_long_game/widgets/her_app_bar.dart';
+import 'package:her_long_game/widgets/her_tab_header.dart';
 
 class LearnPage extends StatefulWidget {
   const LearnPage({super.key});
@@ -174,39 +175,47 @@ class _LearnPageState extends State<LearnPage> {
 
     return Scaffold(
       appBar: HerAppBar(
-        title: Text('Learn', style: HLGTextStyles.labelMedium(color: HLGColors.textBody)),
+        useBrandBand: true,
         actions: [
           IconButton(onPressed: _isLoading ? null : _loadProgress, icon: const Icon(Icons.refresh, color: HLGColors.textBody), tooltip: 'Refresh'),
           const HerLogoutIconButton(),
         ],
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 18, 24, 24),
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _error != null
-                  ? _LearnErrorState(message: _error!, onRetry: _loadProgress)
-                  : ListView(
-                      children: [
-                        // Welcome module (O1\u2013O5) sits above phases until O5 is complete.
-                        // Once O5 is done it disappears \u2014 user is inside the real modules.
-                        if (!(_statusByLessonCode['O5'] == 'complete') &&
-                            LearningCatalog.instance.maybeGetModule('0') != null) ...[
-                          _WelcomeCard(
-                            module: LearningCatalog.instance.maybeGetModule('0')!,
-                            statusByLessonCode: _statusByLessonCode,
-                            onTap: () => context.push('/learn/module/0'),
-                          ),
-                          const SizedBox(height: 14),
-                        ],
-                        for (var i = 0; i < phases.length; i++) ...[
-                          _buildPhaseCard(context, phases[i]),
-                          if (i < phases.length - 1) const SizedBox(height: 14),
-                        ],
-                      ],
-                    ),
-        ),
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _error != null
+                ? _LearnErrorState(message: _error!, onRetry: _loadProgress)
+                : ListView(
+                    padding: EdgeInsets.zero,
+                    children: [
+                      const HerTabHeader(
+                        tabLabel: 'LEARN',
+                        showEyebrow: false,
+                        title: 'Learn',
+                        subtitle: 'Your curriculum, progress, and next steps — at your pace.',
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                        child: Column(
+                          children: [
+                            if (!(_statusByLessonCode['O5'] == 'complete') && LearningCatalog.instance.maybeGetModule('0') != null) ...[
+                              _WelcomeCard(
+                                module: LearningCatalog.instance.maybeGetModule('0')!,
+                                statusByLessonCode: _statusByLessonCode,
+                                onTap: () => context.push('/learn/module/0'),
+                              ),
+                              const SizedBox(height: 14),
+                            ],
+                            for (var i = 0; i < phases.length; i++) ...[
+                              _buildPhaseCard(context, phases[i]),
+                              if (i < phases.length - 1) const SizedBox(height: 14),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
       ),
     );
   }

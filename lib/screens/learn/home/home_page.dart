@@ -17,7 +17,15 @@ import 'package:her_long_game/widgets/principles_card.dart';
 import 'package:her_long_game/widgets/welcome_module_card.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, this.showFirstRunWelcomeCard = false, this.showBaselineReminder = false});
+
+  /// True when arriving from onboarding (query param). Used to show the
+  /// one-time “You’re in.” card.
+  final bool showFirstRunWelcomeCard;
+
+  /// True when onboarding was skipped (query param). Used to show a gentle
+  /// non-blocking reminder card.
+  final bool showBaselineReminder;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -78,11 +86,22 @@ class _HomePageState extends State<HomePage> {
   static const List<String> _welcomeCodes = ['O1', 'O2', 'O3', 'O4', 'O5'];
   final Map<String, String> _displayNameByCode = {};
 
+  bool _showFirstRunWelcomeCard = false;
+  bool _showBaselineReminderCard = false;
+
   List<Map<String, dynamic>> _goalsSnapshot = const [];
 
   @override
   void initState() {
     super.initState();
+    _showFirstRunWelcomeCard = widget.showFirstRunWelcomeCard;
+    _showBaselineReminderCard = widget.showBaselineReminder;
+    // Clear query params after we capture them, so they don’t keep re-triggering
+    // cards on back/forward navigation.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (widget.showFirstRunWelcomeCard || widget.showBaselineReminder) context.go(AppRoutes.home);
+    });
     _loadNextLesson();
     _loadGoalsSnapshot();
   }
@@ -195,7 +214,7 @@ class _HomePageState extends State<HomePage> {
       ),
       child: Scaffold(
         backgroundColor: HLGColors.warmCream,
-        appBar: const HerAppBar(actions: [HerLogoutIconButton()]),
+        appBar: const HerAppBar(useBrandBand: true, actions: [HerLogoutIconButton()]),
         body: SafeArea(
           bottom: false,
           child: RefreshIndicator(
@@ -210,10 +229,32 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   const HerTabHeader(
                     tabLabel: 'HOME',
+                    showEyebrow: false,
                     title: 'Welcome back',
                     subtitle: 'Pick up where you left off — small steps, long game.',
                   ),
                   const SizedBox(height: 6),
+                  if (_showFirstRunWelcomeCard) ...[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: FirstRunWelcomeCard(
+                        onStartFirstLesson: () => context.go('/lesson/O1'),
+                        onExplore: () => context.go(AppRoutes.learn),
+                        onDismiss: () => setState(() => _showFirstRunWelcomeCard = false),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                  if (_showBaselineReminderCard) ...[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: BaselineReminderCard(
+                        onContinue: () => context.go(AppRoutes.onboardingIntro),
+                        onDismiss: () => setState(() => _showBaselineReminderCard = false),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
                   if (!_isLoading && _welcomeCompleted < _welcomeCodes.length) ...[
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -251,6 +292,111 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class FirstRunWelcomeCard extends StatelessWidget {
+  const FirstRunWelcomeCard({super.key, required this.onStartFirstLesson, required this.onExplore, required this.onDismiss});
+
+  final VoidCallback onStartFirstLesson;
+  final VoidCallback onExplore;
+  final VoidCallback onDismiss;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
+    final cs = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: cs.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.7)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(child: Text('You’re in.', style: t.titleMedium)),
+              IconButton(
+                tooltip: 'Dismiss',
+                onPressed: onDismiss,
+                icon: Icon(Icons.close_rounded, color: cs.onSurfaceVariant),
+              ),
+            ],
+          ),
+          Text('Start with one lesson, one tool, or one note. You do not need to do everything today.', style: t.bodyMedium),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: FilledButton(
+                  onPressed: onStartFirstLesson,
+                  style: FilledButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999))),
+                  child: const Text('Start first lesson'),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: onExplore,
+              style: OutlinedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999))),
+              child: const Text('Explore the app'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class BaselineReminderCard extends StatelessWidget {
+  const BaselineReminderCard({super.key, required this.onContinue, required this.onDismiss});
+
+  final VoidCallback onContinue;
+  final VoidCallback onDismiss;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
+    final cs = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: cs.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.7)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(child: Text('A quick starting point (optional)', style: t.titleMedium)),
+              IconButton(
+                tooltip: 'Dismiss',
+                onPressed: onDismiss,
+                icon: Icon(Icons.close_rounded, color: cs.onSurfaceVariant),
+              ),
+            ],
+          ),
+          Text('If you want, you can take one minute to tell the app how money feels right now. It helps personalise what you see.', style: t.bodyMedium),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton(
+              onPressed: onContinue,
+              style: FilledButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999))),
+              child: const Text('Continue onboarding'),
+            ),
+          ),
+        ],
       ),
     );
   }

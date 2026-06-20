@@ -18,6 +18,7 @@ class HerSystemPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: HLGColors.warmCream,
       appBar: const HerAppBar(
+        useBrandBand: true,
         backgroundColor: HLGColors.warmCream,
         surfaceTintColor: Colors.transparent,
         actions: [HerLogoutIconButton(color: HLGColors.textBody)],
@@ -27,6 +28,7 @@ class HerSystemPage extends StatelessWidget {
           children: [
             const HerTabHeader(
               tabLabel: 'SYSTEM',
+              showEyebrow: false,
               title: 'Everything in one place',
               subtitle: 'Your notes, bookmarks, tools, direction, and perspective.',
             ),
