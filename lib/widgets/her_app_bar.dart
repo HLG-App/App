@@ -203,17 +203,19 @@ class _CornerLogo extends StatelessWidget {
   final bool useBrandBand;
   final bool isDarkPanel;
 
-  // Use the primary brand wordmark asset for maximum legibility.
-  static const String _logoAsset = 'assets/images/Her_Long_Game-01.png';
+  // Two wordmark variants so we can keep contrast without adding a background
+  // capsule behind the logo.
+  //
+  // - 01 = light wordmark (best on dark backgrounds)
+  // - 02 = dark wordmark (best on light backgrounds)
+  static const String _logoLightAsset = 'assets/images/Her_Long_Game-01.png';
+  static const String _logoDarkAsset = 'assets/images/Her_Long_Game-02.png';
   static const double _logoHeight = 24;
   static const double _logoWidth = 70;
 
   @override
   Widget build(BuildContext context) {
-    // The wordmark asset is light-toned; on cream/petal headers it needs a dark
-    // capsule behind it to remain visible. On dark panels (e.g. diagnostic)
-    // we avoid adding an extra block.
-    final showCapsule = useBrandBand && !isDarkPanel;
+    final logoAsset = isDarkPanel ? _logoLightAsset : _logoDarkAsset;
 
     return Padding(
       padding: const EdgeInsets.only(left: 14),
@@ -221,19 +223,18 @@ class _CornerLogo extends StatelessWidget {
         alignment: Alignment.centerLeft,
         // Give the wordmark a stable width so it can’t be rendered as a thin
         // clipped strip when constraints get tight (seen on some lesson screens).
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          curve: Curves.easeOut,
-          padding: showCapsule ? const EdgeInsets.symmetric(horizontal: 10, vertical: 8) : EdgeInsets.zero,
-          decoration: showCapsule
-              ? BoxDecoration(
-                  color: HLGColors.deepSage,
-                  borderRadius: BorderRadius.circular(999),
-                )
-              : null,
-          child: SizedBox(
-            width: _logoWidth,
-            child: Image.asset(_logoAsset, height: _logoHeight, fit: BoxFit.contain),
+        child: SizedBox(
+          width: _logoWidth,
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 160),
+            switchInCurve: Curves.easeOut,
+            switchOutCurve: Curves.easeIn,
+            child: Image.asset(
+              logoAsset,
+              key: ValueKey(logoAsset),
+              height: _logoHeight,
+              fit: BoxFit.contain,
+            ),
           ),
         ),
       ),
@@ -252,7 +253,7 @@ class _BackAndLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final showCapsule = useBrandBand && !isDarkPanel;
+    final logoAsset = isDarkPanel ? _CornerLogo._logoLightAsset : _CornerLogo._logoDarkAsset;
     return Padding(
       padding: const EdgeInsets.only(left: 6),
       child: Row(
@@ -260,19 +261,18 @@ class _BackAndLogo extends StatelessWidget {
         children: [
           AppBackButton(color: backButtonColor ?? HLGColors.textBody, fallbackRoute: fallbackRoute, onPressed: onPressed),
           const SizedBox(width: 8),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            curve: Curves.easeOut,
-            padding: showCapsule ? const EdgeInsets.symmetric(horizontal: 10, vertical: 7) : EdgeInsets.zero,
-            decoration: showCapsule
-                ? BoxDecoration(
-                    color: HLGColors.deepSage,
-                    borderRadius: BorderRadius.circular(999),
-                  )
-                : null,
-            child: SizedBox(
-              width: _CornerLogo._logoWidth,
-              child: Image.asset(_CornerLogo._logoAsset, height: 20, fit: BoxFit.contain),
+          SizedBox(
+            width: _CornerLogo._logoWidth,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 160),
+              switchInCurve: Curves.easeOut,
+              switchOutCurve: Curves.easeIn,
+              child: Image.asset(
+                logoAsset,
+                key: ValueKey(logoAsset),
+                height: 20,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
         ],
