@@ -237,7 +237,6 @@ class _FounderNoteStepPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
     final maxWidth = MediaQuery.of(context).size.width;
     final pad = maxWidth >= 520 ? const EdgeInsets.symmetric(horizontal: 32, vertical: 24) : const EdgeInsets.fromLTRB(24, 20, 24, 24);
 
@@ -358,11 +357,10 @@ class _FounderNoteStepBody extends StatelessWidget {
 }
 
 class _StaggeredFadeIn extends StatefulWidget {
-  const _StaggeredFadeIn({required this.children, this.initialDelay = Duration.zero, this.stagger = const Duration(milliseconds: 200)});
+  const _StaggeredFadeIn({required this.children, this.initialDelay = Duration.zero});
 
   final List<Widget> children;
   final Duration initialDelay;
-  final Duration stagger;
 
   @override
   State<_StaggeredFadeIn> createState() => _StaggeredFadeInState();
@@ -391,7 +389,7 @@ class _StaggeredFadeInState extends State<_StaggeredFadeIn> {
     Future<void>.delayed(widget.initialDelay, () {
       if (!mounted) return;
       for (int i = 0; i < _visible.length; i++) {
-        Future<void>.delayed(widget.stagger * i, () {
+        Future<void>.delayed(const Duration(milliseconds: 200) * i, () {
           if (!mounted) return;
           setState(() => _visible[i] = true);
         });

@@ -144,8 +144,6 @@ class _OnboardingIntroFlowPageState extends State<OnboardingIntroFlowPage> {
   }
 }
 
-class _moneyFeels {
-}
 
 class _OnboardingTopBar extends StatelessWidget {
   const _OnboardingTopBar({
@@ -240,6 +238,7 @@ class _StepScaffold extends StatelessWidget {
   }
 }
 
+// ignore: unused_element
 class _WelcomeStep extends StatelessWidget {
   const _WelcomeStep();
 
@@ -259,6 +258,7 @@ class _WelcomeStep extends StatelessWidget {
   }
 }
 
+// ignore: unused_element
 class _WhyThisExistsStep extends StatelessWidget {
   const _WhyThisExistsStep();
 
@@ -561,6 +561,7 @@ class _BestOutOfAppStep extends StatelessWidget {
   }
 }
 
+// ignore: unused_element
 class _FinalStep extends StatelessWidget {
   const _FinalStep();
 
