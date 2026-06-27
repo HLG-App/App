@@ -5,13 +5,10 @@ import 'package:her_long_game/supabase/supabase_config.dart';
 import 'package:her_long_game/theme.dart';
 import 'package:her_long_game/widgets/app_back_button.dart';
 
-/// Standard app bar that keeps the brand mark visible in the top-left.
+/// Standard app bar.
 ///
-/// - Root screens: shows the logo as the leading widget.
-/// - Back-stack screens: shows back arrow + logo together in the leading area.
-///
-/// This avoids “bare” top corners while preserving go_router navigation
-/// (via [AppBackButton]).
+/// This app previously rendered a wordmark/logo in the leading area. The
+/// leading area now only shows a back button when requested.
 class HerAppBar extends StatelessWidget implements PreferredSizeWidget {
   const HerAppBar({
     super.key,
@@ -90,17 +87,17 @@ class HerAppBar extends StatelessWidget implements PreferredSizeWidget {
       titleSpacing: 0,
       toolbarHeight: toolbarHeight,
       shape: useBrandBand ? Border(bottom: BorderSide(color: HLGColors.sageTint, width: 1)) : null,
-      // Leave enough room for the back button + horizontal wordmark.
-      leadingWidth: showBack ? 168 : 92,
+      leadingWidth: showBack ? kToolbarHeight : 0,
       leading: showBack
-          ? _BackAndLogo(
-              fallbackRoute: fallbackRoute,
-              backButtonColor: backButtonColor,
-              onPressed: onBackPressed,
-              useBrandBand: useBrandBand,
-              isDarkPanel: isDarkBrandPanel,
+          ? Padding(
+              padding: const EdgeInsets.only(left: 6),
+              child: AppBackButton(
+                color: backButtonColor ?? (isDarkBrandPanel ? HLGColors.warmCream : HLGColors.textBody),
+                fallbackRoute: fallbackRoute,
+                onPressed: onBackPressed,
+              ),
             )
-          : _CornerLogo(useBrandBand: useBrandBand, isDarkPanel: isDarkBrandPanel),
+          : const SizedBox.shrink(),
       title: DefaultTextStyle(style: Theme.of(context).textTheme.titleMedium?.copyWith(color: titleColor) ?? TextStyle(color: titleColor), child: titleWidget),
       actions: actions,
     );
@@ -197,86 +194,3 @@ class HerLogoutIconButton extends StatelessWidget {
   }
 }
 
-class _CornerLogo extends StatelessWidget {
-  const _CornerLogo({required this.useBrandBand, required this.isDarkPanel});
-
-  final bool useBrandBand;
-  final bool isDarkPanel;
-
-  // Two wordmark variants so we can keep contrast without adding a background
-  // capsule behind the logo.
-  //
-  // - 01 = light wordmark (best on dark backgrounds)
-  // - 02 = dark wordmark (best on light backgrounds)
-  static const String _logoLightAsset = 'assets/images/Her_Long_Game-01.png';
-  static const String _logoDarkAsset = 'assets/images/Her_Long_Game-02.png';
-  static const double _logoHeight = 24;
-  static const double _logoWidth = 70;
-
-  @override
-  Widget build(BuildContext context) {
-    final logoAsset = isDarkPanel ? _logoLightAsset : _logoDarkAsset;
-
-    return Padding(
-      padding: const EdgeInsets.only(left: 14),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        // Give the wordmark a stable width so it can’t be rendered as a thin
-        // clipped strip when constraints get tight (seen on some lesson screens).
-        child: SizedBox(
-          width: _logoWidth,
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 160),
-            switchInCurve: Curves.easeOut,
-            switchOutCurve: Curves.easeIn,
-            child: Image.asset(
-              logoAsset,
-              key: ValueKey(logoAsset),
-              height: _logoHeight,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _BackAndLogo extends StatelessWidget {
-  const _BackAndLogo({this.fallbackRoute, this.backButtonColor, this.onPressed, required this.useBrandBand, required this.isDarkPanel});
-
-  final String? fallbackRoute;
-  final Color? backButtonColor;
-  final VoidCallback? onPressed;
-  final bool useBrandBand;
-  final bool isDarkPanel;
-
-  @override
-  Widget build(BuildContext context) {
-    final logoAsset = isDarkPanel ? _CornerLogo._logoLightAsset : _CornerLogo._logoDarkAsset;
-    return Padding(
-      padding: const EdgeInsets.only(left: 6),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AppBackButton(color: backButtonColor ?? HLGColors.textBody, fallbackRoute: fallbackRoute, onPressed: onPressed),
-          const SizedBox(width: 8),
-          SizedBox(
-            width: _CornerLogo._logoWidth,
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 160),
-              switchInCurve: Curves.easeOut,
-              switchOutCurve: Curves.easeIn,
-              child: Image.asset(
-                logoAsset,
-                key: ValueKey(logoAsset),
-                height: 20,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

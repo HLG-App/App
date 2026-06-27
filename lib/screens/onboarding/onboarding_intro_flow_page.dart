@@ -239,26 +239,6 @@ class _StepScaffold extends StatelessWidget {
 }
 
 // ignore: unused_element
-class _WelcomeStep extends StatelessWidget {
-  const _WelcomeStep();
-
-  @override
-  Widget build(BuildContext context) {
-    final t = Theme.of(context).textTheme;
-    return _StepScaffold(
-      title: 'Welcome to Her Long Game',
-      body: [
-        Text('This is financial education for women who want to understand money, build confidence, and stop feeling behind.', style: t.bodyMedium),
-        const SizedBox(height: 10),
-        Text('You do not need to know everything before you start.', style: t.bodyMedium),
-        const SizedBox(height: 6),
-        Text('You just need a place to start.', style: t.bodyMedium),
-      ],
-    );
-  }
-}
-
-// ignore: unused_element
 class _WhyThisExistsStep extends StatelessWidget {
   const _WhyThisExistsStep();
 
@@ -288,34 +268,7 @@ class _WhyThisExistsStep extends StatelessWidget {
   }
 }
 
-class _WhatItDoesStep extends StatelessWidget {
-  const _WhatItDoesStep();
-
-  @override
-  Widget build(BuildContext context) {
-    final t = Theme.of(context).textTheme;
-    return _StepScaffold(
-      title: 'What Her Long Game helps you do',
-      body: [
-        Text('Her Long Game helps you understand how money works.', style: t.bodyMedium),
-        const SizedBox(height: 10),
-        Text('You will learn the language, history, principles and systems behind financial decisions.', style: t.bodyMedium),
-        const SizedBox(height: 14),
-        _BulletList(items: const [
-          'Follow structured lessons',
-          'Use simple tools',
-          'Save notes and reflections',
-          'Build your own financial goals',
-          'Return to what matters later',
-          'Learn from wisdom passed on by other women',
-        ]),
-        const SizedBox(height: 12),
-        Text('This is about building understanding before pressure.', style: t.bodyMedium),
-      ],
-    );
-  }
-}
-
+// ignore: unused_element
 class _WhatItDoesNotDoStep extends StatelessWidget {
   const _WhatItDoesNotDoStep();
 
@@ -351,6 +304,7 @@ class _WhatItDoesNotDoStep extends StatelessWidget {
   }
 }
 
+// ignore: unused_element
 class _StartingPointStep extends StatelessWidget {
   const _StartingPointStep({required this.selected, required this.onSelected});
 
@@ -435,27 +389,22 @@ class _AppMapCarouselState extends State<_AppMapCarousel> {
     _AppMapCardData(
       title: 'Home',
       body: 'Your starting point each time you open the app.\n\nUse Home to see what to do next, continue learning, return to tools, and keep track of your progress.',
-      icon: Icons.home_rounded,
     ),
     _AppMapCardData(
       title: 'Her',
       body: 'Your personal space.\n\nUse Her to see your reflections, saved notes, goals, current focus and the pieces you want to carry forward.',
-      icon: Icons.favorite_rounded,
     ),
     _AppMapCardData(
       title: 'Learn',
       body: 'Your lesson library.\n\nUse Learn to follow the Her Long Game curriculum, build your financial foundations and understand the system step by step.',
-      icon: Icons.school_rounded,
     ),
     _AppMapCardData(
       title: 'Wisdom',
       body: 'Your plain-English money library.\n\nUse Wisdom for explainers, field notes, definitions, community insights and the things women wish they had been taught earlier.',
-      icon: Icons.menu_book_rounded,
     ),
     _AppMapCardData(
       title: 'Profile',
       body: 'Your account and settings.\n\nUse Profile to manage your details, privacy, preferences, progress and support options.',
-      icon: Icons.person_rounded,
     ),
   ];
 
@@ -489,11 +438,10 @@ class _AppMapCarouselState extends State<_AppMapCarousel> {
 }
 
 class _AppMapCardData {
-  const _AppMapCardData({required this.title, required this.body, required this.icon});
+  const _AppMapCardData({required this.title, required this.body});
 
   final String title;
   final String body;
-  final IconData icon;
 }
 
 class _AppMapCard extends StatelessWidget {
@@ -515,13 +463,6 @@ class _AppMapCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            height: 44,
-            width: 44,
-            decoration: BoxDecoration(color: cs.surface, borderRadius: BorderRadius.circular(14), border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.7))),
-            child: Icon(data.icon, color: cs.primary),
-          ),
-          const SizedBox(height: 12),
           Text(data.title, style: t.titleMedium),
           const SizedBox(height: 8),
           Expanded(child: Text(data.body, style: t.bodyMedium)),

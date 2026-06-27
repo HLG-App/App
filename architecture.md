@@ -48,6 +48,10 @@ Last updated: 2026-06-14
 
 Antique Rose usage rule (from brand system): maximum one use per screen. Appropriate for: Her Notes accents, debt/cost warning cards, community insight borders, stopping-cost callouts. Never use for CTAs, navigation, backgrounds, or body text.
 
+### UI copy rule — no emojis
+- Do **not** use emoji characters (e.g. 📚 ✨ 💡) in any user-facing UI copy.
+- Tone should be carried by typography, spacing, and (when needed) functional icons — not emoji glyphs.
+
 ---
 
 ## 2) GoRouter route map

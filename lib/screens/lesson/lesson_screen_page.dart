@@ -226,7 +226,15 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
             await _lessonRepo.completeLesson(
               userId: completeUserId,
               lessonCode: widget.lessonCode,
-              finalScreenIndex: _currentScreenIndex,
+              // IMPORTANT:
+              // `complete` screens are treated as *end markers* only (we don't
+              // render them). If we persist the complete-marker index as
+              // `current_screen`, then the Carry This back button would route
+              // back to that marker and immediately bounce forward to Carry This
+              // again, creating a broken back loop.
+              //
+              // Persist the last real content screen index instead.
+              finalScreenIndex: (_currentScreenIndex - 1).clamp(0, 1 << 30),
             );
           }
         } catch (e) {
@@ -361,7 +369,13 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
 
       final isComplete = screen.screenType == 'complete';
       if (isComplete) {
-        await _lessonRepo.completeLesson(userId: userId, lessonCode: widget.lessonCode, finalScreenIndex: _currentScreenIndex);
+        // Same reasoning as the complete-marker branch above: store the last
+        // meaningful content index, not the complete screen itself.
+        await _lessonRepo.completeLesson(
+          userId: userId,
+          lessonCode: widget.lessonCode,
+          finalScreenIndex: (_currentScreenIndex - 1).clamp(0, 1 << 30),
+        );
       } else {
         await _lessonRepo.saveProgress(
           userId: userId,
@@ -869,24 +883,9 @@ class _LessonScreenScaffold extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (showChoices && (selectedOption ?? '').trim().isNotEmpty) ...[
-                Text(
-                  'Selected: ${selectedOption!.trim()}',
-                  style: HLGTextStyles.labelMedium(color: HLGColors.textMuted),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 10),
-              ],
-              if (showFreeTextReflection && reflectionText.trim().isNotEmpty) ...[
-                Text(
-                  'Saved draft: ${reflectionText.trim()}',
-                  style: HLGTextStyles.labelMedium(color: HLGColors.textMuted),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 10),
-              ],
+              // Intentionally no “Selected: …” helper text. The selected option is
+              // already visually indicated in the option pills, and repeating it
+              // here reads like debug commentary.
               SizedBox(
                 height: 52,
                 child: FilledButton(

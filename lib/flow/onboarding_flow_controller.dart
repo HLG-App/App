@@ -33,10 +33,18 @@ class OnboardingFlowController {
   ///
   /// This method is the single place that decides whether onboarding is done.
   String resumeOnboarding(UserProgress progress) {
-    // 1) Not welcomed
+    // 1) Founder note is the true first-run gate.
+    //
+    // Some environments may pre-populate `welcomed_at` (e.g. DB defaults or
+    // legacy data), which would incorrectly skip the Welcome flow. Treat the
+    // Founder Note as canonical: if it hasn't been seen, always start at
+    // Welcome.
+    if (!progress.founderNoteSeen) return AppRoutes.welcome;
+
+    // 2) Not welcomed (commitment step)
     if (!progress.welcomed) return AppRoutes.welcome;
 
-    // 2) Diagnostic not complete — show ONCE only
+    // 3) Diagnostic not complete — show ONCE only
     if (!progress.diagnosticComplete) return AppRoutes.financialWellbeingDiagnostic;
 
     // 4) Everything done
