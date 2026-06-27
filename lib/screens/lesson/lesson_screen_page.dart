@@ -32,6 +32,13 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
   // This is critical for avoiding duplicate "Lesson Complete" / "Carry this" experiences.
   bool _didNavigateAway = false;
 
+  void _pushOnce(String route) {
+    if (!mounted) return;
+    if (_didNavigateAway) return;
+    _didNavigateAway = true;
+    context.push(route);
+  }
+
   void _pushReplacementOnce(String route) {
     if (!mounted) return;
     if (_didNavigateAway) return;
@@ -186,7 +193,9 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
         }
 
         if (hasCompleteScreen) {
-          _pushReplacementOnce(LessonFlow.nextRouteAfterLesson(widget.lessonCode));
+          // Push (not replacement) so users can go back from Carry This to the
+          // final reflection/content screen.
+          _pushOnce(LessonFlow.nextRouteAfterLesson(widget.lessonCode));
           return;
         }
 
@@ -240,7 +249,9 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
         } catch (e) {
           debugPrint('[LessonScreenPage] Failed to complete ${widget.lessonCode} at complete marker: $e');
         }
-        _pushReplacementOnce(LessonFlow.nextRouteAfterLesson(widget.lessonCode));
+        // Push (not replacement) so users can go back from Carry This to the
+        // final reflection/content screen.
+        _pushOnce(LessonFlow.nextRouteAfterLesson(widget.lessonCode));
         return;
       }
 
@@ -388,10 +399,9 @@ class _LessonScreenPageState extends State<LessonScreenPage> {
 
       if (isComplete) {
         if (!mounted) return;
-        // Use pushReplacement so the user can navigate "back" to where they
-        // came from (e.g., Learn), without leaving the completed lesson screen
-        // on the stack.
-        _pushReplacementOnce(LessonFlow.nextRouteAfterLesson(widget.lessonCode));
+        // Push (not replacement) so users can go back from Carry This to the
+        // final reflection/content screen.
+        _pushOnce(LessonFlow.nextRouteAfterLesson(widget.lessonCode));
         return;
       }
 

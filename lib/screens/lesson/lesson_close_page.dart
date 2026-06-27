@@ -100,6 +100,13 @@ class _LessonClosePageState extends State<LessonClosePage> {
   }
 
   void _onBackToLesson() {
+    // Prefer true back if the lesson screen exists behind us.
+    if (context.canPop()) {
+      context.pop();
+      return;
+    }
+
+    // Fallback: deep link back into the last known screen.
     final idx = (_lastScreenIndex ?? 0).clamp(0, 1 << 30);
     context.go('/lesson/${widget.lessonCode}/screen?start=$idx');
   }
@@ -217,7 +224,7 @@ class _LessonClosePageState extends State<LessonClosePage> {
       backgroundColor: const Color(0xFFF7F5F0),
       appBar: HerAppBar(
         showBack: true,
-        fallbackRoute: '/learn',
+          fallbackRoute: '/learn',
         onBackPressed: _onBackToLesson,
         title: Text('Carry this', style: HLGTextStyles.labelMedium(color: HLGColors.textBody)),
       ),

@@ -10,6 +10,10 @@ import 'package:her_long_game/screens/auth/welcome_screen.dart';
 import 'package:her_long_game/screens/checkpoint/checkpoint_page.dart';
 import 'package:her_long_game/screens/learn/home/home_page.dart';
 import 'package:her_long_game/flow/phase_progress_controller.dart';
+import 'package:her_long_game/flow/onboarding_flow_controller.dart';
+import 'package:her_long_game/flow/user_progress.dart';
+import 'package:her_long_game/flow/user_state.dart';
+import 'package:her_long_game/flow/user_state_repository.dart';
 import 'package:her_long_game/screens/lesson/lesson_page.dart';
 import 'package:her_long_game/screens/lesson/lesson_close_page.dart';
 import 'package:her_long_game/screens/lesson/lesson_screen_page.dart';
@@ -17,7 +21,6 @@ import 'package:her_long_game/screens/learn/learn_page.dart';
 import 'package:her_long_game/screens/learn/learn_phase_page.dart';
 import 'package:her_long_game/screens/learn/lesson_list_page.dart';
 import 'package:her_long_game/screens/learn/phase_entry_page.dart';
-import 'package:her_long_game/screens/now/now_page.dart';
 import 'package:her_long_game/screens/onboarding/financial_wellbeing_diagnostic_screen.dart';
 import 'package:her_long_game/screens/onboarding/onboarding_intro_flow_page.dart';
 import 'package:her_long_game/screens/profile/profile_page.dart';
@@ -35,6 +38,7 @@ import 'package:her_long_game/screens/system/her_system_page.dart';
 import 'package:her_long_game/screens/system/her_tools_page.dart';
 import 'package:her_long_game/screens/splash/splash_page.dart';
 import 'package:her_long_game/screens/wisdom/wisdom_page.dart';
+import 'package:her_long_game/supabase/supabase_config.dart';
 import 'package:her_long_game/theme.dart';
 
 /// Main app widget.
@@ -57,8 +61,47 @@ class App extends StatelessWidget {
 
 /// Named route configuration requested.
 class AppRouter {
+  static final _RouteGuardCache _guardCache = _RouteGuardCache();
+
   static final GoRouter router = GoRouter(
     initialLocation: AppRoutes.splash,
+    refreshListenable: GoRouterRefreshStream(SupabaseConfig.client.auth.onAuthStateChange),
+    redirect: (context, state) async {
+      final loc = state.uri.toString();
+
+      // Public routes.
+      final isSplash = loc == AppRoutes.splash;
+      final isAuth = loc.startsWith(AppRoutes.auth);
+      if (isSplash) return null;
+
+      // If signed out, force auth for all non-public routes.
+      final session = SupabaseConfig.auth.currentSession;
+      if (session == null) {
+        return isAuth ? null : AppRoutes.auth;
+      }
+
+      // If signed in, keep users out of the auth page.
+      if (isAuth) return AppRoutes.splash;
+
+      // Onboarding gating: ensure deep links can't bypass the welcome/diagnostic.
+      // We cache the user flags briefly to avoid re-fetching on every navigation.
+      final userState = await _guardCache.loadUserState();
+      final progress = UserProgress.fromUserState(userState);
+      final resume = OnboardingFlowController.instance.resumeOnboarding(progress);
+      final isOnboardingRoute = loc.startsWith(AppRoutes.welcome) || loc.startsWith(AppRoutes.financialWellbeingDiagnostic);
+
+      // Always allow the practical App Guide (used from Profile support).
+      final isAppGuide = loc.startsWith(AppRoutes.onboardingIntro);
+
+      if (!isOnboardingRoute && !isAppGuide && resume != AppRoutes.home) {
+        return resume;
+      }
+
+      // Once onboarding is complete, prevent returning to onboarding routes.
+      if (resume == AppRoutes.home && isOnboardingRoute) return AppRoutes.home;
+
+      return null;
+    },
     routes: [
       GoRoute(path: AppRoutes.splash, name: 'splash', pageBuilder: (context, state) => const NoTransitionPage(child: SplashPage())),
       GoRoute(path: AppRoutes.auth, name: 'auth', pageBuilder: (context, state) => const MaterialPage(child: AuthPage())),
@@ -142,6 +185,11 @@ class AppRouter {
 
           GoRoute(
             path: '/principles',
+            redirect: (context, state) => '${AppRoutes.wisdom}/principles',
+          ),
+
+          GoRoute(
+            path: '${AppRoutes.wisdom}/principles',
             name: 'principles',
             pageBuilder: (context, state) => const MaterialPage(child: PrinciplesPage()),
           ),
@@ -190,11 +238,10 @@ class AppRouter {
               ),
             ],
           ),
-           GoRoute(
-             path: AppRoutes.now,
-             name: 'now',
-             pageBuilder: (context, state) => const NoTransitionPage(child: NowPage()),
-           ),
+          // The Now tab is not part of the current bottom-nav IA. Preserve the
+          // route for compatibility but redirect to Home to avoid confusing tab
+          // selection + unreachable destinations.
+          GoRoute(path: AppRoutes.now, redirect: (context, state) => AppRoutes.home),
           GoRoute(path: AppRoutes.wisdom, name: 'wisdom', pageBuilder: (context, state) => const NoTransitionPage(child: WisdomPage())),
           GoRoute(path: AppRoutes.tools, name: 'tools', pageBuilder: (context, state) => const MaterialPage(child: HerToolsPage())),
           GoRoute(path: AppRoutes.perspective, name: 'perspective', pageBuilder: (context, state) => const MaterialPage(child: HerPerspectivePage())),
@@ -314,9 +361,9 @@ class _TabScaffold extends StatelessWidget {
     if (location.startsWith(AppRoutes.bookmarks)) return 1;
     if (location.startsWith(AppRoutes.direction)) return 1;
     if (location.startsWith(AppRoutes.perspective)) return 1;
-    if (location.startsWith(AppRoutes.now)) return 1;
     if (location.startsWith(AppRoutes.learn)) return 2;
     if (location.startsWith(AppRoutes.wisdom)) return 3;
+    if (location.startsWith('/principles')) return 3;
     if (location.startsWith(AppRoutes.profile)) return 4;
 
     // Routes no longer represented in the bottom nav.
@@ -361,6 +408,33 @@ class _TabScaffold extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class _RouteGuardCache {
+  UserState? _cached;
+  DateTime? _cachedAt;
+  Future<UserState>? _inFlight;
+
+  static const Duration _ttl = Duration(seconds: 5);
+
+  Future<UserState> loadUserState() async {
+    final now = DateTime.now();
+    final cached = _cached;
+    if (cached != null && _cachedAt != null && now.difference(_cachedAt!) < _ttl) return cached;
+    final current = _inFlight;
+    if (current != null) return current;
+
+    final f = const SupabaseUserStateRepository().load();
+    _inFlight = f;
+    try {
+      final res = await f;
+      _cached = res;
+      _cachedAt = DateTime.now();
+      return res;
+    } finally {
+      _inFlight = null;
+    }
   }
 }
 
