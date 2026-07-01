@@ -25,8 +25,6 @@ class _ProfilePageState extends State<ProfilePage> {
   int _lessonsTotal = 0;
   bool _hasStartedLearning = false;
 
-// 3 lessons + 4 checkpoints
-
   @override
   void initState() {
     super.initState();
@@ -44,14 +42,16 @@ class _ProfilePageState extends State<ProfilePage> {
         setState(() {
           _lessonsCompleted = 0;
           _hasStartedLearning = false;
-          _lessonsTotal = LessonFlow.lessonSequence.where((s) => s.startsWith('L')).length;
+          _lessonsTotal = LessonFlow.lessonSequence.where((s) => !s.startsWith('CK')).length;
         });
         return;
       }
 
       int completed = 0;
       bool started = false;
-      final lessonCodes = LessonFlow.lessonSequence.where((s) => s.startsWith('L')).toList(growable: false);
+      // V4 lesson codes use O/P/N/F prefixes; checkpoints use CK. Count every
+      // non-checkpoint item as a lesson.
+      final lessonCodes = LessonFlow.lessonSequence.where((s) => !s.startsWith('CK')).toList(growable: false);
       final total = lessonCodes.length;
       try {
         final progress = await _lessonRepo.getAllProgress(userId: uid);

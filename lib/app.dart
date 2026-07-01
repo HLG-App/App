@@ -136,7 +136,7 @@ class AppRouter {
         path: AppRoutes.lessonCover,
         name: 'lessonCover',
         pageBuilder: (context, state) {
-          final lessonCode = state.pathParameters['code'] ?? 'LA';
+          final lessonCode = state.pathParameters['code'] ?? 'O1';
           return MaterialPage(child: LessonPage(lessonCode: lessonCode));
         },
       ),
@@ -144,7 +144,7 @@ class AppRouter {
         path: AppRoutes.lessonScreen,
         name: 'lessonScreen',
         pageBuilder: (context, state) {
-          final lessonCode = state.pathParameters['code'] ?? 'LA';
+          final lessonCode = state.pathParameters['code'] ?? 'O1';
           final startRaw = state.uri.queryParameters['start'];
           final start = int.tryParse((startRaw ?? '').trim()) ?? 0;
           return MaterialPage(child: LessonScreenPage(lessonCode: lessonCode, initialScreenIndex: start));
@@ -154,7 +154,7 @@ class AppRouter {
         path: AppRoutes.lessonClose,
         name: 'lessonClose',
         pageBuilder: (context, state) {
-          final lessonCode = state.pathParameters['code'] ?? 'LA';
+          final lessonCode = state.pathParameters['code'] ?? 'O1';
           return MaterialPage(child: LessonClosePage(lessonCode: lessonCode));
         },
       ),

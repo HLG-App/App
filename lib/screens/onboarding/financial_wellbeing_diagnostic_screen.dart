@@ -340,7 +340,7 @@ class _BottomContinueBar extends StatelessWidget {
   }
 }
 
-class _CompletionScreen extends StatelessWidget {
+class _CompletionScreen extends StatefulWidget {
   const _CompletionScreen({required this.archetype, required this.selectedBaseline, required this.scores, required this.fallbackRoute});
 
   final FinancialWellbeingArchetype archetype;
@@ -348,37 +348,56 @@ class _CompletionScreen extends StatelessWidget {
   final Map<String, dynamic> scores;
   final String fallbackRoute;
 
-  Future<void> _saveAndGoHome(BuildContext context) async {
+  @override
+  State<_CompletionScreen> createState() => _CompletionScreenState();
+}
+
+class _CompletionScreenState extends State<_CompletionScreen> {
+  bool _saving = false;
+
+  Future<void> _saveAndGoHome() async {
+    if (_saving) return;
+    setState(() => _saving = true);
     try {
       final client = Supabase.instance.client;
       final userId = client.auth.currentUser?.id;
       if (userId == null) {
         debugPrint('[Diagnostic] completion blocked: no user');
-        context.go(AppRoutes.auth);
+        if (mounted) context.go(AppRoutes.auth);
         return;
       }
 
       await client.from('users').update({
         'diagnostic_complete': true,
-        'emotional_baseline': selectedBaseline,
-        'diagnostic_archetype': archetype.name,
-        'diagnostic_scores': scores,
+        'emotional_baseline': widget.selectedBaseline,
+        'diagnostic_archetype': widget.archetype.name,
+        'diagnostic_scores': widget.scores,
       }).eq('id', userId);
 
-      if (context.mounted) context.go(AppRoutes.home);
+      if (mounted) context.go(AppRoutes.home);
     } catch (e) {
       debugPrint('[Diagnostic] completion save failed: $e');
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Could not save diagnostic. Please try again.'),
-        backgroundColor: Color(0xFFD4621A),
-        duration: Duration(seconds: 4),
+      if (!mounted) return;
+      setState(() => _saving = false);
+      // Never leave the user stranded on the final screen: offer a one-tap
+      // Retry directly from the failure message.
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text('Could not save. Check your connection and try again.'),
+        backgroundColor: const Color(0xFFD4621A),
+        duration: const Duration(seconds: 6),
+        action: SnackBarAction(
+          label: 'Retry',
+          textColor: HLGColors.warmCream,
+          onPressed: _saveAndGoHome,
+        ),
       ));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final archetype = widget.archetype;
+    final fallbackRoute = widget.fallbackRoute;
     final info = archetype.info;
     return Scaffold(
       backgroundColor: HLGColors.deepSage,
@@ -433,13 +452,17 @@ class _CompletionScreen extends StatelessWidget {
                     shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(999))),
                     overlayColor: WidgetStatePropertyAll(HLGColors.warmCream.withValues(alpha: 0.12)),
                   ),
-                  onPressed: () {
-                    _saveAndGoHome(context);
-                  },
-                  child: Text(
-                    'Go to Home',
-                    style: HLGTextStyles.homeCta15(color: HLGColors.deepSage).copyWith(fontWeight: FontWeight.w600),
-                  ),
+                  onPressed: _saving ? null : _saveAndGoHome,
+                  child: _saving
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(strokeWidth: 2.4, color: HLGColors.deepSage),
+                        )
+                      : Text(
+                          'Go to Home',
+                          style: HLGTextStyles.homeCta15(color: HLGColors.deepSage).copyWith(fontWeight: FontWeight.w600),
+                        ),
                 ),
               ),
               const SizedBox(height: 28),

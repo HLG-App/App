@@ -29,7 +29,9 @@ class _LearningProgressOverviewPageState extends State<LearningProgressOverviewP
     _load();
   }
 
-  static List<String> _lessonCodesInSequence() => LessonFlow.lessonSequence.where((s) => s.startsWith('L')).toList(growable: false);
+  // V4 lesson codes use O/P/N/F prefixes; checkpoints use CK. A "lesson" is any
+  // sequence item that is not a checkpoint.
+  static List<String> _lessonCodesInSequence() => LessonFlow.lessonSequence.where((s) => !s.startsWith('CK')).toList(growable: false);
 
   Future<void> _load() async {
     setState(() {
@@ -61,7 +63,7 @@ class _LearningProgressOverviewPageState extends State<LearningProgressOverviewP
 
       String? next;
       for (final item in LessonFlow.lessonSequence) {
-        if (item.startsWith('L')) {
+        if (!item.startsWith('CK')) {
           if (statusByCode[item] != 'complete') {
             next = item;
             break;

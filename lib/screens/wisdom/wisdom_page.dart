@@ -90,12 +90,13 @@ class _WisdomPageState extends State<WisdomPage> {
         .toList(growable: false);
   }
 
+  // V4 curriculum codes grouped by phase (Past / Present / Future). Community
+  // insights in `passed_on` are keyed by V4 lesson_code, so these must be V4
+  // codes — the retired V1 codes (L0, LA, L1…) never match a row.
   static const Map<String, List<String>> _moduleLessonCodes = {
-    'Pre-Course': ['L0', 'LA'],
-    'Module 1': ['L1', 'L1b', 'LB', 'L2', 'CK1'],
-    'Module 2': ['L3', 'L4', 'LD', 'LE', 'CK2'],
-    'Module 3': ['L5', 'L6', 'L7', 'L7b', 'LC', 'LF', 'CK3'],
-    'Module 4': ['L8', 'L8a', 'L9', 'L10', 'CK4'],
+    'The Past': ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'CK1'],
+    'The Present': ['N1', 'N2', 'N3', 'N4', 'N5', 'N6', 'N7', 'N8', 'N9', 'N10', 'N11', 'N12', 'N13', 'CK2', 'CK3'],
+    'The Future': ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'CK4'],
   };
 
   List<Map<String, dynamic>> _insightsForModule(List<String> lessonCodes) {
